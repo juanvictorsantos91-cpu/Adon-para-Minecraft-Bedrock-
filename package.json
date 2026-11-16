@@ -1,0 +1,9 @@
+{
+  "name": "minecraft-bedrock-rule-mob-ai",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "simulate": "node examples/simulate-zombie.js"
+  }
+}
