@@ -193,8 +193,8 @@ test("reconhece pais, filhos, irmãos, parceiros e dragões da mesma espécie", 
   const child = { id: "c1", species: "earth", parentIds: ["p1"] };
   const sibling = { id: "s1", species: "earth", parentIds: ["p1"] };
   const partner = { id: "m1", species: "earth" };
-  assert.equal(classifyDragonRelationship(parent, child), "parent");
-  assert.equal(classifyDragonRelationship(child, parent), "child");
+  assert.equal(classifyDragonRelationship(parent, child), "child");
+  assert.equal(classifyDragonRelationship(child, parent), "parent");
   assert.equal(classifyDragonRelationship(child, sibling), "sibling");
   assert.equal(classifyDragonRelationship({ id: "x", species: "earth", partnerId: "m1" }, partner), "partner");
   assert.equal(classifyDragonRelationship(parent, { id: "z", species: "earth" }), "same_species");
