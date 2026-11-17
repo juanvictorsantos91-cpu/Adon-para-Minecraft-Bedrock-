@@ -80,3 +80,29 @@ npm run simulate:world
 ```
 
 As funções produzem avaliações e intenções. Elas não criam blocos, entidades, animações, sons, ovos ou ataques dentro do Minecraft; isso pertence à futura integração com a Script API Bedrock.
+
+
+## Primeira ponte com Minecraft Bedrock
+
+A estrutura inicial do Behavior Pack está em `bedrock/behavior_pack/`:
+
+- `manifest.json`: declara o módulo Script API estável `@minecraft/server` 2.10.0, alinhado à documentação atual do Bedrock 1.26.50.
+- `scripts/main.js`: consulta dragões marcados com `ds:dragon`, coleta contexto local em intervalos de 40 ticks e envia o estado ao MIS/DBS.
+- `src/adapters/bedrock/snapshot.js`: converte entidades observadas em estados que o núcleo consegue avaliar.
+- `scripts/build-bedrock-pack.js`: copia o núcleo JavaScript para dentro do Behavior Pack.
+
+### Convenção inicial de tags
+
+Cada entidade de dragão precisa receber `ds:dragon` e uma tag `ds:species:<espécie>`, por exemplo `ds:species:electric`. Indicadores podem ser fornecidos por tags `ds:energy:0-100`, `ds:hunger:0-100` e `ds:spawn_tick:<ticks>`. Presas só entram no planejamento de caça se estiverem explicitamente marcadas com `ds:wild`; isso evita que animais de fazendas sejam tratados como selvagens por engano.
+
+### Limite desta primeira ponte
+
+A ponte já consulta entidades e contexto do mundo e calcula decisões do MIS/DBS. Por segurança, publica a decisão como uma tag `ds:action:<ação>` na entidade. Ela ainda não move o dragão, não aplica ataques e não cria efeitos: esses comportamentos exigem componentes e eventos correspondentes nos arquivos JSON das entidades, além de validação dentro do Minecraft.
+
+Antes de distribuir o pacote, confirme a versão exata do Minecraft instalada no celular. A dependência declarada é a versão estável 2.10.0 da Script API, documentada para a linha Bedrock 1.26.50; se a versão instalada exigir outra dependência, o manifesto deverá ser ajustado.
+
+Para preparar a pasta do Behavior Pack:
+
+```bash
+npm run build:bedrock
+```
