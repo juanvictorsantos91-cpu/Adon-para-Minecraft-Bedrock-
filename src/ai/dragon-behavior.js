@@ -16,31 +16,31 @@ const commandActions = {
 function behaviorRules(profile) {
   return [
     {
-      name: "obey-trained-command", priority: 1,
+      name: "obey-trained-command", priority: 5,
       when: s => Boolean(s.trainingCommand && commandActions[s.trainingCommand]),
       action: s => commandActions[s.trainingCommand],
       reason: "Executa um comando reconhecido do treinador."
     },
     {
-      name: "protect-young", priority: 2,
-      when: s => s.hasYoung === true && s.youngInDanger === true,
+      name: "protect-young", priority: 1,
+      when: s => s.hasYoung === true && s.youngInDanger === true && profile.protectiveness >= 0.6,
       action: "protect_young",
       reason: "Protege os filhotes quando existe uma ameaça próxima."
     },
     {
-      name: "protect-nest", priority: 3,
+      name: "protect-nest", priority: 2,
       when: s => s.nestThreatened === true,
       action: "guard_nest",
       reason: "A proteção do ninho é uma prioridade natural."
     },
     {
-      name: "protect-owner", priority: 4,
-      when: s => s.ownerInDanger === true && s.bondLevel >= 2,
+      name: "protect-owner", priority: 3,
+      when: s => s.ownerInDanger === true && s.bondLevel >= 2 && profile.protectiveness >= 0.7,
       action: "defend_owner",
       reason: "Defende o dono com quem desenvolveu vínculo."
     },
     {
-      name: "respond-to-threat", priority: 5,
+      name: "respond-to-threat", priority: 4,
       when: s => s.threatDetected === true,
       action: s => {
         if (s.health <= 40 || s.energy <= 25) return "retreat_to_safety";
@@ -52,7 +52,7 @@ function behaviorRules(profile) {
     },
     {
       name: "follow-bonded-owner", priority: 6,
-      when: s => s.ownerNearby === true && s.bondLevel >= 2 && s.trainingCommand !== "stay",
+      when: s => s.ownerNearby === true && s.bondLevel >= (profile.independence >= 0.8 ? 3 : 2) && s.trainingCommand !== "stay",
       action: "stay_near_owner",
       reason: "Mantém proximidade voluntária com o dono de confiança."
     },
@@ -64,7 +64,7 @@ function behaviorRules(profile) {
     },
     {
       name: "socialize-compatible-dragon", priority: 8,
-      when: s => s.compatibleDragonNearby === true && s.socialOpportunity === true,
+      when: s => s.compatibleDragonNearby === true && s.socialOpportunity === true && profile.sociability >= 0.5,
       action: "socialize_with_dragon",
       reason: "Interage socialmente com outro dragão compatível."
     },
