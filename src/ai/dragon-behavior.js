@@ -44,7 +44,7 @@ function behaviorRules(profile) {
     },
     {
       name: "protect-nest", priority: 2,
-      when: s => s.nestThreatened === true,
+      when: s => profile.nestRequired !== false && s.nestThreatened === true,
       action: "guard_nest",
       reason: "A proteção do ninho é uma prioridade natural."
     },
@@ -214,6 +214,55 @@ function behaviorRules(profile) {
       reason: "Cospe uma quantidade concentrada de veneno contra uma ameaça."
     },
     {
+      name: "plasma-concealment", priority: 3.3,
+      when: s => profile.plasmaStealth === true && s.stealthRequested === true &&
+        s.coverAvailable === true && s.isExposed !== true && s.energy >= 12,
+      action: "dim_plasma_glow_and_conceal",
+      reason: "Reduz o brilho das fissuras e usa cobertura para evitar ser detectado; não concede invisibilidade."
+    },
+    {
+      name: "plasma-silent-reposition", priority: 3.4,
+      when: s => profile.plasmaStealth === true && s.repositionRequested === true &&
+        s.coverAvailable === true && s.energy >= 10,
+      action: "reposition_silently",
+      reason: "Muda de posição por uma rota protegida, evitando exposição desnecessária."
+    },
+    {
+      name: "plasma-overload", priority: 3.5,
+      when: s => profile.plasmaCombat === true && s.overloadRequested === true &&
+        s.threatDetected === true && s.energy >= 45,
+      action: "activate_plasma_overload",
+      reason: "Eleva temporariamente a potência do plasma, com alto consumo de energia e maior luminosidade."
+    },
+    {
+      name: "plasma-breath", priority: 3.6,
+      when: s => profile.plasmaCombat === true && s.plasmaBreathRequested === true &&
+        s.threatDetected === true && s.energy >= 30,
+      action: "release_plasma_breath",
+      reason: "Libera um fluxo concentrado de plasma contra uma ameaça."
+    },
+    {
+      name: "plasma-discharge", priority: 3.7,
+      when: s => profile.plasmaCombat === true && s.plasmaDischargeRequested === true &&
+        s.threatDetected === true && s.energy >= 35,
+      action: "release_plasma_discharge",
+      reason: "Libera uma descarga de plasma em área próxima para afastar ameaças."
+    },
+    {
+      name: "plasma-ionized-projectile", priority: 3.8,
+      when: s => profile.plasmaCombat === true && s.ionizedProjectileRequested === true &&
+        s.threatDetected === true && s.energy >= 20,
+      action: "fire_ionized_projectile",
+      reason: "Dispara um projétil concentrado de energia ionizada."
+    },
+    {
+      name: "plasma-arc", priority: 3.9,
+      when: s => profile.plasmaCombat === true && s.plasmaArcRequested === true &&
+        s.threatDetected === true && s.energy >= 35,
+      action: "create_plasma_arc",
+      reason: "Cria arcos de plasma contra alvos próximos."
+    },
+    {
       name: "wind-gust-ability", priority: 13.5,
       when: s => profile.windCombat === true && s.windAbilityRequested === true && s.energy > 25 && s.threatDetected === true,
       action: "perform_wind_gust",
@@ -250,11 +299,12 @@ export function decideDragonBehavior(state) {
     throw new TypeError("O estado do dragão precisa ser um objeto.");
   }
 
+  const profile = getBehaviorProfile(state.species);
   const nearbyDragons = state.nearbyDragons ?? [];
   const environmentAssessment = assessEnvironment(state.species, state.environmentContext ?? state);
   const territory = assessTerritory(state, nearbyDragons, state);
   const huntingPlan = assessHuntingPlan(state, state.nearbyPrey ?? [], state);
-  const lifeCycle = assessLifeCycle(state, nearbyDragons, {
+  const lifeCycle = assessLifeCycle({ ...state, reproductionRequiresNest: profile.nestRequired !== false }, nearbyDragons, {
     environmentSafe: environmentAssessment.safetyScore >= 70 && !environmentAssessment.immediateHazard,
     incubationConditionsValid: state.incubationConditionsValid === true
   });
@@ -264,7 +314,6 @@ export function decideDragonBehavior(state) {
     return { ...survival, ...worldAssessment, system: "MIS", species: state.species ?? null };
   }
 
-  const profile = getBehaviorProfile(state.species);
   const relationships = assessDragonRelationships(state, nearbyDragons);
   const migrationStatus = Number.isInteger(state.currentTick)
     ? getMigrationStatus({
