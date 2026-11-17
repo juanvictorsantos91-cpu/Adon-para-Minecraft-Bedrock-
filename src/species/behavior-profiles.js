@@ -50,7 +50,7 @@ export const behaviorProfiles = {
     socialPattern: "large_groups", preferredGroupSize: 6, groupRange: "large",
     migrationPattern: "local_roaming",
     preferredActivities: ["dig_explore", "tend_nest", "rest_underground"],
-    preferredEnvironment: ["forest", "cave", "underground", "lush"],
+    preferredEnvironment: ["forest", "plains", "jungle", "lush", "wooded_hills"],
     threatResponse: "guard_and_block"
   },
   lava: {
@@ -60,7 +60,7 @@ export const behaviorProfiles = {
     socialPattern: "large_groups", preferredGroupSize: 6, groupRange: "large",
     migrationPattern: "local_roaming",
     preferredActivities: ["patrol_hot_ground", "absorb_heat", "volcanic_roam"],
-    preferredEnvironment: ["volcanic", "lava", "hot_cave"],
+    preferredEnvironment: ["volcanic", "lava", "basalt_deltas", "hot_cave"],
     threatResponse: "heat_warning"
   }
   ,
@@ -71,7 +71,7 @@ export const behaviorProfiles = {
     socialPattern: "small_groups", preferredGroupSize: 3, groupRange: "small",
     migrationPattern: "local_roaming",
     preferredActivities: ["glide_with_wind", "scan_open_sky", "explore_high_altitude"],
-    preferredEnvironment: ["wind", "high_altitude", "open_plains", "mountain"],
+    preferredEnvironment: ["wind", "open_plains", "coast", "savanna", "high_altitude"],
     threatResponse: "evade_with_wind", windCombat: true
   },
   poison: {
@@ -80,8 +80,8 @@ export const behaviorProfiles = {
     sociability: 0.2, independence: 0.95,
     socialPattern: "solitary", preferredGroupSize: 1, groupRange: "individual",
     migrationPattern: "local_roaming",
-    preferredActivities: ["hide_in_shadows", "stalk_prey", "ambush_from_cover"],
-    preferredEnvironment: ["swamp", "jungle", "dark_forest", "cave"],
+    preferredActivities: ["hide_in_shadows", "stalk_prey", "ambush_from_cover", "avoid_bright_open_ground"],
+    preferredEnvironment: ["swamp", "mangrove", "jungle", "dark_forest", "dense_forest"],
     threatResponse: "retreat_to_cover",
     poisonCombat: true, poisonCamouflage: true,
     bodyPlan: "long_serpentine_winged_two_legged",
@@ -93,8 +93,9 @@ export const behaviorProfiles = {
     sociability: 0.2, independence: 0.98,
     socialPattern: "solitary", preferredGroupSize: 1, groupRange: "individual",
     migrationPattern: "nomadic_roaming",
-    preferredActivities: ["remain_concealed", "observe_from_cover", "reposition_silently"],
-    preferredEnvironment: ["high_altitude", "mountain", "mineral_cave", "storm_exposed"],
+    preferredActivities: ["remain_concealed", "observe_from_cover", "reposition_silently", "seek_shelter_between_storms"],
+    preferredEnvironment: ["storm_exposed", "open_plateau", "windswept_coast", "high_altitude"],
+    spawnConditions: { weather: "thunderstorm", cooldownTicks: 120000, minimumDistanceFromPreviousSpawn: 1500, minimumDistanceFromExisting: 1200, chanceDenominator: 100, scanIntervalTicks: 6000 },
     threatResponse: "evade_and_conceal",
     plasmaCombat: true, plasmaStealth: true,
     spawnRarity: "extremely_rare",
@@ -110,8 +111,8 @@ export const behaviorProfiles = {
     sociability: 0.6, independence: 0.7,
     socialPattern: "small_groups", preferredGroupSize: 3, groupRange: "small",
     migrationPattern: "local_roaming",
-    preferredActivities: ["map_environment_with_echoes", "track_vibrations", "rest_in_quiet_cave"],
-    preferredEnvironment: ["cave", "mountain", "valley", "underground"],
+    preferredActivities: ["map_environment_with_echoes", "track_vibrations", "signal_group_with_echoes", "patrol_rocky_valley"],
+    preferredEnvironment: ["valley", "rocky_canyon", "forest", "cliffs", "cave"],
     threatResponse: "disorient_and_reposition",
     soundSensing: true, soundCombat: true,
     bodyPlan: "standard_four_legged_two_winged",
