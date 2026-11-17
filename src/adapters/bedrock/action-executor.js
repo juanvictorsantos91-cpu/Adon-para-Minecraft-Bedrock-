@@ -12,7 +12,11 @@ function normalizedDirection(from, to) {
   return { x: dx / length, y: dy / length, z: dz / length };
 }
 
-function isHostileType(typeId = "") {\n  return /minecraft:(zombie|husk|drowned|skeleton|stray|bogged|creeper|spider|cave_spider|witch|pillager|vindicator|ravager|phantom|warden|blaze|ghast|magma_cube|slime)$/.test(typeId);\n}\n\nfunction findById(entities, id) {
+function isHostileType(typeId = "") {
+  return /minecraft:(zombie|husk|drowned|skeleton|stray|bogged|creeper|spider|cave_spider|witch|pillager|vindicator|ravager|phantom|warden|blaze|ghast|magma_cube|slime)$/.test(typeId);
+}
+
+function findById(entities, id) {
   return entities.find(entity => entity.id === id);
 }
 
@@ -53,7 +57,7 @@ export function executeDragonAction(entity, decision, nearbyEntities = [], conte
 
     if (action === "perform_wind_gust" || action === "perform_aerial_push") {
       const targets = nearbyEntities.filter(target =>
-        target.id !== entity.id && target.hasTag?.("ds:hostile")
+        target.id !== entity.id && (target.hasTag?.("ds:hostile") || isHostileType(target.typeId))
       );
       for (const target of targets) {
         const direction = normalizedDirection(entity.location, target.location);
