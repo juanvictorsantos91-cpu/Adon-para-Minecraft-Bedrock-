@@ -1,5 +1,5 @@
-import { recoverEnergy, spendEnergy } from "./energy.js";
-import { reduceHunger } from "./hunger.js";
+import { recoverEnergy, spendEnergy, canSpendEnergy } from "./energy.js";
+import { reduceHunger, feedHunger } from "./hunger.js";
 import { damageHealth, recoverHealth } from "./health.js";
 import { progressInjury } from "./injuries.js";
 
@@ -12,14 +12,25 @@ export function tickMetabolism(state, profile, context = {}) {
   const next = { ...state };
   const activity = context.activity ?? "idle";
   const activityCost = (profile.activityCosts?.[activity] ?? 0) * minutes;
-  next.energy = spendEnergy(next.energy, activityCost);
+  const emergency = context.emergency === true;
+  if (canSpendEnergy(next.energy, activityCost, {
+    reserve: profile.emergencyReserve ?? 15,
+    emergency
+  })) {
+    next.energy = spendEnergy(next.energy, activityCost);
+  } else if (activityCost > 0) {
+    next.activityBlocked = true;
+  }
 
   const hungerRate = profile.hungerPerMinute ?? 0.05;
   next.hunger = reduceHunger(next.hunger, hungerRate * minutes);
 
   if (context.resting && context.safe && context.stationary) {
     const specialRate = profile.environmentRecovery?.[context.environment] ?? null;
-    const recoveryRate = specialRate ?? profile.restRecoveryPerMinute ?? 2;
+    let recoveryRate = specialRate ?? profile.restRecoveryPerMinute ?? 2;
+    if (next.hunger <= 20) {
+      recoveryRate *= profile.lowHungerEnergyMultiplier ?? 0.5;
+    }
     next.energy = recoverEnergy(next.energy, recoveryRate * minutes);
     next.health = recoverHealth(next.health, (profile.healthRecoveryPerMinute ?? 0.15) * minutes);
     if (next.injury) {
@@ -39,5 +50,21 @@ export function tickMetabolism(state, profile, context = {}) {
     next.starvationMinutes = 0;
   }
 
+  return next;
+}
+
+export function feedDragon(state, profile, food) {
+  if (!food || !Number.isFinite(food.nutrition) || food.nutrition <= 0) {
+    throw new RangeError("O alimento precisa ter nutrição positiva.");
+  }
+  const next = { ...state };
+  const nutrition = Math.min(food.nutrition, profile.maxNutritionPerMeal ?? 100);
+  next.hunger = feedHunger(next.hunger, nutrition);
+  const energyGain = Math.min(
+    food.energy ?? 0,
+    profile.maxEnergyFromMeal ?? 15
+  );
+  next.energy = recoverEnergy(next.energy, energyGain);
+  next.starvationMinutes = next.hunger > 0 ? 0 : (next.starvationMinutes ?? 0);
   return next;
 }
