@@ -87,6 +87,23 @@ export const behaviorProfiles = {
     bodyPlan: "long_serpentine_winged_two_legged",
     locomotionSupport: "two_legs"
   },
+  plasma: {
+    temperament: "elusive_stealth_predator",
+    aggression: 0.35, caution: 0.98, curiosity: 0.55, protectiveness: 0.35,
+    sociability: 0.2, independence: 0.98,
+    socialPattern: "solitary", preferredGroupSize: 1, groupRange: "individual",
+    migrationPattern: "nomadic_roaming",
+    preferredActivities: ["remain_concealed", "observe_from_cover", "reposition_silently"],
+    preferredEnvironment: ["high_altitude", "mountain", "mineral_cave", "storm_exposed"],
+    threatResponse: "evade_and_conceal",
+    plasmaCombat: true, plasmaStealth: true,
+    spawnRarity: "extremely_rare",
+    nestRequired: false,
+    bodyPlan: "standard_medium_four_legged_two_winged",
+    locomotionSupport: "four_legs_and_two_wings",
+    visualSignature: "dark_scales_blue_violet_white_plasma_fissures",
+    luminosityControl: "dim_when_hidden_brighten_during_overload"
+  },
   sound: {
     temperament: "observant_cautious",
     aggression: 0.45, caution: 0.85, curiosity: 0.9, protectiveness: 0.65,
