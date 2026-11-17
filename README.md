@@ -138,6 +138,19 @@ O adaptador consulta dragões marcados com `ds:dragon`; cada dragão precisa ter
 A pasta do Behavior Pack pode ser preparada com `npm run build:bedrock`.
 
 
+## Oitava espécie: Dragão de Som (oficial; ficha em revisão)
+
+O Dragão de Som está registrado no catálogo oficial. Sua anatomia foi definida como a de um dragão tradicional, com quatro patas, duas asas e cauda; não possui corpo serpentino nem estrutura física especial.
+
+- **Eco Localizador:** emite pulsos sonoros e interpreta os ecos para localizar criaturas, obstáculos e espaços próximos, inclusive no escuro.
+- **Onda de Impacto:** libera uma onda de pressão sonora que empurra criaturas e pode interromper ataques.
+- **Rugido Desorientador:** emite uma frequência intensa que confunde temporariamente adversários e dificulta a perseguição.
+- **Percepção de Vibrações:** identifica movimentos transmitidos pelo solo e pelas paredes, como passos e escavações.
+- Personalidade observadora e cautelosa; tende a viver em pequenos grupos.
+- Dieta experimental baseada em pequenos animais, peixes e carne.
+
+As habilidades estão implementadas como decisões no núcleo de regras, mas seus efeitos sonoros, visuais e físicos ainda dependem do adaptador e de testes dentro do Minecraft. A ficha continua aberta a ajustes.
+
 ## Nona espécie: Dragão Venenoso (em desenvolvimento)
 
 O Dragão Venenoso entrou no núcleo experimental com uma anatomia serpentina alada, duas patas como principal suporte de locomoção e corpo projetado para ser o mais comprido do catálogo. Seu perfil comportamental é cauteloso, solitário e especializado em emboscadas.
