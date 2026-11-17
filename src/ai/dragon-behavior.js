@@ -60,7 +60,7 @@ function behaviorRules(profile) {
     },
     {
       name: "care-for-young", priority: 7,
-      when: s => s.hasYoung === true && s.youngNeedsCare === true,
+      when: s => s.relationships?.parentalAction !== null && s.relationships?.parentalAction !== undefined,
       action: s => s.relationships?.parentalAction ?? "care_for_young",
       reason: "Cuida dos filhotes quando estão seguros e precisam de atenção."
     },
