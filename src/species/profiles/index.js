@@ -4,6 +4,7 @@ import { iceDragonProfile } from "./ice.js";
 import { fireDragonProfile } from "./fire.js";
 import { earthDragonProfile } from "./earth.js";
 import { lavaDragonProfile } from "./lava.js";
+import { windDragonProfile } from "./wind.js";
 
 export const speciesProfiles = {
   electric: electricDragonProfile,
@@ -11,7 +12,8 @@ export const speciesProfiles = {
   ice: iceDragonProfile,
   fire: fireDragonProfile,
   earth: earthDragonProfile,
-  lava: lavaDragonProfile
+  lava: lavaDragonProfile,
+  wind: windDragonProfile
 };
 
 export function getSpeciesProfile(species) {
