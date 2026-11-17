@@ -206,6 +206,20 @@ function behaviorRules(profile) {
       reason: "Emite uma frequência intensa para desorientar temporariamente um inimigo."
     },
     {
+      name: "poison-ambush-wait", priority: 3.45,
+      when: s => profile.poisonCombat === true && s.ambushOpportunity === true &&
+        s.preyNearby === true && s.threatDetected !== true && s.energy >= 20,
+      action: "wait_in_ambush",
+      reason: "Permanece imóvel em cobertura e espera o momento seguro para surpreender uma presa."
+    },
+    {
+      name: "poison-seek-cover", priority: 3.48,
+      when: s => profile.poisonCamouflage === true && s.poisonCamouflageRequested === true &&
+        s.camouflageSuitable !== true && s.coverTargetAvailable === true && s.energy >= 10,
+      action: "move_to_shade_before_camouflage",
+      reason: "Procura sombra ou vegetação densa antes de usar a nuvem de camuflagem."
+    },
+    {
       name: "poison-camouflage-mist", priority: 3.5,
       when: s => profile.poisonCamouflage === true &&
         s.poisonCamouflageRequested === true && s.camouflageSuitable === true &&
