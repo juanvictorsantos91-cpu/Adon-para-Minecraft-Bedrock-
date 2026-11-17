@@ -30,7 +30,7 @@ test("executor aproxima o dragão de uma presa selvagem verificada", () => {
   const result = executeDragonAction(
     dragon, { action: "hunt_selected_prey", huntingPlan: { selectedPreyId: "rabbit" } }, [prey]
   );
-  assert.equal(result.mode, "approach_prey");
+  assert.equal(result.mode, "approach_and_pursue");
   assert.equal(dragon.impulses.length, 1);
 });
 
