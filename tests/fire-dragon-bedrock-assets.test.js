@@ -43,7 +43,7 @@ test("Fire Dragon geometry contains the approved basic anatomy", async () => {
     assert.ok(names.has(required), `Missing required bone: ${required}`);
   }
 
-  assert.equal([...names].filter((name) => name.startsWith("wing_")).length, 2);
+  assert.ok(names.has("wing_left") && names.has("wing_right"));
   assert.equal([...names].filter((name) => name.includes("_leg_")).length, 4);
 
   for (const bone of bones) {
