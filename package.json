@@ -9,6 +9,7 @@
     "simulate:all": "node examples/simulate-all-dragons.js",
     "test": "node --test",
     "simulate:social": "node examples/simulate-social-life.js",
-    "simulate:world": "node examples/simulate-world-systems.js"
+    "simulate:world": "node examples/simulate-world-systems.js",
+    "build:bedrock": "node scripts/build-bedrock-pack.js"
   }
 }
