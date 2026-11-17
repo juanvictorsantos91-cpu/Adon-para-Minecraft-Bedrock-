@@ -10,7 +10,8 @@ const environments = {
   earth: "underground",
   lava: "volcanic",
   wind: "wind",
-  sound: "quiet_cave"
+  sound: "quiet_cave",
+  poison: "swamp"
 };
 
 for (const [species, profile] of Object.entries(speciesProfiles)) {
