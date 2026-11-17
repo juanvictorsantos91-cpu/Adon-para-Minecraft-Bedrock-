@@ -90,19 +90,34 @@ export function assessTerritory(self, nearbyDragons = [], context = {}) {
   const visitors = isNomadic ? [] : nearbyDragons.filter(other => {
     if (!other || other.id === self.id || !Number.isFinite(other.distance) || other.distance > radius) return false;
     if (other.species === self.species && context.territoryId && other.territoryId === context.territoryId) return false;
-    // Lava tolera a passagem dos grupos de Terra durante a migração; não os trata como invasores.
     if (self.species === "lava" && other.species === "earth" && other.temporaryTerritoryMigrationDue === true) return false;
     return true;
   });
-  const knownVisitors = visitors.filter(other => other.knownToSelf === true || other.isTamed === true);
-  const unknownDragons = visitors.filter(other => other.knownToSelf !== true && other.isTamed !== true);
+  const migratingEarth = self.species !== "earth" && self.species !== "lava"
+    ? visitors.filter(other => other.species === "earth" && other.temporaryTerritoryMigrationDue === true)
+    : [];
+  const migrationReception = migratingEarth.map(earth =>
+    assessEarthMigrationReception(self, earth, { migrationCycle: context.migrationCycle })
+  );
+  const earthMigrationTargets = self.species === "earth" && relocationDue
+    ? nearbyDragons.filter(other => other && other.species !== "earth" &&
+        Number.isFinite(other.distance) && other.territoryId &&
+        other.distance <= (getTerritoryRadius(other.species) ?? 0))
+        .map(owner => assessEarthMigrationReception(owner, self, { migrationCycle: context.migrationCycle }))
+    : [];
+  const allMigrationReceptions = [...migrationReception, ...earthMigrationTargets];
+  const migrationConflict = migrationReception.some(result => result.conflict);
   const nestThreatened = context.nestThreatened === true ||
     visitors.some(other => other.nearNest === true || other.hostile === true);
-  const territoryIntruded = !isNomadic && (context.territoryIntruded === true || visitors.length > 0 || migratingEarth.length > 0);
+  const territoryIntruded = !isNomadic && (
+    context.territoryIntruded === true || visitors.length > 0 || migratingEarth.length > 0
+  );
   const canDefend = self.health > 40 && self.energy > 30 && self.injury?.severity !== "severe";
   const action = isNomadic ? "remain_nomadic"
     : nestThreatened ? "guard_nest"
     : relocationDue ? "prepare_temporary_territory_relocation"
+    : migrationConflict && canDefend ? "challenge_migrating_earth_group"
+    : migratingEarth.length > 0 ? "warn_migrating_earth_group"
     : territoryIntruded && canDefend ? "challenge_territory_intruder"
     : territoryIntruded ? "observe_intruder_from_safety"
     : "patrol_territory";
@@ -111,9 +126,10 @@ export function assessTerritory(self, nearbyDragons = [], context = {}) {
     radius, isNomadic, temporaryTerritory,
     territoryActive: temporaryTerritory ? !relocationDue : !isNomadic,
     relocationDue, territoryIntruded, nestThreatened,
-    intruderCount: visitors.length, knownVisitorCount: knownVisitors.length,
-    unknownDragonCount: unknownDragons.length, canDefend, action,
-    migrationReception,\n    toleratedEarthMigrationCount: nearbyDragons.filter(other => self.species === "lava" &&
+    intruderCount: visitors.length, knownVisitorCount: visitors.filter(other => other.knownToSelf === true || other.isTamed === true).length,
+    unknownDragonCount: visitors.filter(other => other.knownToSelf !== true && other.isTamed !== true).length,
+    canDefend, action, migrationReception: allMigrationReceptions,
+    toleratedEarthMigrationCount: nearbyDragons.filter(other => self.species === "lava" &&
       other?.species === "earth" && other.temporaryTerritoryMigrationDue === true &&
       Number.isFinite(other.distance) && other.distance <= radius).length,
     spacing: assessTerritorialSpacing(self, nearbyDragons)
