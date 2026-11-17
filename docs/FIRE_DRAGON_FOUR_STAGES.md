@@ -47,8 +47,8 @@ Arquivos: scripts/package-bedrock-addon.js e .github/workflows/package-bedrock-a
 - Junta os dois em um arquivo MC addon.
 - Publica o pacote como artefato baixável do GitHub Actions.
 
-Estado: automação criada; o primeiro artefato precisa ser gerado pelo workflow e inspecionado antes do teste no celular.
+Estado: automação executada com sucesso. O artefato Dragon-Survival-Prototype foi gerado no GitHub Actions (retenção de 14 dias). Ainda precisa ser instalado e inspecionado no Minecraft Android.
 
 ## Fora do escopo destas quatro etapas
 
-A etapa 5 será o teste real no Minecraft Bedrock Android. Nela verificaremos importação, textura, UVs, escala, pivôs, animações e comportamento. A aprovação da CI não substitui esse teste no jogo.
+A etapa 5 será o teste real no Minecraft Bedrock Android. Nela verificaremos importação, textura, UVs, escala, pivôs, animações e comportamento. A CI passou nos testes automatizados do projeto e na validação estrutural do protótipo. A aprovação da CI não substitui o teste no jogo.
