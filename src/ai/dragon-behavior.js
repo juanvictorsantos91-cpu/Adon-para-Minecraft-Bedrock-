@@ -4,6 +4,7 @@ import { getBehaviorProfile } from "../species/behavior-profiles.js";
 import { getSocialGroupPlan } from "./social-groups.js";
 import { assessDragonRelationships } from "./dragon-relationships.js";
 import { getMigrationStatus } from "./migration-cycle.js";
+import { assessSocialInteractions } from "./social-interactions.js";
 
 const commandActions = {
   follow: "follow_owner",
@@ -72,6 +73,18 @@ function behaviorRules(profile) {
         s.ownerNearby !== true && s.hasYoung !== true,
       action: "begin_long_migration",
       reason: "Inicia uma grande migração quando o ciclo natural da espécie chega e a rota é segura."
+    },
+    {
+      name: "respond-to-dragon-aggression", priority: 9,
+      when: s => s.socialInteractions?.action && s.socialInteractions.kind !== "peaceful",
+      action: s => s.socialInteractions.action,
+      reason: "Responde a agressão ou conflito territorial de outro dragão sem iniciar hostilidade automaticamente."
+    },
+    {
+      name: "peaceful-cross-species-interaction", priority: 12,
+      when: s => s.socialInteractions?.action === "perform_peaceful_cross_species_interaction",
+      action: "perform_peaceful_cross_species_interaction",
+      reason: "Realiza uma interação pacífica com outra espécie quando existe oportunidade segura."
     },
     {
       name: "maintain-natural-group", priority: 9,
@@ -157,9 +170,11 @@ export function decideDragonBehavior(state) {
         cycleDurationTicks: state.migrationCycleTicks
       })
     : { migratory: profile.migrationPattern === "long_cycle", due: false };
+  const socialInteractions = assessSocialInteractions(state, state.nearbyDragons ?? [], state);
   const enrichedState = {
     ...state,
     relationships,
+    socialInteractions,
     migrationDue: state.migrationDue === true || migrationStatus.due
   };
   const decision = chooseAction(enrichedState, behaviorRules(profile), "observe_environment");
@@ -173,8 +188,10 @@ export function decideDragonBehavior(state) {
     migrationStatus,
     groupPlan: getSocialGroupPlan(
       state.species,
-      Number.isInteger(state.nearbySameSpeciesCount) ? state.nearbySameSpeciesCount : 0
-    )
+      Number.isInteger(state.nearbySameSpeciesCount) ? state.nearbySameSpeciesCount : 0,
+      state.nearbyDragons ?? []
+    ),
+    socialInteractions
   };
 }
 
