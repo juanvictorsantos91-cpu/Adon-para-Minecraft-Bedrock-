@@ -42,7 +42,8 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
   const spawnTick = readTaggedNumber(tags, NUMBER_PREFIXES.spawnTick, currentTick);
 
   const nearbyDragons = [];
-  const nearbyPrey = [];\n  const nearbyHostiles = [];
+  const nearbyPrey = [];
+  const nearbyHostiles = [];
   for (const other of nearbyEntities) {
     if (!other || other.id === entity.id) continue;
     const distance = distanceBetween(entity.location, other.location);
@@ -61,7 +62,11 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
       continue;
     }
 
-    if (isHostileType(other.typeId)) {\n      nearbyHostiles.push({ id: other.id, typeId: other.typeId, distance });\n      continue;\n    }\n    const foodId = preyFoodId(other.typeId);
+    if (isHostileType(other.typeId)) {
+      nearbyHostiles.push({ id: other.id, typeId: other.typeId, distance });
+      continue;
+    }
+    const foodId = preyFoodId(other.typeId);
     if (!foodId) continue;
     // Só entidades marcadas explicitamente como selvagens podem ser caçadas.
     // Isso evita atacar animais de fazendas do jogador por engano.
@@ -88,7 +93,9 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
     spawnTick,
     currentTick,
     nearbyDragons,
-    nearbyPrey,\n    nearbyHostiles,\n    threatDetected: nearbyHostiles.length > 0 || environmentContext.hostileMobsNearby === true,
+    nearbyPrey,
+    nearbyHostiles,
+    threatDetected: nearbyHostiles.length > 0 || environmentContext.hostileMobsNearby === true,
     nearbySameSpeciesCount: nearbyDragons.filter(dragon => dragon.species === species).length,
     sameSpeciesGroupNearby: nearbyDragons.some(dragon => dragon.species === species),
     environmentContext,
@@ -96,7 +103,8 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
     safeToExplore: environmentContext.immediateHazard !== true,
     safeToRest: environmentContext.immediateHazard !== true,
     threatDetected: environmentContext.hostileMobsNearby === true,
-    ownerNearby: tags.includes("ds:owner_nearby"),\n    windAbilityRequested: tags.includes("ds:wind_gust_requested"),
+    ownerNearby: tags.includes("ds:owner_nearby"),
+    windAbilityRequested: tags.includes("ds:wind_gust_requested"),
     bondLevel: readTaggedNumber(tags, "ds:bond:", 0),
     isEgg: tags.includes("ds:egg"),
     lifeStage: tags.includes("ds:stage:hatchling") ? "hatchling" :
@@ -105,7 +113,11 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
   };
 }
 
-function isHostileType(typeId = "") {\n  return /minecraft:(zombie|husk|drowned|skeleton|stray|bogged|creeper|spider|cave_spider|witch|pillager|vindicator|ravager|phantom|warden|blaze|ghast|magma_cube|slime)$/.test(typeId);\n}\n\nfunction preyFoodId(typeId = "") {
+function isHostileType(typeId = "") {
+  return /minecraft:(zombie|husk|drowned|skeleton|stray|bogged|creeper|spider|cave_spider|witch|pillager|vindicator|ravager|phantom|warden|blaze|ghast|magma_cube|slime)$/.test(typeId);
+}
+
+function preyFoodId(typeId = "") {
   const id = typeId.replace(/^minecraft:/, "");
   const known = {
     salmon: "salmon", cod: "cod", tropical_fish: "tropical_fish",
