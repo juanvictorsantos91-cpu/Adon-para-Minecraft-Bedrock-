@@ -98,3 +98,45 @@ test("descanso seguro, socialização e exploração são considerados", () => {
 test("espécie desconhecida é rejeitada", () => {
   assert.throws(() => getBehaviorProfile("unknown"), RangeError);
 });
+
+test("padrões sociais naturais são diferentes por espécie", () => {
+  assert.equal(getBehaviorProfile("water").socialPattern, "small_groups");
+  assert.equal(getBehaviorProfile("fire").socialPattern, "pairs");
+  assert.equal(getBehaviorProfile("ice").socialPattern, "pairs");
+  assert.equal(getBehaviorProfile("electric").socialPattern, "solitary");
+  assert.equal(getBehaviorProfile("earth").socialPattern, "large_groups");
+  assert.equal(getBehaviorProfile("lava").socialPattern, "large_groups");
+  assert.equal(getBehaviorProfile("electric").migrationPattern, "long_cycle");
+});
+
+test("água, fogo, gelo, terra e lava procuram seus grupos naturais", () => {
+  const cases = [
+    ["water", "travel_in_small_group"],
+    ["fire", "travel_in_pair"],
+    ["ice", "travel_in_pair"],
+    ["earth", "travel_in_large_group"],
+    ["lava", "travel_in_large_group"]
+  ];
+  for (const [species, expected] of cases) {
+    const result = decideDragonBehavior(healthy(species, {
+      nearbySameSpeciesCount: 2, safeToExplore: true
+    }));
+    assert.equal(result.action, expected);
+  }
+});
+
+test("dragões elétricos permanecem solitários e migram em ciclos longos seguros", () => {
+  const alone = decideDragonBehavior(healthy("electric", {
+    nearbySameSpeciesCount: 3, sameSpeciesGroupNearby: true
+  }));
+  assert.notEqual(alone.action, "travel_in_large_group");
+  assert.notEqual(alone.action, "travel_in_small_group");
+  const migrate = decideDragonBehavior(healthy("electric", {
+    migrationDue: true, migrationRouteSafe: true
+  }));
+  assert.equal(migrate.action, "begin_long_migration");
+  const unsafe = decideDragonBehavior(healthy("electric", {
+    migrationDue: true, migrationRouteSafe: false
+  }));
+  assert.notEqual(unsafe.action, "begin_long_migration");
+});
