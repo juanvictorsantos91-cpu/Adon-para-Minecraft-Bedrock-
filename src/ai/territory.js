@@ -47,6 +47,39 @@ const MIGRATION_CONFRONTATION_CHANCE = Object.freeze({
   wind: 0.32, sound: 0.40, poison: 0.78, plasma: 0.60
 });
 
+const INVASION_DAILY_CHANCE = Object.freeze({ fire: 0.035, electric: 0.008, ice: 0.008, earth: 0.008, wind: 0.008, sound: 0.008, poison: 0.008 });
+const INVASION_MIN_AGGRESSION = 0.7;
+
+/** Planeja invasões raras; não inicia combate nem transfere território por conta própria. */
+export function assessTerritorialInvasion(self, nearbyDragons = [], context = {}) {
+  if (!self || typeof self !== "object" || !Array.isArray(nearbyDragons)) {
+    throw new TypeError("Estado do dragão e lista de vizinhos são necessários.");
+  }
+  const excluded = ["water", "plasma", "lava"];
+  const aggression = Number.isFinite(self.aggression) ? self.aggression :
+    ({ fire: 0.9, electric: 0.55, ice: 0.45, earth: 0.3, wind: 0.35, sound: 0.45, poison: 0.55 }[self.species] ?? 0);
+  const targets = excluded.includes(self.species) ? [] : nearbyDragons.filter(other =>
+    other && other.id !== self.id && other.species !== self.species && other.territoryId &&
+    Number.isFinite(other.distance) && other.distance >= 0 &&
+    other.distance <= (getTerritoryRadius(other.species) ?? 0) && other.isTamed !== true
+  );
+  const healthy = self.health >= 60 && self.energy >= 50 && self.hunger >= 30 &&
+    self.injury?.severity !== "severe" && self.immediateDanger !== true &&
+    self.hasYoung !== true && self.safeToExplore !== false;
+  const eligible = aggression >= INVASION_MIN_AGGRESSION && targets.length > 0 && healthy;
+  const chance = eligible ? (INVASION_DAILY_CHANCE[self.species] ?? 0.008) : 0;
+  const cycle = Number.isInteger(context.invasionCycle) ? context.invasionCycle : 0;
+  const target = targets[0] ?? null;
+  const roll = target ? stableRoll(`invasion:${self.id ?? self.species}:${target.id ?? target.territoryId}:${cycle}`) : 1;
+  const shouldInvade = eligible && roll < chance;
+  return {
+    eligible, shouldInvade, aggression, chance, roll,
+    targetDragonId: shouldInvade ? (target.id ?? null) : null,
+    targetTerritoryId: shouldInvade ? target.territoryId : null,
+    action: shouldInvade ? "attempt_territory_invasion" : null
+  };
+}
+
 function stableRoll(seed) {
   let hash = 2166136261;
   for (const char of String(seed)) {
@@ -96,6 +129,7 @@ export function assessTerritory(self, nearbyDragons = [], context = {}) {
   const migratingEarth = self.species !== "earth" && self.species !== "lava"
     ? visitors.filter(other => other.species === "earth" && other.temporaryTerritoryMigrationDue === true)
     : [];
+  const invasionPlan = assessTerritorialInvasion(self, nearbyDragons, { invasionCycle: context.invasionCycle });
   const migrationReception = migratingEarth.map(earth =>
     assessEarthMigrationReception(self, earth, { migrationCycle: context.migrationCycle })
   );
@@ -128,7 +162,7 @@ export function assessTerritory(self, nearbyDragons = [], context = {}) {
     relocationDue, territoryIntruded, nestThreatened,
     intruderCount: visitors.length, knownVisitorCount: visitors.filter(other => other.knownToSelf === true || other.isTamed === true).length,
     unknownDragonCount: visitors.filter(other => other.knownToSelf !== true && other.isTamed !== true).length,
-    canDefend, action, migrationReception: allMigrationReceptions,
+    canDefend, action, invasionPlan, migrationReception: allMigrationReceptions,
     toleratedEarthMigrationCount: nearbyDragons.filter(other => self.species === "lava" &&
       other?.species === "earth" && other.temporaryTerritoryMigrationDue === true &&
       Number.isFinite(other.distance) && other.distance <= radius).length,
