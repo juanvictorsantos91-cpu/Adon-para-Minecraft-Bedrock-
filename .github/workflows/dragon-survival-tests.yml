@@ -24,3 +24,5 @@ jobs:
         run: npm run simulate:all
       - name: Run social life simulation
         run: npm run simulate:social
+      - name: Run integrated world systems simulation
+        run: npm run simulate:world
