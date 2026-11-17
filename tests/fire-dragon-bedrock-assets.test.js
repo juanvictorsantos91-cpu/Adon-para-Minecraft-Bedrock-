@@ -67,7 +67,9 @@ test("Fire Dragon client entity references its texture, render controller and an
   const description = clientEntity["minecraft:client_entity"].description;
   assert.equal(description.textures.default, "textures/entity/dragon_fire");
   assert.equal(description.render_controllers[0], "controller.render.dragon_survival.fire");
-  assert.ok(description.animation_controllers.some((entry) => entry["controller.animation.dragon_survival.fire"]));
+  assert.ok(description.animation_controllers.some((entry) => entry.fire_controller === "controller.animation.dragon_survival.fire"));
+  assert.deepEqual(description.scripts.animate, ["fire_controller"]);
+  assert.equal(description.spawn_egg.texture, "dragon_survival:fire_dragon_spawn_egg");
   assert.equal(description.animations.fire_idle, "animation.dragon_survival.fire.idle");
   assert.equal(description.animations.fire_walk, "animation.dragon_survival.fire.walk");
   assert.equal(description.animations.fire_fly, "animation.dragon_survival.fire.fly");
@@ -87,4 +89,26 @@ test("Fire Dragon animation files and render controller are connected", async ()
   assert.deepEqual(states.walk.animations, ["fire_walk"]);
   assert.deepEqual(states.fly.animations, ["fire_fly"]);
   assert.ok(renderFile.render_controllers["controller.render.dragon_survival.fire"]);
+});
+
+test("Fire Dragon has a distinct custom spawn egg texture and localized name", async () => {
+  const png = await readFile(new URL("../bedrock/resource_pack/textures/items/dragon_fire_spawn_egg.png", import.meta.url));
+  const itemAtlas = await readJson("../bedrock/resource_pack/textures/item_texture.json");
+  const languages = await readJson("../bedrock/resource_pack/texts/languages.json");
+  const pt = await readFile(new URL("../bedrock/resource_pack/texts/pt_BR.lang", import.meta.url), "utf8");
+  assert.equal(png.subarray(0, 8).toString("hex"), "89504e470d0a1a0a");
+  assert.equal(png.readUInt32BE(16), 16);
+  assert.equal(png.readUInt32BE(20), 16);
+  assert.ok(itemAtlas.texture_data["dragon_survival:fire_dragon_spawn_egg"]);
+  assert.ok(languages.languages.includes("pt_BR"));
+  assert.match(pt, /Ovo de Invocação do Dragão de Fogo/);
+});
+
+test("Bedrock dragon discovery uses the declared dragon_survival family", async () => {
+  const main = await readFile(new URL("../bedrock/behavior_pack/scripts/main.js", import.meta.url), "utf8");
+  const behavior = await readJson("../bedrock/behavior_pack/entities/fire_dragon.json");
+  const families = behavior["minecraft:entity"].components["minecraft:type_family"].family;
+  assert.ok(families.includes("dragon_survival"));
+  assert.match(main, /getEntities\\(\\{ families: \\[["']dragon_survival["']\\] \\}\\)/);
+  assert.match(main, /entity\\.addTag\\(["']ds:dragon["']\\)/);
 });
