@@ -384,3 +384,39 @@ test("Dragão de Terra adia mudança de território quando a rota não é segura
   assert.notEqual(result.action, "relocate_temporary_territory");
   assert.equal(result.migrationStatus.due, true);
 });
+
+
+test("Dragão de Terra usa um ciclo territorial temporário de 21 dias", () => {
+  const cycle = 21 * 24_000;
+  const before = getMigrationStatus({ species: "earth", currentTick: cycle - 1, spawnTick: 0 });
+  assert.equal(before.due, false);
+  assert.equal(before.temporaryTerritory, true);
+  assert.equal(before.cycleDurationTicks, cycle);
+  const due = getMigrationStatus({ species: "earth", currentTick: cycle, spawnTick: 0 });
+  assert.equal(due.due, true);
+  const earth = decideDragonBehavior(healthy("earth", {
+    currentTick: cycle, spawnTick: 0, migrationRouteSafe: true,
+    nearbyDragons: [{ id: "lava-1", species: "lava", lifeStage: "adult" }]
+  }));
+  assert.equal(earth.action, "begin_mixed_earth_lava_migration");
+  assert.equal(earth.socialInteractions.migrationRoles.earth, "excavate_route_and_temporary_shelters");
+  assert.equal(earth.socialInteractions.migrationRoles.lava, "warm_subterranean_passages_and_cross_hot_terrain");
+});
+
+test("Dragão de Terra adia mudança de território quando a rota não é segura", () => {
+  const cycle = 21 * 24_000;
+  const result = decideDragonBehavior(healthy("earth", {
+    currentTick: cycle, spawnTick: 0, migrationRouteSafe: false
+  }));
+  assert.notEqual(result.action, "relocate_temporary_territory");
+  assert.equal(result.migrationStatus.due, true);
+});
+
+test("Lava reconhece convite de migração de um grupo de Terra", () => {
+  const interaction = assessSocialInteractions(
+    { id: "lava-1", species: "lava" },
+    [{ id: "earth-1", species: "earth", temporaryTerritoryMigrationDue: true }]
+  );
+  assert.equal(interaction.action, "coordinate_temporary_territory_migration");
+  assert.equal(interaction.kind, "peaceful_migration");
+});
