@@ -68,7 +68,7 @@ function behaviorRules(profile) {
     {
       name: "defend-territory", priority: 4.5,
       when: s => s.territory?.territoryIntruded === true && s.territory?.canDefend === true,
-      action: "challenge_territory_intruder",
+      action: s => s.territory?.action ?? "challenge_territory_intruder",
       reason: "Defende o território quando a condição física permite."
     },
     {
