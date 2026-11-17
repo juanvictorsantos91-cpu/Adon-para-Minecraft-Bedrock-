@@ -2,6 +2,7 @@ import { chooseAction } from "./rule-engine.js";
 import { decideSurvivalAction } from "./survival-decisions.js";
 import { getBehaviorProfile } from "../species/behavior-profiles.js";
 import { getSocialGroupPlan } from "./social-groups.js";
+import { assessDragonRelationships } from "./dragon-relationships.js";
 
 const commandActions = {
   follow: "follow_owner",
@@ -60,7 +61,7 @@ function behaviorRules(profile) {
     {
       name: "care-for-young", priority: 7,
       when: s => s.hasYoung === true && s.youngNeedsCare === true,
-      action: "care_for_young",
+      action: s => s.relationships?.parentalAction ?? "care_for_young",
       reason: "Cuida dos filhotes quando estão seguros e precisam de atenção."
     },
     {
@@ -91,31 +92,37 @@ function behaviorRules(profile) {
       reason: "Procura formar ou integrar o tipo de grupo característico da espécie."
     },
     {
-      name: "socialize-compatible-dragon", priority: 11,
+      name: "form-compatible-pair", priority: 11,
+      when: s => s.relationships?.canFormPair === true,
+      action: "approach_compatible_mate",
+      reason: "Procura aproximar-se de um parceiro adulto compatível e sem parentesco próximo."
+    },
+    {
+      name: "socialize-compatible-dragon", priority: 12,
       when: s => s.compatibleDragonNearby === true && s.socialOpportunity === true && profile.sociability >= 0.5,
       action: "socialize_with_dragon",
       reason: "Interage socialmente com outro dragão compatível."
     },
     {
-      name: "rest-in-preferred-place", priority: 12,
+      name: "rest-in-preferred-place", priority: 13,
       when: s => s.safeToRest === true && s.energy < 65,
       action: "rest_in_preferred_habitat",
       reason: "Escolhe um local seguro e adequado para descansar."
     },
     {
-      name: "species-environment-behavior", priority: 13,
+      name: "species-environment-behavior", priority: 14,
       when: s => profile.preferredEnvironment.includes(s.environment),
       action: () => profile.preferredActivities[0],
       reason: "Escolhe uma atividade natural no ambiente preferido da espécie."
     },
     {
-      name: "explore-by-curiosity", priority: 14,
+      name: "explore-by-curiosity", priority: 15,
       when: s => s.safeToExplore === true && profile.curiosity >= 0.6,
       action: "explore_environment",
       reason: "A curiosidade da espécie favorece a exploração segura."
     },
     {
-      name: "idle-observe", priority: 15,
+      name: "idle-observe", priority: 16,
       when: () => true,
       action: "observe_environment",
       reason: "Observa o ambiente enquanto nenhuma necessidade prioritária exige ação."
@@ -139,13 +146,16 @@ export function decideDragonBehavior(state) {
   }
 
   const profile = getBehaviorProfile(state.species);
-  const decision = chooseAction(state, behaviorRules(profile), "observe_environment");
+  const relationships = assessDragonRelationships(state, state.nearbyDragons ?? []);
+  const enrichedState = { ...state, relationships };
+  const decision = chooseAction(enrichedState, behaviorRules(profile), "observe_environment");
   return {
     ...decision,
-    action: typeof decision.action === "function" ? decision.action(state) : decision.action,
+    action: typeof decision.action === "function" ? decision.action(enrichedState) : decision.action,
     system: "DBS",
     species: state.species,
     temperament: profile.temperament,
+    relationships,
     groupPlan: getSocialGroupPlan(
       state.species,
       Number.isInteger(state.nearbySameSpeciesCount) ? state.nearbySameSpeciesCount : 0
