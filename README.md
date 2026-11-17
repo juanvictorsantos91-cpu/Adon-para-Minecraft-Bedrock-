@@ -209,3 +209,8 @@ O executor Bedrock agora valida novamente a presa antes de agir, aproxima-se e p
 
 ## Migração territorial do Dragão de Terra
 A cada ciclo de 21 dias, o grupo de Terra pode atravessar regiões ocupadas por outras espécies. Lava é a única espécie que aceita a passagem sem conflito. As demais reconhecem o grupo como intruso; uma chance determinística por encontro define se partem para confronto ou se apenas emitem um aviso/observam. O resultado é estável durante o encontro para evitar alternância aleatória a cada atualização.
+
+
+## Invasão territorial seletiva
+
+O MIS/DBS avalia tentativas raras de invasão, sem transferir automaticamente a propriedade nem iniciar combate. Água e Plasma não invadem; Lava também foi excluída desse comportamento por sua dependência de habitat. O Dragão de Fogo tem a maior chance-base (3,5% por ciclo diário), mas a tentativa exige agressividade individual de pelo menos 0,7, saúde, energia e fome suficientes, ausência de perigo imediato, ausência de filhotes sob cuidado e um território vizinho válido. Outras espécies podem tentar somente se o indivíduo tiver agressividade elevada, com chance-base muito menor (0,8% por ciclo diário). O resultado é determinístico dentro de cada ciclo para evitar repetição aleatória a cada atualização. A intenção de invasão ainda precisa de execução física e validação dentro do Minecraft.
