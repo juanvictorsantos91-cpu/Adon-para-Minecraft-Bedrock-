@@ -11,9 +11,10 @@ export function tickMetabolism(state, profile, context = {}) {
 
   const next = { ...state };
   const activity = context.activity ?? "idle";
+  next.activityBlocked = false;
   const activityCost = (profile.activityCosts?.[activity] ?? 0) * minutes;
   const emergency = context.emergency === true;
-  if (canSpendEnergy(next.energy, activityCost, {
+  if (activityCost === 0 || canSpendEnergy(next.energy, activityCost, {
     reserve: profile.emergencyReserve ?? 15,
     emergency
   })) {
