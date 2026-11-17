@@ -13,20 +13,19 @@ export function getMigrationStatus({
   currentTick,
   spawnTick,
   lastMigrationTick,
-  cycleDurationTicks = ELECTRIC_MIGRATION_CYCLE_TICKS
+  cycleDurationTicks
 }) {
   if (!Number.isInteger(currentTick) || currentTick < 0) {
     throw new RangeError("currentTick deve ser um inteiro não negativo.");
   }
-  if (!Number.isInteger(cycleDurationTicks) || cycleDurationTicks <= 0) {
+  if (cycleDurationTicks !== undefined && (!Number.isInteger(cycleDurationTicks) || cycleDurationTicks <= 0)) {
     throw new RangeError("cycleDurationTicks deve ser um inteiro positivo.");
   }
   if (species !== "electric" && species !== "earth") {
     return { migratory: false, due: false, elapsedTicks: 0, cycleDurationTicks };
   }
-  const effectiveCycleDuration = Number.isInteger(cycleDurationTicks)
-    ? cycleDurationTicks
-    : species === "earth" ? EARTH_TERRITORY_CYCLE_TICKS : ELECTRIC_MIGRATION_CYCLE_TICKS;
+  const effectiveCycleDuration = cycleDurationTicks ??
+    (species === "earth" ? EARTH_TERRITORY_CYCLE_TICKS : ELECTRIC_MIGRATION_CYCLE_TICKS);
 
   const referenceTick = Number.isInteger(lastMigrationTick)
     ? lastMigrationTick
