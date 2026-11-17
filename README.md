@@ -60,3 +60,23 @@ npm run simulate:social
 O DBS é uma camada de decisão: os adaptadores que percebem entidades/ambiente e executam ações reais ainda precisam ser implementados.
 
 O núcleo ainda não está conectado à Script API e não é um Add-On instalável. A integração com o Minecraft Bedrock será uma etapa posterior, após confirmar a versão do jogo e a API disponível.
+
+
+## Sistemas de mundo e ciclo de vida
+
+A nova camada de planejamento adiciona quatro avaliações independentes, integradas ao MIS/DBS:
+
+- **Percepção ambiental** (`src/ai/environment-awareness.js`): reconhece tags de bioma/terreno, recursos úteis e perigos; calcula adequação de habitat, segurança e locais candidatos.
+- **Território e ninhos** (`src/ai/territory.js`): detecta invasores próximos, avalia ameaça ao ninho e pontua locais candidatos para construção. A proteção física do território ainda depende do adaptador Bedrock.
+- **Caça** (`src/ai/hunting.js`): filtra presas pela dieta da espécie, distância e risco; exclui animais domesticados, de fazenda ou protegidos pelo jogador; pode sugerir caça cooperativa. A captura e o compartilhamento real ainda dependem do adaptador.
+- **Ciclo de vida** (`src/ai/life-cycle.js`): calcula ovo, filhote, jovem e adulto a partir da idade em ticks, avalia cuidado parental, incubação, eclosão e condições para tentativa de reprodução. Envelhecimento adulto é um marcador experimental, sem morte automática.
+
+Os prazos iniciais de crescimento e envelhecimento são parâmetros experimentais e configuráveis no código; precisam de simulação e balanceamento. Quando o adaptador não informar idade, a fase permanece "unknown" em vez de presumir que todo dragão é filhote.
+
+Para simular as quatro camadas integradas:
+
+```bash
+npm run simulate:world
+```
+
+As funções produzem avaliações e intenções. Elas não criam blocos, entidades, animações, sons, ovos ou ataques dentro do Minecraft; isso pertence à futura integração com a Script API Bedrock.
