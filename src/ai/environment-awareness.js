@@ -1,13 +1,16 @@
 import { getBehaviorProfile } from "../species/behavior-profiles.js";
 
 const habitatTags = {
-  electric: ["mountain", "cold", "high_altitude"],
-  water: ["water", "river", "ocean", "waterfall"],
-  ice: ["snow", "ice", "glacier", "cold"],
-  fire: ["hot", "volcanic", "lava", "desert"],
-  earth: ["forest", "cave", "underground", "lush"],
-  lava: ["volcanic", "lava", "hot_cave"],
-  wind: ["wind", "high_altitude", "open_plains", "mountain"]
+  electric: ["mountain", "cold", "high_altitude", "windswept_plateau"],
+  water: ["water", "river", "ocean", "waterfall", "mangrove"],
+  ice: ["snow", "ice", "glacier", "cold", "snowy_plains", "frozen_peaks", "frozen_ocean"],
+  fire: ["hot", "volcanic", "lava", "desert", "savanna", "badlands"],
+  earth: ["forest", "plains", "jungle", "lush", "wooded_hills"],
+  lava: ["volcanic", "lava", "basalt_deltas", "hot_cave"],
+  wind: ["wind", "high_altitude", "open_plains", "coast", "savanna"],
+  poison: ["swamp", "mangrove", "jungle", "dark_forest", "dense_forest"],
+  sound: ["valley", "rocky_canyon", "forest", "cliffs", "cave"],
+  plasma: ["storm_exposed", "open_plateau", "windswept_coast", "high_altitude"]
 };
 
 const hazardKeys = ["lavaNearby", "fireNearby", "hostileMobsNearby", "unstableGround", "deepWater", "fallRisk"];
