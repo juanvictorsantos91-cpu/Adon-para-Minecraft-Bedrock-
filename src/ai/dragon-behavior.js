@@ -84,12 +84,23 @@ function behaviorRules(profile) {
       reason: "Cuida dos filhotes quando estão seguros e precisam de atenção."
     },
     {
-      name: "long-cycle-migration", priority: 8,
-      when: s => profile.migrationPattern === "long_cycle" &&
+      name: "earth-lava-temporary-territory-migration", priority: 7.8,
+      when: s => profile.territoryMode === "temporary" &&
+        s.socialInteractions?.action === "coordinate_temporary_territory_migration" &&
         s.migrationDue === true && s.migrationRouteSafe === true &&
         s.ownerNearby !== true && s.hasYoung !== true,
-      action: "begin_long_migration",
-      reason: "Inicia uma grande migração quando o ciclo natural da espécie chega e a rota é segura."
+      action: "begin_mixed_earth_lava_migration",
+      reason: "Migra com os dragões de Lava para estabelecer um novo território temporário; Terra abre rotas e abrigos, enquanto Lava atravessa e aquece passagens subterrâneas."
+    },
+    {
+      name: "long-cycle-migration", priority: 8,
+      when: s => ["long_cycle", "long_cycle_nomadic"].includes(profile.migrationPattern) &&
+        s.migrationDue === true && s.migrationRouteSafe === true &&
+        s.ownerNearby !== true && s.hasYoung !== true,
+      action: profile.territoryMode === "temporary" ? "relocate_temporary_territory" : "begin_long_migration",
+      reason: profile.territoryMode === "temporary"
+        ? "Encerra a permanência no território temporário e procura uma nova região após o longo ciclo."
+        : "Inicia uma grande migração quando o ciclo natural da espécie chega e a rota é segura."
     },
     {
       name: "respond-to-dragon-aggression", priority: 9,
@@ -366,7 +377,7 @@ export function decideDragonBehavior(state) {
         cycleDurationTicks: state.migrationCycleTicks
       })
     : { migratory: profile.migrationPattern === "long_cycle", due: false };
-  const socialInteractions = assessSocialInteractions(state, nearbyDragons, state);
+  const socialInteractions = assessSocialInteractions(state, nearbyDragons, { ...state, migrationDue: migrationStatus.due });
   const electricStormRitual = assessElectricStormRitual(state, nearbyDragons, state);
   const groupPlan = getSocialGroupPlan(
     state.species,
