@@ -58,7 +58,8 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
         energy: readTaggedNumber(otherTags, NUMBER_PREFIXES.energy, 100),
         lifeStage: otherTags.includes("ds:stage:hatchling") ? "hatchling" :
           otherTags.includes("ds:stage:juvenile") ? "juvenile" : "adult",
-        temporaryTerritoryMigrationDue: otherTags.includes("ds:migration_due")
+        temporaryTerritoryMigrationDue: otherTags.includes("ds:migration_due"),
+        territoryId: otherTags.find(tag => tag.startsWith("ds:territory:"))?.slice("ds:territory:".length) ?? null
       });
       continue;
     }
@@ -103,7 +104,7 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
     environment: environmentContext.environment ?? "unknown",
     safeToExplore: environmentContext.immediateHazard !== true,
     safeToRest: environmentContext.immediateHazard !== true,
-    threatDetected: environmentContext.hostileMobsNearby === true,
+    threatDetected: nearbyHostiles.length > 0 || environmentContext.hostileMobsNearby === true,
     ownerNearby: tags.includes("ds:owner_nearby"),
     windAbilityRequested: tags.includes("ds:wind_gust_requested"),
     bondLevel: readTaggedNumber(tags, "ds:bond:", 0),
