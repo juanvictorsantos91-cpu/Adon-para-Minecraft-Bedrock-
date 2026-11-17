@@ -6,7 +6,8 @@ const habitatTags = {
   ice: ["snow", "ice", "glacier", "cold"],
   fire: ["hot", "volcanic", "lava", "desert"],
   earth: ["forest", "cave", "underground", "lush"],
-  lava: ["volcanic", "lava", "hot_cave"]
+  lava: ["volcanic", "lava", "hot_cave"],
+  wind: ["wind", "high_altitude", "open_plains", "mountain"]
 };
 
 const hazardKeys = ["lavaNearby", "fireNearby", "hostileMobsNearby", "unstableGround", "deepWater", "fallRisk"];
