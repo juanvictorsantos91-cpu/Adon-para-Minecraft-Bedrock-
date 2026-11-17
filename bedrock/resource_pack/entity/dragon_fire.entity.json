@@ -13,7 +13,7 @@
         "default": "geometry.dragon_survival.fire"
       },
       "render_controllers": [
-        "controller.render.default"
+        "controller.render.dragon_survival.fire"
       ],
       "animations": {
         "fire_idle": "animation.dragon_survival.fire.idle",
@@ -21,7 +21,9 @@
         "fire_fly": "animation.dragon_survival.fire.fly"
       },
       "animation_controllers": [
-        "controller.animation.dragon_survival.fire"
+        {
+          "controller.animation.dragon_survival.fire": "controller.animation.dragon_survival.fire"
+        }
       ]
     }
   }
