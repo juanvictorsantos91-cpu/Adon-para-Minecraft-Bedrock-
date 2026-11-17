@@ -6,6 +6,10 @@ import { assessDragonRelationships } from "./dragon-relationships.js";
 import { getMigrationStatus } from "./migration-cycle.js";
 import { assessSocialInteractions } from "./social-interactions.js";
 import { assessElectricStormRitual } from "./electric-storm-ritual.js";
+import { assessEnvironment } from "./environment-awareness.js";
+import { assessTerritory } from "./territory.js";
+import { assessHuntingPlan } from "./hunting.js";
+import { assessLifeCycle } from "./life-cycle.js";
 
 const commandActions = {
   follow: "follow_owner",
@@ -56,6 +60,12 @@ function behaviorRules(profile) {
       reason: "Avalia a ameaça conforme saúde, energia e personalidade."
     },
     {
+      name: "defend-territory", priority: 4.5,
+      when: s => s.territory?.territoryIntruded === true && s.territory?.canDefend === true,
+      action: "challenge_territory_intruder",
+      reason: "Defende o território quando a condição física permite."
+    },
+    {
       name: "follow-bonded-owner", priority: 6,
       when: s => s.ownerNearby === true && s.bondLevel >= (profile.independence >= 0.8 ? 3 : 2) && s.trainingCommand !== "stay",
       action: "stay_near_owner",
@@ -63,8 +73,8 @@ function behaviorRules(profile) {
     },
     {
       name: "care-for-young", priority: 7,
-      when: s => s.relationships?.parentalAction !== null && s.relationships?.parentalAction !== undefined,
-      action: s => s.relationships?.parentalAction ?? "care_for_young",
+      when: s => (s.lifeCycle?.parentalAction ?? s.relationships?.parentalAction) != null,
+      action: s => s.lifeCycle?.parentalAction ?? s.relationships?.parentalAction ?? "care_for_young",
       reason: "Cuida dos filhotes quando estão seguros e precisam de atenção."
     },
     {
@@ -132,25 +142,37 @@ function behaviorRules(profile) {
       reason: "Interage socialmente com outro dragão compatível."
     },
     {
-      name: "rest-in-preferred-place", priority: 13,
+      name: "hatch-ready-egg", priority: 12.5,
+      when: s => s.lifeCycle?.eggReadyToHatch === true,
+      action: "hatch_egg",
+      reason: "O ovo concluiu a incubação em condições adequadas."
+    },
+    {
+      name: "hunt-available-prey", priority: 13,
+      when: s => s.huntingPlan?.shouldHunt === true && s.huntingPlan?.selectedPreyId,
+      action: s => s.huntingPlan.cooperative ? "coordinate_cooperative_hunt" : "hunt_selected_prey",
+      reason: "Seleciona uma presa adequada conforme fome, risco e distância."
+    },
+    {
+      name: "rest-in-preferred-place", priority: 14,
       when: s => s.safeToRest === true && s.energy < 65,
       action: "rest_in_preferred_habitat",
       reason: "Escolhe um local seguro e adequado para descansar."
     },
     {
-      name: "species-environment-behavior", priority: 14,
+      name: "species-environment-behavior", priority: 15,
       when: s => profile.preferredEnvironment.includes(s.environment),
       action: () => profile.preferredActivities[0],
       reason: "Escolhe uma atividade natural no ambiente preferido da espécie."
     },
     {
-      name: "explore-by-curiosity", priority: 15,
+      name: "explore-by-curiosity", priority: 16,
       when: s => s.safeToExplore === true && profile.curiosity >= 0.6,
       action: "explore_environment",
       reason: "A curiosidade da espécie favorece a exploração segura."
     },
     {
-      name: "idle-observe", priority: 16,
+      name: "idle-observe", priority: 17,
       when: () => true,
       action: "observe_environment",
       reason: "Observa o ambiente enquanto nenhuma necessidade prioritária exige ação."
@@ -168,13 +190,22 @@ export function decideDragonBehavior(state) {
     throw new TypeError("O estado do dragão precisa ser um objeto.");
   }
 
+  const nearbyDragons = state.nearbyDragons ?? [];
+  const environment = assessEnvironment(state.species, state.environmentContext ?? state);
+  const territory = assessTerritory(state, nearbyDragons, state);
+  const huntingPlan = assessHuntingPlan(state, state.nearbyPrey ?? [], state);
+  const lifeCycle = assessLifeCycle(state, nearbyDragons, {
+    environmentSafe: environment.safetyScore >= 70 && !environment.immediateHazard,
+    incubationConditionsValid: state.incubationConditionsValid === true
+  });
+  const worldAssessment = { environment, territory, huntingPlan, lifeCycle };
   const survival = decideSurvivalAction(state);
   if (survival.action !== "species_behavior") {
-    return { ...survival, system: "MIS", species: state.species ?? null };
+    return { ...survival, ...worldAssessment, system: "MIS", species: state.species ?? null };
   }
 
   const profile = getBehaviorProfile(state.species);
-  const relationships = assessDragonRelationships(state, state.nearbyDragons ?? []);
+  const relationships = assessDragonRelationships(state, nearbyDragons);
   const migrationStatus = Number.isInteger(state.currentTick)
     ? getMigrationStatus({
         species: state.species,
@@ -184,17 +215,21 @@ export function decideDragonBehavior(state) {
         cycleDurationTicks: state.migrationCycleTicks
       })
     : { migratory: profile.migrationPattern === "long_cycle", due: false };
-  const socialInteractions = assessSocialInteractions(state, state.nearbyDragons ?? [], state);
-  const electricStormRitual = assessElectricStormRitual(state, state.nearbyDragons ?? [], state);
+  const socialInteractions = assessSocialInteractions(state, nearbyDragons, state);
+  const electricStormRitual = assessElectricStormRitual(state, nearbyDragons, state);
   const groupPlan = getSocialGroupPlan(
     state.species,
     Number.isInteger(state.nearbySameSpeciesCount) ? state.nearbySameSpeciesCount : 0,
-    state.nearbyDragons ?? []
+    nearbyDragons
   );
   const enrichedState = {
     ...state,
     relationships,
     socialInteractions,
+    environment,
+    territory,
+    huntingPlan,
+    lifeCycle,
     electricStormRitual,
     groupPlan,
     migrationDue: state.migrationDue === true || migrationStatus.due
@@ -207,6 +242,7 @@ export function decideDragonBehavior(state) {
     species: state.species,
     temperament: profile.temperament,
     relationships,
+    ...worldAssessment,
     migrationStatus,
     groupPlan,
     socialInteractions,
