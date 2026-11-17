@@ -63,6 +63,17 @@ export const behaviorProfiles = {
     preferredEnvironment: ["volcanic", "lava", "hot_cave"],
     threatResponse: "heat_warning"
   }
+  ,
+  wind: {
+    temperament: "independent_explorer",
+    aggression: 0.35, caution: 0.65, curiosity: 0.95, protectiveness: 0.55,
+    sociability: 0.55, independence: 0.85,
+    socialPattern: "small_groups", preferredGroupSize: 3, groupRange: "small",
+    migrationPattern: "local_roaming",
+    preferredActivities: ["glide_with_wind", "scan_open_sky", "explore_high_altitude"],
+    preferredEnvironment: ["wind", "high_altitude", "open_plains", "mountain"],
+    threatResponse: "evade_with_wind"
+  }
 };
 
 export function getBehaviorProfile(species) {
