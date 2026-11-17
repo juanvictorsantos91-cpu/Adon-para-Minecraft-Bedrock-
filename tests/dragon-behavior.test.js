@@ -371,11 +371,10 @@ test("Dragão de Terra migra após 21 dias e coordena mudança com Lava", () => 
     currentTick: cycle, spawnTick: 0, migrationRouteSafe: true,
     nearbyDragons: [{ id: "lava-1", species: "lava", lifeStage: "adult" }]
   }));
-  assert.equal(earth.action, "begin_mixed_earth_lava_migration");
+  assert.equal(earth.action, "relocate_temporary_territory");
   assert.equal(earth.territory.relocationDue, true);
   assert.equal(earth.territory.territoryActive, false);
-  assert.equal(earth.socialInteractions.migrationRoles.earth, "excavate_route_and_temporary_shelters");
-  assert.equal(earth.socialInteractions.migrationRoles.lava, "warm_subterranean_passages_and_cross_hot_terrain");
+  assert.equal(earth.socialInteractions.migrationRoles, null);
 });
 
 test("Dragão de Terra adia mudança de território quando a rota não é segura", () => {
@@ -400,9 +399,8 @@ test("Dragão de Terra usa um ciclo territorial temporário de 21 dias", () => {
     currentTick: cycle, spawnTick: 0, migrationRouteSafe: true,
     nearbyDragons: [{ id: "lava-1", species: "lava", lifeStage: "adult" }]
   }));
-  assert.equal(earth.action, "begin_mixed_earth_lava_migration");
-  assert.equal(earth.socialInteractions.migrationRoles.earth, "excavate_route_and_temporary_shelters");
-  assert.equal(earth.socialInteractions.migrationRoles.lava, "warm_subterranean_passages_and_cross_hot_terrain");
+  assert.equal(earth.action, "relocate_temporary_territory");
+  assert.equal(earth.socialInteractions.migrationRoles, null);
 });
 
 test("Dragão de Terra adia mudança de território quando a rota não é segura", () => {
@@ -419,6 +417,6 @@ test("Lava reconhece convite de migração de um grupo de Terra", () => {
     { id: "lava-1", species: "lava" },
     [{ id: "earth-1", species: "earth", temporaryTerritoryMigrationDue: true }]
   );
-  assert.equal(interaction.action, "coordinate_temporary_territory_migration");
-  assert.equal(interaction.kind, "peaceful_migration");
+  assert.equal(interaction.action, "tolerate_earth_migration_passage");
+  assert.equal(interaction.kind, "peaceful_passage");
 });
