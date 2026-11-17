@@ -234,7 +234,10 @@ export function decideDragonBehavior(state) {
     Number.isInteger(state.nearbySameSpeciesCount) ? state.nearbySameSpeciesCount : 0,
     nearbyDragons
   );
-  const enrichedState = {\n    ...state,\n    environment: state.environment ?? state.environmentContext?.tags?.[0],\n    hasYoung: state.hasYoung ?? lifeCycle.needs.protection,
+  const enrichedState = {
+    ...state,
+    environment: state.environment ?? state.environmentContext?.tags?.[0],
+    hasYoung: state.hasYoung ?? lifeCycle.needs.protection,
     ...state,
     relationships,
     socialInteractions,
