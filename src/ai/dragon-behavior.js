@@ -5,6 +5,7 @@ import { getSocialGroupPlan } from "./social-groups.js";
 import { assessDragonRelationships } from "./dragon-relationships.js";
 import { getMigrationStatus } from "./migration-cycle.js";
 import { assessSocialInteractions } from "./social-interactions.js";
+import { assessElectricStormRitual } from "./electric-storm-ritual.js";
 
 const commandActions = {
   follow: "follow_owner",
@@ -79,6 +80,12 @@ function behaviorRules(profile) {
       when: s => s.socialInteractions?.action && s.socialInteractions.kind !== "peaceful",
       action: s => s.socialInteractions.action,
       reason: "Responde a agressão ou conflito territorial de outro dragão sem iniciar hostilidade automaticamente."
+    },
+    {
+      name: "electric-storm-communication-ritual", priority: 11,
+      when: s => s.electricStormRitual?.eligible === true,
+      action: "perform_electric_storm_communication_ritual",
+      reason: "Três ou mais Dragões Elétricos realizam um voo coletivo nas nuvens e formam uma tempestade de raios como chamado de comunicação."
     },
     {
       name: "peaceful-cross-species-interaction", priority: 12,
@@ -178,6 +185,7 @@ export function decideDragonBehavior(state) {
       })
     : { migratory: profile.migrationPattern === "long_cycle", due: false };
   const socialInteractions = assessSocialInteractions(state, state.nearbyDragons ?? [], state);
+  const electricStormRitual = assessElectricStormRitual(state, state.nearbyDragons ?? [], state);
   const groupPlan = getSocialGroupPlan(
     state.species,
     Number.isInteger(state.nearbySameSpeciesCount) ? state.nearbySameSpeciesCount : 0,
@@ -187,6 +195,7 @@ export function decideDragonBehavior(state) {
     ...state,
     relationships,
     socialInteractions,
+    electricStormRitual,
     groupPlan,
     migrationDue: state.migrationDue === true || migrationStatus.due
   };
@@ -200,7 +209,8 @@ export function decideDragonBehavior(state) {
     relationships,
     migrationStatus,
     groupPlan,
-    socialInteractions
+    socialInteractions,
+    electricStormRitual
   };
 }
 
