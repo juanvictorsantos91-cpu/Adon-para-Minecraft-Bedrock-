@@ -7,7 +7,8 @@ export const speciesDiets = {
   lava: { foods: ["meat", "special_food"], preferred: ["beef", "cooked_beef", "magma_cream"] },
   wind: { foods: ["meat", "small_animals", "fish"], preferred: ["rabbit", "chicken", "salmon"] },
   poison: { foods: ["venomous_mobs", "plants"], preferred: ["spider", "cave_spider", "bee", "spider_eye", "poisonous_potato", "mushroom", "red_mushroom", "brown_mushroom"] },
-  sound: { foods: ["small_animals", "fish", "meat"], preferred: ["rabbit", "chicken", "salmon"] }
+  sound: { foods: ["small_animals", "fish", "meat"], preferred: ["rabbit", "chicken", "salmon"] },
+  plasma: { foods: ["meat", "small_animals"], preferred: ["rabbit", "chicken", "salmon"] }
 };
 
 export function getSpeciesDiet(species) {
