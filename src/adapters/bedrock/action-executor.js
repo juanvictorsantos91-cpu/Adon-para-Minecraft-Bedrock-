@@ -62,7 +62,8 @@ export function executeDragonAction(entity, decision, nearbyEntities = [], conte
       const beforeHealth = prey.getComponent?.("minecraft:health")?.currentValue;
       const hit = prey.applyDamage?.(6);
       const afterHealth = prey.getComponent?.("minecraft:health")?.currentValue;
-      if (hit && ((Number.isFinite(afterHealth) && afterHealth <= 0) ||\n          (Number.isFinite(beforeHealth) && beforeHealth <= 6))) {
+      if (hit && ((Number.isFinite(afterHealth) && afterHealth <= 0) ||
+          (Number.isFinite(beforeHealth) && beforeHealth <= 6))) {
         const hungerTag = entity.getTags().find(tag => tag.startsWith("ds:hunger:"));
         const hunger = hungerTag ? Number(hungerTag.slice("ds:hunger:".length)) : 100;
         if (hungerTag) entity.removeTag(hungerTag);
