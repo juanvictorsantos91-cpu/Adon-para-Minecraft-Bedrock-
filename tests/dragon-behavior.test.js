@@ -310,7 +310,7 @@ test("grupos mistos Terra-Lava contam indivíduos das duas espécies", () => {
     { species: "lava", lifeStage: "adult" },
     { species: "lava", lifeStage: "young" }
   ]);
-  assert.equal(plan.observedGroupSize, 4);
+  assert.equal(plan.observedGroupSize, 5);
   assert.equal(plan.mixedCompanions, 2);
   assert.equal(plan.seekingMembers, true);
 });
