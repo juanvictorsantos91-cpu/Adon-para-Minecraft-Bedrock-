@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { decideDragonBehavior } from "../src/ai/dragon-behavior.js";
 import { behaviorProfiles, getBehaviorProfile } from "../src/species/behavior-profiles.js";
+import { getSocialGroupPlan } from "../src/ai/social-groups.js";
 
 const healthy = (species, extra = {}) => ({
   species, energy: 90, hunger: 90, health: 100,
@@ -139,4 +140,48 @@ test("dragões elétricos permanecem solitários e migram em ciclos longos segur
     migrationDue: true, migrationRouteSafe: false
   }));
   assert.notEqual(unsafe.action, "begin_long_migration");
+});
+
+
+test("planejador social respeita o tamanho preferido de cada espécie", () => {
+  const cases = [
+    ["water", 3, 1, "seek_group_members"],
+    ["fire", 2, 1, "seek_group_members"],
+    ["ice", 2, 1, "seek_group_members"],
+    ["earth", 6, 2, "travel_with_species_group"],
+    ["lava", 6, 5, "travel_with_species_group"]
+  ];
+
+  for (const [species, target, nearby, action] of cases) {
+    const plan = getSocialGroupPlan(species, nearby);
+    assert.equal(plan.targetGroupSize, target);
+    assert.equal(plan.observedGroupSize, nearby + 1);
+    assert.equal(plan.action, action);
+  }
+});
+
+test("o elétrico mantém padrão solitário mesmo com outros dragões próximos", () => {
+  const plan = getSocialGroupPlan("electric", 5);
+  assert.equal(plan.targetGroupSize, 1);
+  assert.equal(plan.action, "remain_solo");
+  assert.equal(plan.seekingMembers, false);
+});
+
+test("o plano social é incluído nas decisões DBS e não substitui o MIS", () => {
+  const normal = decideDragonBehavior(healthy("water", {
+    nearbySameSpeciesCount: 1
+  }));
+  assert.equal(normal.groupPlan.targetGroupSize, 3);
+  assert.equal(normal.groupPlan.action, "travel_with_species_group");
+
+  const critical = decideDragonBehavior(healthy("water", {
+    energy: 10, immediateDanger: true, nearbySameSpeciesCount: 2
+  }));
+  assert.equal(critical.system, "MIS");
+  assert.equal(critical.groupPlan, undefined);
+});
+
+test("o planejador rejeita quantidades inválidas de indivíduos próximos", () => {
+  assert.throws(() => getSocialGroupPlan("water", -1), RangeError);
+  assert.throws(() => getSocialGroupPlan("water", 1.5), RangeError);
 });
