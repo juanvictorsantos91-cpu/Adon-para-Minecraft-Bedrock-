@@ -72,3 +72,19 @@ test("Fire Dragon client entity references its texture, render controller and an
   assert.equal(description.animations.fire_walk, "animation.dragon_survival.fire.walk");
   assert.equal(description.animations.fire_fly, "animation.dragon_survival.fire.fly");
 });
+
+test("Fire Dragon animation files and render controller are connected", async () => {
+  const animationFile = await readJson("../bedrock/resource_pack/animations/dragon_fire.animation.json");
+  const controllerFile = await readJson("../bedrock/resource_pack/animation_controllers/dragon_fire.animation_controllers.json");
+  const renderFile = await readJson("../bedrock/resource_pack/render_controllers/dragon_fire.render_controllers.json");
+  const animations = animationFile.animations;
+  const states = controllerFile.animation_controllers["controller.animation.dragon_survival.fire"].states;
+
+  assert.ok(animations["animation.dragon_survival.fire.idle"]);
+  assert.ok(animations["animation.dragon_survival.fire.walk"]);
+  assert.ok(animations["animation.dragon_survival.fire.fly"]);
+  assert.deepEqual(states.idle.animations, ["fire_idle"]);
+  assert.deepEqual(states.walk.animations, ["fire_walk"]);
+  assert.deepEqual(states.fly.animations, ["fire_fly"]);
+  assert.ok(renderFile.render_controllers["controller.render.dragon_survival.fire"]);
+});
