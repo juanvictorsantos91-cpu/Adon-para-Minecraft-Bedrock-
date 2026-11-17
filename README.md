@@ -11,7 +11,8 @@ A ramificação `feature/dragon-survival-core` adiciona uma primeira base indepe
 - Metabolismo configurável por espécie.
 - Decisões do MIS considerando os três indicadores e perigo imediato.
 - Alimentação que recupera fome e energia com limite por refeição.
-- Primeiro perfil: Dragão Elétrico.
+- Perfis experimentais das seis espécies: Elétrico, Água, Gelo, Fogo, Terra e Lava.
+- Dietas e preferências alimentares por espécie.
 
 Os valores desta etapa são parâmetros experimentais para simulação, não balanceamento final.
 
@@ -20,7 +21,9 @@ Os valores desta etapa são parâmetros experimentais para simulação, não bal
 - `src/ai/rule-engine.js`: motor genérico de regras.
 - `src/ai/survival-decisions.js`: prioridades de sobrevivência do MIS.
 - `src/survival/`: energia, fome, saúde, ferimentos e metabolismo.
-- `src/species/profiles/electric.js`: perfil inicial do Dragão Elétrico.
+- `src/species/profiles/`: perfis metabólicos das seis espécies.
+- `src/species/diets/species-diets.js`: dietas e preferências alimentares.
+- `examples/simulate-all-dragons.js`: simulação comparativa das seis espécies.
 - `examples/simulate-electric-dragon.js`: simulação fora do Minecraft.
 - `tests/survival.test.js`: testes automatizados do núcleo.
 
@@ -31,6 +34,7 @@ Com Node.js instalado:
 ```bash
 npm test
 npm run simulate:electric
+npm run simulate:all
 ```
 
 O núcleo ainda não está conectado à Script API e não é um Add-On instalável. A integração com o Minecraft Bedrock será uma etapa posterior, após confirmar a versão do jogo e a API disponível.
