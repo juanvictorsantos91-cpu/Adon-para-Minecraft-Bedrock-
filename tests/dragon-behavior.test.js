@@ -4,6 +4,7 @@ import { decideDragonBehavior } from "../src/ai/dragon-behavior.js";
 import { behaviorProfiles, getBehaviorProfile } from "../src/species/behavior-profiles.js";
 import { getSocialGroupPlan } from "../src/ai/social-groups.js";
 import { assessDragonRelationships, classifyDragonRelationship, isEligiblePair } from "../src/ai/dragon-relationships.js";
+import { ELECTRIC_MIGRATION_CYCLE_TICKS, getMigrationStatus } from "../src/ai/migration-cycle.js";
 
 const healthy = (species, extra = {}) => ({
   species, energy: 90, hunger: 90, health: 100,
@@ -250,4 +251,39 @@ test("DBS integra cuidado parental e aproximação de parceiro compatível", () 
   }));
   assert.equal(pair.action, "approach_compatible_mate");
   assert.equal(pair.relationships.mateCandidateId, "b");
+});
+
+
+test("migração elétrica usa um ciclo longo contado em ticks do mundo", () => {
+  const start = 1000;
+  const before = getMigrationStatus({
+    species: "electric",
+    currentTick: start + ELECTRIC_MIGRATION_CYCLE_TICKS - 1,
+    spawnTick: start
+  });
+  assert.equal(before.due, false);
+  const due = getMigrationStatus({
+    species: "electric",
+    currentTick: start + ELECTRIC_MIGRATION_CYCLE_TICKS,
+    spawnTick: start
+  });
+  assert.equal(due.due, true);
+  assert.equal(due.progress, 1);
+  const otherSpecies = getMigrationStatus({
+    species: "water",
+    currentTick: start + ELECTRIC_MIGRATION_CYCLE_TICKS,
+    spawnTick: start
+  });
+  assert.equal(otherSpecies.migratory, false);
+});
+
+test("DBS inicia migração elétrica quando o ciclo longo vence e a rota está segura", () => {
+  const start = 0;
+  const result = decideDragonBehavior(healthy("electric", {
+    currentTick: ELECTRIC_MIGRATION_CYCLE_TICKS,
+    spawnTick: start,
+    migrationRouteSafe: true
+  }));
+  assert.equal(result.action, "begin_long_migration");
+  assert.equal(result.migrationStatus.due, true);
 });
