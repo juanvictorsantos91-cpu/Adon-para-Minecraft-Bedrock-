@@ -15,7 +15,10 @@ test("Dragão de Som possui metabolismo, dieta e personalidade próprios", () =>
   assert.equal(profile.species, "sound");
   assert.ok(profile.activityCosts.echoPulse > 0);
   assert.ok(profile.activityCosts.sonicImpact > profile.activityCosts.echoPulse);
-  assert.equal(getBehaviorProfile("sound").soundSensing, true);
+  const behavior = getBehaviorProfile("sound");
+  assert.equal(behavior.soundSensing, true);
+  assert.equal(behavior.bodyPlan, "standard_four_legged_two_winged");
+  assert.equal(behavior.locomotionSupport, "four_legs_and_two_wings");
   assert.equal(getSpeciesDiet("sound").preferred.includes("salmon"), true);
   assert.equal(canEat("sound", "rabbit"), true);
 });
