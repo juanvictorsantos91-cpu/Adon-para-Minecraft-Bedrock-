@@ -5,7 +5,8 @@ export const speciesDiets = {
   fire: { foods: ["meat", "land_animals"], preferred: ["beef", "porkchop", "mutton"] },
   earth: { foods: ["land_animals", "minerals"], preferred: ["beef", "mutton", "iron_nugget", "copper_ingot"] },
   lava: { foods: ["meat", "special_food"], preferred: ["beef", "cooked_beef", "magma_cream"] },
-  wind: { foods: ["meat", "small_animals", "fish"], preferred: ["rabbit", "chicken", "salmon"] }
+  wind: { foods: ["meat", "small_animals", "fish"], preferred: ["rabbit", "chicken", "salmon"] },
+  sound: { foods: ["small_animals", "fish", "meat"], preferred: ["rabbit", "chicken", "salmon"] }
 };
 
 export function getSpeciesDiet(species) {
