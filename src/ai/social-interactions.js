@@ -36,9 +36,10 @@ export function assessSocialInteractions(self, nearbyDragons = [], context = {})
     kind: "peaceful"
   }));
 
-  const earthMigrationPassage =
-    self.species === "lava" &&
-    differentSpecies.some(other => other.species === "earth" && other.temporaryTerritoryMigrationDue === true);
+  const migratingEarth = differentSpecies.filter(other =>
+    other.species === "earth" && other.temporaryTerritoryMigrationDue === true
+  );
+  const earthMigrationPassage = self.species === "lava" && migratingEarth.length > 0;
   let action = null, targetId = null, kind = null;
   if (context.attackedByDragon === true) {
     action = self.health <= 40 || self.energy <= 25
@@ -65,6 +66,6 @@ export function assessSocialInteractions(self, nearbyDragons = [], context = {})
     action, kind, targetId,
     mixedEarthLavaGroup: false,
     migrationRoles: null,
-    toleratesEarthMigration: earthMigrationPassage
+    toleratesEarthMigration: earthMigrationPassage,\n    migratingEarthIntruderCount: earthMigrationPassage ? 0 : migratingEarth.length
   };
 }
