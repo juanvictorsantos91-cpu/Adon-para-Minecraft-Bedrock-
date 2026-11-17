@@ -69,6 +69,13 @@ function updateDimension(dimension, currentTick) {
       const state = buildDragonSnapshot(entity, nearby, environmentContext, currentTick);
       if (!state) continue;
       const decision = decideDragonBehavior(state);
+      // Publica a janela de migração para que os dragões de Lava próximos
+      // reconheçam a passagem temporária sem tratá-la como invasão.
+      if (state.species === "earth" && decision.migrationStatus?.due === true) {
+        if (!entity.hasTag("ds:migration_due")) entity.addTag("ds:migration_due");
+      } else if (entity.hasTag("ds:migration_due")) {
+        entity.removeTag("ds:migration_due");
+      }
       publishIntent(entity, decision.action);
     } catch {
       // Uma entidade inválida não deve interromper a IA das demais.
