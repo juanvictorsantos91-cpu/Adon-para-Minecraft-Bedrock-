@@ -202,3 +202,10 @@ Novas intenções específicas:
 - Plasma: absorver energia durante tempestades quando estiver seguro e procurar abrigo para observar sem se expor.
 
 Essas são decisões do núcleo. A detecção precisa de clima, cobertura, luz e pontos de surgimento ainda deve ser conectada ao adaptador do jogo.
+
+
+## Caça executada no Behavior Pack
+O executor Bedrock agora valida novamente a presa antes de agir, aproxima-se e persegue o alvo, aplica dano corpo a corpo quando está ao alcance e restaura fome após um abate confirmado. A aproximação e o ataque consomem energia. A caça é interrompida diante de perigo, saúde muito baixa ou energia insuficiente. Entidades domesticadas, pertencentes ao jogador, de fazenda, filhotes ou protegidas não são alvos; apenas entidades marcadas com `ds:wild` podem ser caçadas.
+
+## Migração territorial do Dragão de Terra
+A cada ciclo de 21 dias, o grupo de Terra pode atravessar regiões ocupadas por outras espécies. Lava é a única espécie que aceita a passagem sem conflito. As demais reconhecem o grupo como intruso; uma chance determinística por encontro define se partem para confronto ou se apenas emitem um aviso/observam. O resultado é estável durante o encontro para evitar alternância aleatória a cada atualização.
