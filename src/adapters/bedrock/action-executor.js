@@ -12,7 +12,7 @@ function normalizedDirection(from, to) {
   return { x: dx / length, y: dy / length, z: dz / length };
 }
 
-function findById(entities, id) {
+function isHostileType(typeId = "") {\n  return /minecraft:(zombie|husk|drowned|skeleton|stray|bogged|creeper|spider|cave_spider|witch|pillager|vindicator|ravager|phantom|warden|blaze|ghast|magma_cube|slime)$/.test(typeId);\n}\n\nfunction findById(entities, id) {
   return entities.find(entity => entity.id === id);
 }
 
