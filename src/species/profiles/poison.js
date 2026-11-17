@@ -16,6 +16,6 @@ export const poisonDragonProfile = {
     physicalAttack: 2, fly: 1.2, glide: 0.8, fastFly: 2.2,
     venomSpit: 5, venomBreath: 9, camouflageMist: 7
   },
-  diet: ["small_animals", "land_animals", "fish"],
-  preferredFood: ["rabbit", "chicken", "cod"]
+  diet: ["venomous_mobs", "plants"],
+  preferredFood: ["spider", "cave_spider", "bee", "spider_eye", "poisonous_potato", "mushroom", "red_mushroom", "brown_mushroom"]
 };
