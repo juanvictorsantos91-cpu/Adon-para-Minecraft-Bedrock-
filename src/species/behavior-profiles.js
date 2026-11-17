@@ -96,7 +96,9 @@ export const behaviorProfiles = {
     preferredActivities: ["map_environment_with_echoes", "track_vibrations", "rest_in_quiet_cave"],
     preferredEnvironment: ["cave", "mountain", "valley", "underground"],
     threatResponse: "disorient_and_reposition",
-    soundSensing: true, soundCombat: true
+    soundSensing: true, soundCombat: true,
+    bodyPlan: "standard_four_legged_two_winged",
+    locomotionSupport: "four_legs_and_two_wings"
   }
 };
 
