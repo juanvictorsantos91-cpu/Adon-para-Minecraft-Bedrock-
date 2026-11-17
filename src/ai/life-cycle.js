@@ -46,7 +46,7 @@ export function assessLifeCycle(dragon, nearbyDragons = [], context = {}) {
   const candidate = nearbyDragons.find(other => isEligiblePair(breedingCandidate, other)) ?? null;
   const canAttemptBreeding = lifeStage === "adult" &&
     dragon.reproductionCooldownTicks <= 0 &&
-    dragon.nestReady === true &&
+    (dragon.reproductionRequiresNest === false || dragon.nestReady === true) &&
     dragon.energy > 45 && dragon.health > 60 &&
     candidate !== null &&
     context.environmentSafe === true;
