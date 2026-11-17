@@ -106,3 +106,33 @@ Para preparar a pasta do Behavior Pack:
 ```bash
 npm run build:bedrock
 ```
+
+
+## Sétima espécie: Dragão de Vento
+
+O Dragão de Vento foi adicionado ao catálogo oficial do Dragon Survival. Seu perfil experimental contempla:
+
+- Personalidade independente, curiosa e exploradora.
+- Habitat de altitude, montanhas, planícies abertas e regiões com vento.
+- Pequenos grupos flexíveis, podendo também viver sozinho.
+- Voo de planagem com consumo reduzido quando aproveita correntes favoráveis.
+- Rajada de vento defensiva para afastar criaturas hostis próximas.
+- Dieta de pequenos animais, carne e peixes; alimentos preferidos: coelho, frango e salmão.
+- Montaria somente na fase adulta.
+
+Os custos de energia e as condições de recuperação são parâmetros iniciais de balanceamento, ainda não validados dentro do Minecraft.
+
+## Executor inicial de ações Bedrock
+
+O adaptador agora chama `executeDragonAction` após a decisão do MIS/DBS. O executor já possui ações limitadas e seguras:
+
+- Estabilizar/parar o movimento em descanso ou pouso.
+- Aplicar impulsos pequenos para aproximação e afastamento.
+- Aproximar-se de uma presa selecionada e tentar um ataque corpo a corpo quando estiver ao alcance.
+- Aplicar empurrão em criaturas hostis com a rajada de vento.
+
+A caça exige a tag `ds:wild` na presa. Animais domesticados, próprios ou marcados como fazenda/protegidos são recusados. Essa marcação explícita é intencional para evitar ataques indevidos a animais do jogador. Ações como voo completo, animações, eclosão, escavação e construção de ninho continuam dependendo dos eventos e componentes específicos das entidades.
+
+O adaptador consulta dragões marcados com `ds:dragon`; cada dragão precisa ter também `ds:species:<espécie>`. Para solicitar a rajada defensiva do Dragão de Vento, a entidade recebe `ds:wind_gust_requested` enquanto o sistema de comando/combate não possui uma interface própria.
+
+A pasta do Behavior Pack pode ser preparada com `npm run build:bedrock`.
