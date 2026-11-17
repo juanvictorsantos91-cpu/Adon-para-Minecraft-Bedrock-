@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { assessHuntingPlan, getHuntingStyle } from "../src/ai/hunting.js";
-import { assessTerritory } from "../src/ai/territory.js";
+import { assessTerritory, assessEarthMigrationReception } from "../src/ai/territory.js";
 import { assessSocialInteractions } from "../src/ai/social-interactions.js";
 
 const prey = (id, foodId, distance = 8, extra = {}) => ({
@@ -63,4 +63,28 @@ test("Terra não precisa de Dragão de Lava para iniciar sua migração", () => 
   const interactions = assessSocialInteractions({ id: "earth-1", species: "earth" }, [], { migrationDue: true });
   assert.equal(interactions.action, null);
   assert.equal(interactions.migrationRoles, null);
+});
+
+test("somente Lava aceita a passagem migratória de Terra", () => {
+  const earth = { id: "earth-migrant", species: "earth", temporaryTerritoryMigrationDue: true };
+  const lava = assessEarthMigrationReception({ id: "lava-home", species: "lava" }, earth);
+  assert.equal(lava.accepts, true);
+  assert.equal(lava.conflict, false);
+  assert.equal(lava.action, "tolerate_earth_migration_passage");
+  for (const species of ["fire", "water", "electric", "ice", "wind", "sound", "poison", "plasma"]) {
+    const reception = assessEarthMigrationReception({ id: species + "-home", species }, earth);
+    assert.equal(reception.accepts, false);
+    assert.ok(["challenge_migrating_earth_group", "warn_migrating_earth_group"].includes(reception.action));
+  }
+});
+
+test("a invasão migratória pode gerar confronto ou aviso, sem aceitação de outras espécies", () => {
+  const earth = { id: "earth-migrant", species: "earth", temporaryTerritoryMigrationDue: true, distance: 40 };
+  const territory = assessTerritory(
+    { id: "fire-home", species: "fire", health: 90, energy: 90 },
+    [earth]
+  );
+  assert.equal(territory.territoryIntruded, true);
+  assert.ok(["challenge_migrating_earth_group", "warn_migrating_earth_group"].includes(territory.action));
+  assert.equal(territory.migrationReception[0].accepts, false);
 });
