@@ -59,7 +59,8 @@ export function assessTerritorialInvasion(self, nearbyDragons = [], context = {}
   const aggression = Number.isFinite(self.aggression) ? self.aggression :
     ({ fire: 0.9, electric: 0.55, ice: 0.45, earth: 0.3, wind: 0.35, sound: 0.45, poison: 0.55 }[self.species] ?? 0);
   const targets = excluded.includes(self.species) ? [] : nearbyDragons.filter(other =>
-    other && other.id !== self.id && other.species !== self.species && other.territoryId &&
+    other && other.id !== self.id && other.species !== self.species &&
+    Object.hasOwn(SPECIES_TERRITORY_RADII, other.species) && other.territoryId &&
     Number.isFinite(other.distance) && other.distance >= 0 &&
     other.distance <= (getTerritoryRadius(other.species) ?? 0) && other.isTamed !== true
   );
