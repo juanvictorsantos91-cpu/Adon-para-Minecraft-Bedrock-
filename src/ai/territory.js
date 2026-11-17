@@ -56,6 +56,8 @@ export function assessTerritory(self, nearbyDragons = [], context = {}) {
   }
   const radius = getTerritoryRadius(self.species, context.territoryRadius);
   const isNomadic = radius === null;
+  const temporaryTerritory = self.species === "earth";
+  const relocationDue = temporaryTerritory && context.migrationDue === true;
   const visitors = isNomadic ? [] : nearbyDragons.filter(other =>
     other && other.id !== self.id && Number.isFinite(other.distance) &&
     other.distance <= radius &&
@@ -69,12 +71,15 @@ export function assessTerritory(self, nearbyDragons = [], context = {}) {
   const canDefend = self.health > 40 && self.energy > 30 && self.injury?.severity !== "severe";
   const action = isNomadic ? "remain_nomadic"
     : nestThreatened ? "guard_nest"
+    : relocationDue ? "prepare_temporary_territory_relocation"
     : territoryIntruded && canDefend ? "challenge_territory_intruder"
     : territoryIntruded ? "observe_intruder_from_safety"
     : "patrol_territory";
   return {
     territoryId: isNomadic ? null : (context.territoryId ?? null),
-    radius, isNomadic, territoryIntruded, nestThreatened,
+    radius, isNomadic, temporaryTerritory,
+    territoryActive: temporaryTerritory ? !relocationDue : !isNomadic,
+    relocationDue, territoryIntruded, nestThreatened,
     intruderCount: visitors.length,
     knownVisitorCount: knownVisitors.length,
     unknownDragonCount: unknownDragons.length,
