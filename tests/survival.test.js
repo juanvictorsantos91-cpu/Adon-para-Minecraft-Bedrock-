@@ -70,9 +70,9 @@ test("alimentação recupera fome e energia com limite por refeição", () => {
 });
 
 
-test("as seis espécies possuem perfis metabólicos válidos", () => {
+test("as sete espécies possuem perfis metabólicos válidos", () => {
   assert.deepEqual(Object.keys(speciesProfiles).sort(), [
-    "earth", "electric", "fire", "ice", "lava", "water"
+    "earth", "electric", "fire", "ice", "lava", "water", "wind"
   ]);
   for (const profile of Object.values(speciesProfiles)) {
     assert.ok(profile.restRecoveryPerMinute > 0);
