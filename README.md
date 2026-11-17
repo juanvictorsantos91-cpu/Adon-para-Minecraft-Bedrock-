@@ -17,6 +17,7 @@ A ramificação `feature/dragon-survival-core` adiciona uma primeira base indepe
 - Sistema DBS integrado às prioridades do MIS: proteção de filhotes/ninhos, resposta a ameaças, vínculo com o dono, socialização, descanso, exploração e comandos treinados.
 - Padrões sociais naturais: Água em pequenos grupos; Fogo e Gelo em duplas; Elétrico solitário; Terra e Lava em grandes grupos.
 - Migração de longo ciclo para o Dragão Elétrico, condicionada à segurança da rota.
+- Planejamento social explícito: Água (3), Fogo (2), Gelo (2), Terra (6), Lava (6); Elétrico mantém padrão solitário. Os tamanhos são metas experimentais de grupo.
 
 Os valores desta etapa são parâmetros experimentais para simulação, não balanceamento final.
 
@@ -29,6 +30,7 @@ Os valores desta etapa são parâmetros experimentais para simulação, não bal
 - `src/species/diets/species-diets.js`: dietas e preferências alimentares.
 - `src/species/behavior-profiles.js`: personalidade e tendências por espécie.
 - `src/ai/dragon-behavior.js`: decisões comportamentais integradas ao MIS.
+- `src/ai/social-groups.js`: planejamento do tamanho e da coesão dos grupos por espécie.
 - `tests/dragon-behavior.test.js`: testes do sistema de comportamentos.
 - `examples/simulate-all-dragons.js`: simulação comparativa das seis espécies.
 - `examples/simulate-electric-dragon.js`: simulação fora do Minecraft.
