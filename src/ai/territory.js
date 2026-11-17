@@ -103,7 +103,7 @@ export function assessTerritory(self, nearbyDragons = [], context = {}) {
     ? nearbyDragons.filter(other => other && other.species !== "earth" &&
         Number.isFinite(other.distance) && other.territoryId &&
         other.distance <= (getTerritoryRadius(other.species) ?? 0))
-        .map(owner => assessEarthMigrationReception(owner, self, { migrationCycle: context.migrationCycle }))
+        .map(owner => assessEarthMigrationReception(owner, { ...self, temporaryTerritoryMigrationDue: true }, { migrationCycle: context.migrationCycle }))
     : [];
   const allMigrationReceptions = [...migrationReception, ...earthMigrationTargets];
   const migrationConflict = migrationReception.some(result => result.conflict);
