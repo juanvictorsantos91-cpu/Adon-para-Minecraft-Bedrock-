@@ -46,9 +46,10 @@ export function assessSocialInteractions(self, nearbyDragons = [], context = {})
       ? "retreat_from_dragon_attack" : "defend_against_dragon";
     kind = "aggressive_defense";
     targetId = context.attackerId ?? null;
-  } else if ((context.territoryConflict === true || (migratingEarth.length > 0 && self.species !== "lava")) && !earthMigrationPassage && profile.aggression >= 0.6) {
-    action = "challenge_intruding_dragon";
-    kind = "territorial_aggression";
+  } else if ((context.territoryConflict === true || (migratingEarth.length > 0 && self.species !== "lava")) && !earthMigrationPassage) {
+    action = profile.aggression >= 0.6 && self.health > 40 && self.energy > 30
+      ? "challenge_intruding_dragon" : "observe_intruder_from_safety";
+    kind = action === "challenge_intruding_dragon" ? "territorial_aggression" : "territorial_caution";
     targetId = context.conflictingDragonId ?? migratingEarth[0]?.id ?? null;
   } else if (earthMigrationPassage) {
     action = "tolerate_earth_migration_passage";
