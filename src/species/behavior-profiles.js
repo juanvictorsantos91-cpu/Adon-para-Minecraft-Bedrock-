@@ -10,7 +10,7 @@ export const behaviorProfiles = {
     socialPattern: "solitary", preferredGroupSize: 1, groupRange: "individual",
     migrationPattern: "long_cycle", migrationInterval: "long",
     preferredActivities: ["scan_high_ground", "patrol_territory", "explore"],
-    preferredEnvironment: ["mountain", "cold", "high_altitude"],
+    preferredEnvironment: ["mountain", "cold", "high_altitude", "windswept_plateau"],
     threatResponse: "charge_warning"
   },
   water: {
@@ -20,7 +20,7 @@ export const behaviorProfiles = {
     socialPattern: "small_groups", preferredGroupSize: 3, groupRange: "small",
     migrationPattern: "local_roaming",
     preferredActivities: ["swim_patrol", "dive_explore", "rest_near_water"],
-    preferredEnvironment: ["water", "river", "ocean", "waterfall"],
+    preferredEnvironment: ["water", "river", "ocean", "waterfall", "mangrove"],
     threatResponse: "retreat_to_water"
   },
   ice: {
@@ -30,7 +30,7 @@ export const behaviorProfiles = {
     socialPattern: "pairs", preferredGroupSize: 2, groupRange: "pair",
     migrationPattern: "local_roaming",
     preferredActivities: ["observe_quietly", "patrol_snow", "rest_in_cold"],
-    preferredEnvironment: ["snow", "ice", "glacier", "cold"],
+    preferredEnvironment: ["snow", "ice", "glacier", "cold", "snowy_plains", "frozen_peaks", "frozen_ocean"],
     threatResponse: "frost_warning"
   },
   fire: {
@@ -40,7 +40,7 @@ export const behaviorProfiles = {
     socialPattern: "pairs", preferredGroupSize: 2, groupRange: "pair",
     migrationPattern: "local_roaming",
     preferredActivities: ["patrol_territory", "display_strength", "sun_warm"],
-    preferredEnvironment: ["hot", "volcanic", "lava", "desert"],
+    preferredEnvironment: ["hot", "volcanic", "lava", "desert", "savanna", "badlands"],
     threatResponse: "roar_and_stand_ground"
   },
   earth: {
