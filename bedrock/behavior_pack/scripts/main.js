@@ -1,6 +1,7 @@
 import { system, world } from "@minecraft/server";
 import { decideDragonBehavior } from "./core/ai/dragon-behavior.js";
-import { buildDragonSnapshot, actionIntentTag } from "./core/adapters/bedrock/snapshot.js";\nimport { executeDragonAction } from "./core/adapters/bedrock/action-executor.js";
+import { buildDragonSnapshot, actionIntentTag } from "./core/adapters/bedrock/snapshot.js";
+import { executeDragonAction } from "./core/adapters/bedrock/action-executor.js";
 
 const TICK_INTERVAL = 40;
 const QUERY_RADIUS = 32;
@@ -11,7 +12,9 @@ function inferEnvironment(dimension, location) {
   try {
     const biome = dimension.getBiome(location);
     const biomeId = typeof biome === "string" ? biome : biome?.id ?? "";
-    context.biome = biomeId;\n    if (location.y >= 120) context.tags.push("high_altitude", "wind");\n    else if (location.y >= 90) context.tags.push("wind");
+    context.biome = biomeId;
+    if (location.y >= 120) context.tags.push("high_altitude", "wind");
+    else if (location.y >= 90) context.tags.push("wind");
     const normalized = biomeId.toLowerCase();
     if (/ocean|river|beach/.test(normalized)) context.tags.push("water");
     if (/snow|frozen|ice|grove/.test(normalized)) context.tags.push("cold");
