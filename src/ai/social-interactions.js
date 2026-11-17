@@ -66,6 +66,7 @@ export function assessSocialInteractions(self, nearbyDragons = [], context = {})
     action, kind, targetId,
     mixedEarthLavaGroup: false,
     migrationRoles: null,
-    toleratesEarthMigration: earthMigrationPassage,\n    migratingEarthIntruderCount: earthMigrationPassage ? 0 : migratingEarth.length
+    toleratesEarthMigration: earthMigrationPassage,
+    migratingEarthIntruderCount: earthMigrationPassage ? 0 : migratingEarth.length
   };
 }
