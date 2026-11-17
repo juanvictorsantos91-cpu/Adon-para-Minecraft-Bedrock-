@@ -109,6 +109,6 @@ test("Bedrock dragon discovery uses the declared dragon_survival family", async 
   const behavior = await readJson("../bedrock/behavior_pack/entities/fire_dragon.json");
   const families = behavior["minecraft:entity"].components["minecraft:type_family"].family;
   assert.ok(families.includes("dragon_survival"));
-  assert.match(main, /getEntities\\(\\{ families: \\[["']dragon_survival["']\\] \\}\\)/);
-  assert.match(main, /entity\\.addTag\\(["']ds:dragon["']\\)/);
+  assert.ok(main.includes('getEntities({ families: ["dragon_survival"] })'));
+  assert.ok(main.includes('entity.addTag("ds:dragon")'));
 });
