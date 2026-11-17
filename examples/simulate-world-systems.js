@@ -22,5 +22,5 @@ const scenarios = [
 for (const scenario of scenarios) {
   const result = decideDragonBehavior({ energy: 80, hunger: 80, health: 100, immediateDanger: false, ...scenario.state });
   console.log("\\n" + scenario.name);
-  console.log({ system: result.system, action: result.action, environment: result.environment?.recommendation, territory: result.territory?.action, hunting: result.huntingPlan?.action, prey: result.huntingPlan?.selectedPreyId, lifeStage: result.lifeCycle?.lifeStage, parentalAction: result.lifeCycle?.parentalAction });
+  console.log({ system: result.system, action: result.action, environment: result.environmentAssessment?.recommendation, territory: result.territory?.action, hunting: result.huntingPlan?.action, prey: result.huntingPlan?.selectedPreyId, lifeStage: result.lifeCycle?.lifeStage, parentalAction: result.lifeCycle?.parentalAction });
 }
