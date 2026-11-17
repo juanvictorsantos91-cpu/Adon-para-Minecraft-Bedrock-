@@ -19,7 +19,7 @@ A ramificação `feature/dragon-survival-core` adiciona uma primeira base indepe
 - Interações entre espécies: cooperação, exploração conjunta, convivência perto de água/calor e sinais sociais pacíficos; respostas agressivas apenas diante de ataque ou conflito territorial, com recuo quando ferido ou com pouca energia.
 - Ritual de comunicação dos Dragões Elétricos: três ou mais adultos saudáveis podem voar acima das nuvens e gerar uma tempestade de raios; respeita segurança, energia, saúde e intervalo mínimo de sete dias Minecraft (168.000 ticks).
 - Migração de longo ciclo para o Dragão Elétrico: ciclo configurável, com referência inicial de 14 dias Minecraft (336.000 ticks), condicionada à segurança da rota.
-- Dragão de Terra nômade: estabelece territórios temporários por ciclos de 21 dias Minecraft (504.000 ticks), explora/escava a região e depois procura outro local; a mudança é adiada se a rota não for segura.
+- Dragão de Terra nômade: estabelece territórios temporários por ciclos de 21 dias Minecraft (504.000 ticks), explora/escava a região e depois procura outro local; a mudança é adiada se a rota não for segura. O adaptador deve atualizar `lastMigrationTick` após a mudança e sinalizar `temporaryTerritoryMigrationDue` nos dragões de Terra próximos para que Lava possa reconhecer o convite.
 - Migração cooperativa Terra-Lava: durante a mudança de território, Terra pode abrir rotas e abrigos temporários, enquanto Lava ajuda a atravessar terrenos quentes e aquece passagens subterrâneas.
 - Planejamento social explícito: Água (3), Fogo (2), Gelo (2), Terra (6), Lava (6); Elétrico mantém padrão solitário. Os tamanhos são metas experimentais de grupo.
 - Reconhecimento de relações entre pais, filhotes, irmãos, parceiros e indivíduos da mesma espécie.
