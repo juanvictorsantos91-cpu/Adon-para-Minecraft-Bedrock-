@@ -19,6 +19,8 @@ A ramificação `feature/dragon-survival-core` adiciona uma primeira base indepe
 - Interações entre espécies: cooperação, exploração conjunta, convivência perto de água/calor e sinais sociais pacíficos; respostas agressivas apenas diante de ataque ou conflito territorial, com recuo quando ferido ou com pouca energia.
 - Ritual de comunicação dos Dragões Elétricos: três ou mais adultos saudáveis podem voar acima das nuvens e gerar uma tempestade de raios; respeita segurança, energia, saúde e intervalo mínimo de sete dias Minecraft (168.000 ticks).
 - Migração de longo ciclo para o Dragão Elétrico: ciclo configurável, com referência inicial de 14 dias Minecraft (336.000 ticks), condicionada à segurança da rota.
+- Dragão de Terra nômade: estabelece territórios temporários por ciclos de 21 dias Minecraft (504.000 ticks), explora/escava a região e depois procura outro local; a mudança é adiada se a rota não for segura.
+- Migração cooperativa Terra-Lava: durante a mudança de território, Terra pode abrir rotas e abrigos temporários, enquanto Lava ajuda a atravessar terrenos quentes e aquece passagens subterrâneas.
 - Planejamento social explícito: Água (3), Fogo (2), Gelo (2), Terra (6), Lava (6); Elétrico mantém padrão solitário. Os tamanhos são metas experimentais de grupo.
 - Reconhecimento de relações entre pais, filhotes, irmãos, parceiros e indivíduos da mesma espécie.
 - Formação de casal apenas entre adultos da mesma espécie, compatíveis, em boas condições e sem parentesco próximo conhecido.
@@ -39,7 +41,7 @@ Os valores desta etapa são parâmetros experimentais para simulação, não bal
 - `src/ai/social-interactions.js`: possibilidades de interações pacíficas e respostas defensivas/agressivas condicionais entre espécies.
 - `src/ai/dragon-relationships.js`: reconhecimento de parentesco, parceiros e compatibilidade para formação de casais.
 - `src/ai/electric-storm-ritual.js`: condições, participantes e intervalo do ritual coletivo de tempestade elétrica.
-- `src/ai/migration-cycle.js`: agenda de migração de longo ciclo do Dragão Elétrico, medida em ticks do mundo.
+- `src/ai/migration-cycle.js`: agenda de migração de longo ciclo do Dragão Elétrico e do ciclo territorial temporário do Dragão de Terra, medida em ticks do mundo.
 - `tests/dragon-behavior.test.js`: testes do sistema de comportamentos.
 - `examples/simulate-all-dragons.js`: simulação comparativa das dez espécies.
 - `examples/simulate-social-life.js`: simulação de grupos, parentesco e cuidado parental.
@@ -67,7 +69,7 @@ O núcleo ainda não está conectado à Script API e não é um Add-On instaláv
 A nova camada de planejamento adiciona quatro avaliações independentes, integradas ao MIS/DBS:
 
 - **Percepção ambiental** (`src/ai/environment-awareness.js`): reconhece tags de bioma/terreno, recursos úteis e perigos; calcula adequação de habitat, segurança e locais candidatos.
-- **Território e ninhos** (`src/ai/territory.js`): define raios experimentais por espécie, diferencia membros do mesmo grupo de grupos independentes, mede risco de sobreposição e reconhece visitantes de outras espécies sem iniciar combate automático. O Plasma é nômade e não mantém território fixo. A proteção física ainda depende do adaptador Bedrock.
+- **Território e ninhos** (`src/ai/territory.js`): define raios experimentais por espécie, diferencia membros do mesmo grupo de grupos independentes, mede risco de sobreposição e reconhece visitantes de outras espécies sem iniciar combate automático. O Plasma é nômade e não mantém território fixo; Terra mantém territórios temporários em ciclos de 21 dias Minecraft. A proteção física ainda depende do adaptador Bedrock.
 - **Caça** (`src/ai/hunting.js`): filtra presas pela dieta da espécie, distância e risco; exclui animais domesticados, de fazenda ou protegidos pelo jogador; pode sugerir caça cooperativa. A captura e o compartilhamento real ainda dependem do adaptador.
 - **Ciclo de vida** (`src/ai/life-cycle.js`): calcula ovo, filhote, jovem e adulto a partir da idade em ticks, avalia cuidado parental, incubação, eclosão e condições para tentativa de reprodução. Envelhecimento adulto é um marcador experimental, sem morte automática.
 
