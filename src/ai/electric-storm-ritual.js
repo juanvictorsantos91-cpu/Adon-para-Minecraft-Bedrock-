@@ -1,4 +1,5 @@
-export const ELECTRIC_STORM_RITUAL_COOLDOWN_TICKS = 24_000;
+// Evento raro: intervalo mínimo de sete dias Minecraft.
+export const ELECTRIC_STORM_RITUAL_COOLDOWN_TICKS = 7 * 24_000;
 export const ELECTRIC_STORM_RITUAL_MIN_ENERGY = 60;
 export const ELECTRIC_STORM_RITUAL_MIN_HEALTH = 60;
 
