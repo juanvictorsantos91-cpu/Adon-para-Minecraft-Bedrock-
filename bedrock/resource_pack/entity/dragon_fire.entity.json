@@ -14,6 +14,14 @@
       },
       "render_controllers": [
         "controller.render.default"
+      ],
+      "animations": {
+        "fire_idle": "animation.dragon_survival.fire.idle",
+        "fire_walk": "animation.dragon_survival.fire.walk",
+        "fire_fly": "animation.dragon_survival.fire.fly"
+      },
+      "animation_controllers": [
+        "controller.animation.dragon_survival.fire"
       ]
     }
   }
