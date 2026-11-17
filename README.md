@@ -1,39 +1,36 @@
 # IA de Regras para Mobs — Minecraft Bedrock
 
-Projeto experimental para desenvolver uma inteligência artificial baseada em regras para entidades (mobs) do Minecraft Bedrock, com foco em dispositivos móveis.
+Projeto experimental para desenvolver uma inteligência baseada em regras para entidades (mobs) do Minecraft Bedrock, com foco em dispositivos móveis.
 
-## Objetivo da primeira etapa
+## Núcleo de sobrevivência Dragon Survival
 
-Criar um pequeno "cérebro" de mob em JavaScript. Ele recebe um retrato do estado do mob e escolhe uma ação com base em regras e prioridades. Nesta etapa, o motor é independente da API do Minecraft, para podermos testar a lógica antes de conectá-la ao jogo.
+A ramificação `feature/dragon-survival-core` adiciona uma primeira base independente da Script API para testar os sistemas de sobrevivência dos dragões:
 
-## Estrutura
+- Energia, fome e saúde como indicadores separados.
+- Ferimento simplificado, com no máximo um estado ativo.
+- Metabolismo configurável por espécie.
+- Decisões do MIS considerando os três indicadores e perigo imediato.
+- Alimentação que recupera fome e energia com limite por refeição.
+- Primeiro perfil: Dragão Elétrico.
 
-- `src/ai/rule-engine.js`: motor genérico que avalia regras por prioridade.
-- `src/brains/zombie-brain.js`: regras iniciais de decisão para um zumbi.
-- `examples/simulate-zombie.js`: exemplo de simulação fora do Minecraft.
+Os valores desta etapa são parâmetros experimentais para simulação, não balanceamento final.
 
-## Regras iniciais do zumbi
+## Estrutura principal
 
-1. Se a vida estiver baixa, recuar.
-2. Se houver alvo ao alcance de ataque, atacar.
-3. Se houver alvo visível, aproximar-se.
-4. Se não houver ameaça, vagar.
-
-A prioridade é: recuar > atacar > aproximar > vagar.
+- `src/ai/rule-engine.js`: motor genérico de regras.
+- `src/ai/survival-decisions.js`: prioridades de sobrevivência do MIS.
+- `src/survival/`: energia, fome, saúde, ferimentos e metabolismo.
+- `src/species/profiles/electric.js`: perfil inicial do Dragão Elétrico.
+- `examples/simulate-electric-dragon.js`: simulação fora do Minecraft.
+- `tests/survival.test.js`: testes automatizados do núcleo.
 
 ## Como testar
 
-O código usa módulos JavaScript (ESM). Com Node.js instalado:
+Com Node.js instalado:
 
 ```bash
-node examples/simulate-zombie.js
+npm test
+npm run simulate:electric
 ```
 
-## Próximas etapas
-
-1. Testar e ajustar as regras.
-2. Conectar as decisões aos eventos e componentes da Script API do Minecraft Bedrock.
-3. Criar o Behavior Pack e testar no Minecraft para celular.
-4. Adicionar outros comportamentos e tipos de mob.
-
-> Estado atual: protótipo da lógica de decisão. Ainda não é um Add-On instalável e não controla mobs dentro do Minecraft.
+O núcleo ainda não está conectado à Script API e não é um Add-On instalável. A integração com o Minecraft Bedrock será uma etapa posterior, após confirmar a versão do jogo e a API disponível.
