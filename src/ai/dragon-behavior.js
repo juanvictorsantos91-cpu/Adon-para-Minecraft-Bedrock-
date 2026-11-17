@@ -63,31 +63,58 @@ function behaviorRules(profile) {
       reason: "Cuida dos filhotes quando estão seguros e precisam de atenção."
     },
     {
-      name: "socialize-compatible-dragon", priority: 8,
+      name: "long-cycle-migration", priority: 8,
+      when: s => profile.migrationPattern === "long_cycle" &&
+        s.migrationDue === true && s.migrationRouteSafe === true &&
+        s.ownerNearby !== true && s.hasYoung !== true,
+      action: "begin_long_migration",
+      reason: "Inicia uma grande migração quando o ciclo natural da espécie chega e a rota é segura."
+    },
+    {
+      name: "maintain-natural-group", priority: 9,
+      when: s => profile.socialPattern !== "solitary" &&
+        s.sameSpeciesGroupNearby === true,
+      action: "stay_with_species_group",
+      reason: "Mantém a coesão do grupo natural da espécie."
+    },
+    {
+      name: "form-natural-group", priority: 10,
+      when: s => profile.socialPattern !== "solitary" &&
+        Number.isFinite(s.nearbySameSpeciesCount) &&
+        s.nearbySameSpeciesCount >= 1 && s.safeToExplore === true,
+      action: () => ({
+        pairs: "travel_in_pair",
+        small_groups: "travel_in_small_group",
+        large_groups: "travel_in_large_group"
+      }[profile.socialPattern]),
+      reason: "Procura formar ou integrar o tipo de grupo característico da espécie."
+    },
+    {
+      name: "socialize-compatible-dragon", priority: 11,
       when: s => s.compatibleDragonNearby === true && s.socialOpportunity === true && profile.sociability >= 0.5,
       action: "socialize_with_dragon",
       reason: "Interage socialmente com outro dragão compatível."
     },
     {
-      name: "rest-in-preferred-place", priority: 9,
+      name: "rest-in-preferred-place", priority: 12,
       when: s => s.safeToRest === true && s.energy < 65,
       action: "rest_in_preferred_habitat",
       reason: "Escolhe um local seguro e adequado para descansar."
     },
     {
-      name: "species-environment-behavior", priority: 10,
+      name: "species-environment-behavior", priority: 13,
       when: s => profile.preferredEnvironment.includes(s.environment),
       action: () => profile.preferredActivities[0],
       reason: "Escolhe uma atividade natural no ambiente preferido da espécie."
     },
     {
-      name: "explore-by-curiosity", priority: 11,
+      name: "explore-by-curiosity", priority: 14,
       when: s => s.safeToExplore === true && profile.curiosity >= 0.6,
       action: "explore_environment",
       reason: "A curiosidade da espécie favorece a exploração segura."
     },
     {
-      name: "idle-observe", priority: 12,
+      name: "idle-observe", priority: 15,
       when: () => true,
       action: "observe_environment",
       reason: "Observa o ambiente enquanto nenhuma necessidade prioritária exige ação."
