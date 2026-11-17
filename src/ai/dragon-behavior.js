@@ -26,7 +26,7 @@ function behaviorRules(profile) {
   return [
     {
       name: "avoid-environmental-hazard", priority: 0.5,
-      when: s => s.environment?.immediateHazard === true,
+      when: s => s.environmentAssessment?.immediateHazard === true,
       action: "move_away_from_environmental_hazard",
       reason: "O dragão evita perigos ambientais detectados antes de atividades de rotina."
     },
@@ -197,14 +197,14 @@ export function decideDragonBehavior(state) {
   }
 
   const nearbyDragons = state.nearbyDragons ?? [];
-  const environment = assessEnvironment(state.species, state.environmentContext ?? state);
+  const environmentAssessment = assessEnvironment(state.species, state.environmentContext ?? state);
   const territory = assessTerritory(state, nearbyDragons, state);
   const huntingPlan = assessHuntingPlan(state, state.nearbyPrey ?? [], state);
   const lifeCycle = assessLifeCycle(state, nearbyDragons, {
-    environmentSafe: environment.safetyScore >= 70 && !environment.immediateHazard,
+    environmentSafe: environmentAssessment.safetyScore >= 70 && !environmentAssessment.immediateHazard,
     incubationConditionsValid: state.incubationConditionsValid === true
   });
-  const worldAssessment = { environment, territory, huntingPlan, lifeCycle };
+  const worldAssessment = { environmentAssessment, territory, huntingPlan, lifeCycle };
   const survival = decideSurvivalAction(state);
   if (survival.action !== "species_behavior") {
     return { ...survival, ...worldAssessment, system: "MIS", species: state.species ?? null };
@@ -232,7 +232,7 @@ export function decideDragonBehavior(state) {
     ...state,
     relationships,
     socialInteractions,
-    environment,
+    environmentAssessment,
     territory,
     huntingPlan,
     lifeCycle,
