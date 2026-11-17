@@ -6,6 +6,7 @@ import { getSocialGroupPlan } from "../src/ai/social-groups.js";
 import { assessDragonRelationships, classifyDragonRelationship, isEligiblePair } from "../src/ai/dragon-relationships.js";
 import { ELECTRIC_MIGRATION_CYCLE_TICKS, getMigrationStatus } from "../src/ai/migration-cycle.js";
 import { assessSocialInteractions } from "../src/ai/social-interactions.js";
+import { assessTerritorialInvasion } from "../src/ai/territory.js";
 
 const healthy = (species, extra = {}) => ({
   species, energy: 90, hunger: 90, health: 100,
@@ -419,4 +420,33 @@ test("Lava reconhece convite de migração de um grupo de Terra", () => {
   );
   assert.equal(interaction.action, "tolerate_earth_migration_passage");
   assert.equal(interaction.kind, "peaceful_passage");
+});
+
+
+test("invasões territoriais são raras e exigem agressividade e boas condições", () => {
+  const owner = { id: "owner-1", species: "ice", territoryId: "ice-home", distance: 40 };
+  const fire = assessTerritorialInvasion(healthy("fire", { id: "fire-1" }), [owner], { invasionCycle: 2 });
+  assert.equal(fire.eligible, true);
+  assert.equal(fire.chance, 0.035);
+  assert.ok(fire.roll >= 0 && fire.roll < 1);
+  const exhausted = assessTerritorialInvasion(healthy("fire", { id: "fire-2", energy: 20 }), [owner], { invasionCycle: 2 });
+  assert.equal(exhausted.eligible, false);
+  assert.equal(exhausted.shouldInvade, false);
+  const calm = assessTerritorialInvasion(healthy("wind", { id: "wind-1" }), [owner], { invasionCycle: 2 });
+  assert.equal(calm.eligible, false);
+  const aggressiveWind = assessTerritorialInvasion(healthy("wind", { id: "wind-2", aggression: 0.85 }), [owner], { invasionCycle: 2 });
+  assert.equal(aggressiveWind.eligible, true);
+  assert.equal(aggressiveWind.chance, 0.008);
+  for (const species of ["water", "plasma", "lava"]) {
+    const excluded = assessTerritorialInvasion(healthy(species, { id: species + "-1", aggression: 1 }), [owner], { invasionCycle: 2 });
+    assert.equal(excluded.eligible, false);
+    assert.equal(excluded.shouldInvade, false);
+  }
+});
+
+test("o DBS só escolhe invasão quando o plano raro é elegível", () => {
+  const owner = { id: "ice-owner", species: "ice", territoryId: "ice-home", distance: 20 };
+  const result = decideDragonBehavior(healthy("fire", { id: "fire-raider", nearbyDragons: [owner], currentTick: 48_000 }));
+  if (result.territory.invasionPlan.shouldInvade) assert.equal(result.action, "attempt_territory_invasion");
+  else assert.notEqual(result.action, "attempt_territory_invasion");
 });
