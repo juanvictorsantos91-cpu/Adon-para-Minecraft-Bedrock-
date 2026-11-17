@@ -66,3 +66,37 @@ test("alimentação recupera fome e energia com limite por refeição", () => {
   assert.equal(after.hunger, 55);
   assert.equal(after.energy, 55);
 });
+
+import { speciesProfiles } from "../src/species/profiles/index.js";
+import { getSpeciesDiet, canEat } from "../src/species/diets/species-diets.js";
+
+test("as seis espécies possuem perfis metabólicos válidos", () => {
+  assert.deepEqual(Object.keys(speciesProfiles).sort(), [
+    "earth", "electric", "fire", "ice", "lava", "water"
+  ]);
+  for (const profile of Object.values(speciesProfiles)) {
+    assert.ok(profile.restRecoveryPerMinute > 0);
+    assert.ok(profile.hungerPerMinute > 0);
+    assert.ok(profile.activityCosts);
+    assert.ok(profile.diet.length > 0);
+  }
+});
+
+test("dietas diferenciam preferências entre espécies", () => {
+  assert.equal(canEat("electric", "salmon"), true);
+  assert.equal(canEat("water", "tropical_fish"), true);
+  assert.equal(canEat("fire", "beef"), true);
+  assert.equal(canEat("ice", "beef"), false);
+  assert.equal(getSpeciesDiet("earth").foods.includes("minerals"), true);
+});
+
+test("ambiente especial melhora recuperação conforme o perfil", () => {
+  const state = { energy: 30, hunger: 80, health: 100, injury: null };
+  const water = tickMetabolism(state, speciesProfiles.water, {
+    minutes: 1, resting: true, safe: true, stationary: true, environment: "water"
+  });
+  const normal = tickMetabolism(state, speciesProfiles.water, {
+    minutes: 1, resting: true, safe: true, stationary: true, environment: "plain"
+  });
+  assert.ok(water.energy > normal.energy);
+});
