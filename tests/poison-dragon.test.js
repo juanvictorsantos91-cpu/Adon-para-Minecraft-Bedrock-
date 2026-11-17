@@ -19,8 +19,14 @@ test("Dragão Venenoso possui corpo serpentino alado, duas patas e perfil própr
   assert.equal(behavior.socialPattern, "solitary");
   assert.ok(profile.activityCosts.venomSpit > 0);
   assert.ok(profile.activityCosts.venomBreath > profile.activityCosts.venomSpit);
-  assert.equal(getSpeciesDiet("poison").preferred.includes("rabbit"), true);
-  assert.equal(canEat("poison", "cod"), true);
+  assert.equal(getSpeciesDiet("poison").foods.includes("venomous_mobs"), true);
+  assert.equal(getSpeciesDiet("poison").foods.includes("plants"), true);
+  assert.equal(canEat("poison", "spider"), true);
+  assert.equal(canEat("poison", "cave_spider"), true);
+  assert.equal(canEat("poison", "bee"), true);
+  assert.equal(canEat("poison", "spider_eye"), true);
+  assert.equal(canEat("poison", "mushroom"), true);
+  assert.equal(canEat("poison", "cod"), false);
 });
 
 test("Dragão Venenoso cospe veneno somente contra ameaça e com energia suficiente", () => {
