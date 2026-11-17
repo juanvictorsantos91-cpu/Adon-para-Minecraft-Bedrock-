@@ -172,12 +172,6 @@ function behaviorRules(profile) {
       reason: "Usa uma rajada de vento defensiva quando há ameaça e energia suficiente."
     },
     {
-      name: "wind-gust-ability", priority: 13.5,
-      when: s => profile.windCombat === true && s.windAbilityRequested === true && s.energy > 25 && s.threatDetected === true,
-      action: "perform_wind_gust",
-      reason: "Usa uma rajada de vento defensiva quando há ameaça e energia suficiente."
-    },
-    {
       name: "species-environment-behavior", priority: 15,
       when: s => profile.preferredEnvironment.includes(s.environment),
       action: () => profile.preferredActivities[0],
