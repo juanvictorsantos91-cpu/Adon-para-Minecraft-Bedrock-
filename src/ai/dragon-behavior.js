@@ -166,6 +166,32 @@ function behaviorRules(profile) {
       reason: "Escolhe um local seguro e adequado para descansar."
     },
     {
+      name: "sound-echo-localization", priority: 13.2,
+      when: s => profile.soundSensing === true && s.soundScanRequested === true && s.energy > 10,
+      action: "perform_echo_localization",
+      reason: "Emite pulsos de eco para mapear obstáculos e localizar movimentos próximos."
+    },
+    {
+      name: "sound-vibration-tracking", priority: 13.25,
+      when: s => profile.soundSensing === true && s.vibrationDetected === true && s.energy > 8,
+      action: "track_target_by_vibration",
+      reason: "Rastreia a origem de vibrações percebidas no solo ou nas paredes."
+    },
+    {
+      name: "sound-impact-wave", priority: 13.3,
+      when: s => profile.soundCombat === true && s.sonicImpactRequested === true &&
+        s.threatDetected === true && s.energy >= 25,
+      action: "perform_sonic_impact_wave",
+      reason: "Usa uma onda de pressão para afastar ameaças próximas."
+    },
+    {
+      name: "sound-disorienting-roar", priority: 13.35,
+      when: s => profile.soundCombat === true && s.disorientingRoarRequested === true &&
+        s.threatDetected === true && s.energy >= 30,
+      action: "perform_disorienting_roar",
+      reason: "Emite uma frequência intensa para desorientar temporariamente um inimigo."
+    },
+    {
       name: "wind-gust-ability", priority: 13.5,
       when: s => profile.windCombat === true && s.windAbilityRequested === true && s.energy > 25 && s.threatDetected === true,
       action: "perform_wind_gust",
