@@ -25,6 +25,12 @@ const commandActions = {
 function behaviorRules(profile) {
   return [
     {
+      name: "avoid-environmental-hazard", priority: 0.5,
+      when: s => s.environment?.immediateHazard === true,
+      action: "move_away_from_environmental_hazard",
+      reason: "O dragão evita perigos ambientais detectados antes de atividades de rotina."
+    },
+    {
       name: "obey-trained-command", priority: 5,
       when: s => Boolean(s.trainingCommand && commandActions[s.trainingCommand]),
       action: s => commandActions[s.trainingCommand],
