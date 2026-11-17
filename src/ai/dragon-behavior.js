@@ -84,22 +84,13 @@ function behaviorRules(profile) {
       reason: "Cuida dos filhotes quando estão seguros e precisam de atenção."
     },
     {
-      name: "earth-lava-temporary-territory-migration", priority: 7.8,
-      when: s => profile.territoryMode === "temporary" &&
-        s.socialInteractions?.action === "coordinate_temporary_territory_migration" &&
-        s.migrationDue === true && s.migrationRouteSafe === true &&
-        s.ownerNearby !== true && s.hasYoung !== true,
-      action: "begin_mixed_earth_lava_migration",
-      reason: "Migra com os dragões de Lava para estabelecer um novo território temporário; Terra abre rotas e abrigos, enquanto Lava atravessa e aquece passagens subterrâneas."
-    },
-    {
       name: "long-cycle-migration", priority: 8,
       when: s => ["long_cycle", "long_cycle_nomadic"].includes(profile.migrationPattern) &&
         s.migrationDue === true && s.migrationRouteSafe === true &&
         s.ownerNearby !== true && s.hasYoung !== true,
       action: profile.territoryMode === "temporary" ? "relocate_temporary_territory" : "begin_long_migration",
       reason: profile.territoryMode === "temporary"
-        ? "Encerra a permanência no território temporário e procura uma nova região após o longo ciclo."
+        ? "Encerra a permanência no território temporário e procura uma nova região após o longo ciclo; pode atravessar territórios de Lava sem exigir que esses dragões acompanhem o grupo."
         : "Inicia uma grande migração quando o ciclo natural da espécie chega e a rota é segura."
     },
     {
