@@ -172,6 +172,12 @@ function behaviorRules(profile) {
       reason: "Usa uma rajada de vento defensiva quando há ameaça e energia suficiente."
     },
     {
+      name: "wind-gust-ability", priority: 13.5,
+      when: s => profile.windCombat === true && s.windAbilityRequested === true && s.energy > 25 && s.threatDetected === true,
+      action: "perform_wind_gust",
+      reason: "Usa uma rajada de vento defensiva quando há ameaça e energia suficiente."
+    },
+    {
       name: "species-environment-behavior", priority: 15,
       when: s => profile.preferredEnvironment.includes(s.environment),
       action: () => profile.preferredActivities[0],
@@ -234,7 +240,7 @@ export function decideDragonBehavior(state) {
     Number.isInteger(state.nearbySameSpeciesCount) ? state.nearbySameSpeciesCount : 0,
     nearbyDragons
   );
-  const enrichedState = {
+  const enrichedState = {\n    ...state,\n    environment: state.environment ?? state.environmentContext?.tags?.[0],\n    hasYoung: state.hasYoung ?? lifeCycle.needs.protection,
     ...state,
     relationships,
     socialInteractions,
