@@ -113,7 +113,7 @@ npm run build:bedrock
 O Dragão de Vento foi adicionado ao catálogo oficial do Dragon Survival. Seu perfil experimental contempla:
 
 - Personalidade independente, curiosa e exploradora.
-- Habitat de altitude, montanhas, planícies abertas e regiões com vento.
+- Habitat distribuído entre planícies abertas, costas, savanas e regiões de altitude com correntes de vento; montanhas são uma opção, não o habitat padrão.
 - Pequenos grupos flexíveis, podendo também viver sozinho.
 - Voo de planagem com consumo reduzido quando aproveita correntes favoráveis.
 - Rajada de vento defensiva para afastar criaturas hostis próximas.
@@ -174,6 +174,29 @@ O Dragão de Plasma entrou no núcleo experimental com porte médio, anatomia tr
 - **Sobrecarga:** aumenta temporariamente a potência e o brilho, com alto consumo de energia.
 - **Arco de Plasma:** arcos energéticos contra alvos próximos.
 - **Furtividade:** reduz a luminosidade e procura cobertura; não concede invisibilidade. Também pode reposicionar-se por rotas protegidas.
+- **Surgimento raro experimental:** somente durante tempestades com raios; intervalo global mínimo de cinco dias Minecraft (120.000 ticks); distância mínima de 1.500 blocos do último surgimento e 1.200 blocos de outro Plasma existente; chance de 1 em 100 por verificação, realizada a cada 6.000 ticks.
+- **Comportamento em tempestades:** pode aproveitar a tempestade para recuperar energia em segurança e procurar abrigo para observar sem se expor.
 - **Reprodução:** mantém o ciclo normal, mas não constrói nem depende de ninhos. O sistema permite iniciar reprodução sem a condição de ninho.
 
-A raridade está registrada como atributo de perfil, mas a taxa real de geração natural ainda não foi implementada. As habilidades e ações furtivas são decisões do núcleo; efeitos visuais, ataques, brilho, geração rara e comportamento físico ainda precisam do adaptador Bedrock e de testes no jogo.
+A regra de elegibilidade do surgimento foi criada e possui testes automatizados no núcleo. Ela ainda não está conectada à geração natural de entidades no Behavior Pack; portanto, não significa que o Plasma já apareça no mundo. Efeitos visuais, ataques, brilho e comportamento físico também precisam do adaptador Bedrock e de testes no jogo.
+
+## Diversificação de habitats e intenções
+
+Os habitats foram redistribuídos para reduzir a concentração em montanhas e cavernas:
+- Água: rios, oceanos, cachoeiras e manguezais.
+- Gelo: planícies nevadas, picos congelados, geleiras e oceanos congelados.
+- Fogo: desertos, savanas, terras áridas e regiões vulcânicas.
+- Terra: florestas, selvas, planícies vegetadas e colinas arborizadas; cavernas deixam de ser preferência dominante.
+- Lava: regiões vulcânicas, deltas de basalto e cavernas quentes.
+- Vento: planícies abertas, costas, savanas e altitude.
+- Venenoso: pântanos, manguezais, selvas e florestas densas.
+- Som: vales, cânions rochosos, florestas, penhascos e cavernas.
+- Elétrico: montanhas frias e planaltos expostos.
+- Plasma: planaltos, costas expostas ao vento e áreas elevadas adequadas a tempestades.
+
+Novas intenções específicas:
+- Som: sinalizar o grupo por ecos e investigar vibrações incomuns.
+- Venenoso: aguardar em emboscada e procurar sombra/vegetação antes de liberar a nuvem de camuflagem.
+- Plasma: absorver energia durante tempestades quando estiver seguro e procurar abrigo para observar sem se expor.
+
+Essas são decisões do núcleo. A detecção precisa de clima, cobertura, luz e pontos de surgimento ainda deve ser conectada ao adaptador do jogo.
