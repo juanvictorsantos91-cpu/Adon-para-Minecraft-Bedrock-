@@ -21,31 +21,22 @@ export function assessTerritorialSpacing(self, nearbyDragons = []) {
   if (!self || typeof self !== "object" || !Array.isArray(nearbyDragons)) {
     throw new TypeError("Estado do dragão e lista de vizinhos são necessários.");
   }
-  const sameSpecies = [];
-  const otherSpecies = [];
+  const sameSpecies = [], otherSpecies = [];
   for (const other of nearbyDragons) {
     if (!other || other.id === self.id || !Number.isFinite(other.distance) || other.distance < 0) continue;
     if (other.species === self.species) sameSpecies.push(other);
     else otherSpecies.push(other);
   }
-  const independentGroups = sameSpecies.filter(other =>
-    self.territoryId && other.territoryId && self.territoryId !== other.territoryId
-  );
-  const sharedGroup = sameSpecies.filter(other =>
-    self.territoryId && other.territoryId === self.territoryId
-  );
+  const independentGroups = sameSpecies.filter(other => self.territoryId && other.territoryId && self.territoryId !== other.territoryId);
+  const sharedGroup = sameSpecies.filter(other => self.territoryId && other.territoryId === self.territoryId);
   const overlapRisk = independentGroups.filter(other => other.distance <= TERRITORY_RULES.sameSpeciesAvoidOverlap);
   const preferredSpacing = independentGroups.filter(other => other.distance < TERRITORY_RULES.sameSpeciesPreferredSeparation);
   const comfortableSpacing = independentGroups.filter(other => other.distance >= TERRITORY_RULES.sameSpeciesComfortableSeparation);
   return {
-    sameSpeciesNearby: sameSpecies.length,
-    sharedTerritoryMembers: sharedGroup.length,
-    independentSameSpeciesGroups: independentGroups.length,
-    overlapRiskCount: overlapRisk.length,
-    preferredSpacingCount: preferredSpacing.length,
-    comfortableSpacingCount: comfortableSpacing.length,
-    crossSpeciesVisitors: otherSpecies.length,
-    shouldAvoidSameSpeciesGroup: overlapRisk.length > 0,
+    sameSpeciesNearby: sameSpecies.length, sharedTerritoryMembers: sharedGroup.length,
+    independentSameSpeciesGroups: independentGroups.length, overlapRiskCount: overlapRisk.length,
+    preferredSpacingCount: preferredSpacing.length, comfortableSpacingCount: comfortableSpacing.length,
+    crossSpeciesVisitors: otherSpecies.length, shouldAvoidSameSpeciesGroup: overlapRisk.length > 0,
     crossSpeciesConflictAutomatic: false
   };
 }
@@ -58,11 +49,13 @@ export function assessTerritory(self, nearbyDragons = [], context = {}) {
   const isNomadic = radius === null;
   const temporaryTerritory = self.species === "earth";
   const relocationDue = temporaryTerritory && context.migrationDue === true;
-  const visitors = isNomadic ? [] : nearbyDragons.filter(other =>
-    other && other.id !== self.id && Number.isFinite(other.distance) &&
-    other.distance <= radius &&
-    (!(other.species === self.species && context.territoryId && other.territoryId === context.territoryId))
-  );
+  const visitors = isNomadic ? [] : nearbyDragons.filter(other => {
+    if (!other || other.id === self.id || !Number.isFinite(other.distance) || other.distance > radius) return false;
+    if (other.species === self.species && context.territoryId && other.territoryId === context.territoryId) return false;
+    // Lava tolera a passagem dos grupos de Terra durante a migração; não os trata como invasores.
+    if (self.species === "lava" && other.species === "earth" && other.temporaryTerritoryMigrationDue === true) return false;
+    return true;
+  });
   const knownVisitors = visitors.filter(other => other.knownToSelf === true || other.isTamed === true);
   const unknownDragons = visitors.filter(other => other.knownToSelf !== true && other.isTamed !== true);
   const nestThreatened = context.nestThreatened === true ||
@@ -80,10 +73,11 @@ export function assessTerritory(self, nearbyDragons = [], context = {}) {
     radius, isNomadic, temporaryTerritory,
     territoryActive: temporaryTerritory ? !relocationDue : !isNomadic,
     relocationDue, territoryIntruded, nestThreatened,
-    intruderCount: visitors.length,
-    knownVisitorCount: knownVisitors.length,
-    unknownDragonCount: unknownDragons.length,
-    canDefend, action,
+    intruderCount: visitors.length, knownVisitorCount: knownVisitors.length,
+    unknownDragonCount: unknownDragons.length, canDefend, action,
+    toleratedEarthMigrationCount: nearbyDragons.filter(other => self.species === "lava" &&
+      other?.species === "earth" && other.temporaryTerritoryMigrationDue === true &&
+      Number.isFinite(other.distance) && other.distance <= radius).length,
     spacing: assessTerritorialSpacing(self, nearbyDragons)
   };
 }
@@ -98,9 +92,6 @@ export function evaluateNestSite(species, candidate = {}) {
   const distanceBonus = Number.isFinite(candidate.distanceFromThreat) ?
     Math.min(12, Math.max(0, candidate.distanceFromThreat / 8)) : 0;
   const score = Math.max(0, Math.min(100, Math.round(environmentScore - dangerPenalty + privacyBonus + distanceBonus)));
-  return {
-    score,
-    suitable: score >= 65 && candidate.protectedFromWeather !== false,
-    reasons: { habitatScore: environmentScore, dangerPenalty, privacyBonus, distanceBonus }
-  };
+  return { score, suitable: score >= 65 && candidate.protectedFromWeather !== false,
+    reasons: { habitatScore: environmentScore, dangerPenalty, privacyBonus, distanceBonus } };
 }
