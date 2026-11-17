@@ -22,9 +22,10 @@ export function assessLifeCycle(dragon, nearbyDragons = [], context = {}) {
   if (!dragon || typeof dragon !== "object" || !Array.isArray(nearbyDragons)) {
     throw new TypeError("Estado do dragão e lista de indivíduos próximos são necessários.");
   }
-  const ageTicks = Number.isFinite(dragon.ageTicks) ? dragon.ageTicks : 0;
-  const lifeStage = getLifeStage(ageTicks, dragon.isEgg === true);
-  const elder = lifeStage === "adult" && ageTicks >= ELDER_AFTER_TICKS;
+  const ageTicks = Number.isFinite(dragon.ageTicks) ? dragon.ageTicks : null;
+  const lifeStage = dragon.isEgg === true ? "egg"
+    : dragon.lifeStage ?? (ageTicks === null ? "unknown" : getLifeStage(ageTicks));
+  const elder = lifeStage === "adult" && ageTicks !== null && ageTicks >= ELDER_AFTER_TICKS;
   const needs = {
     food: lifeStage === "hatchling" && dragon.hunger < 75,
     warmth: lifeStage === "hatchling" && dragon.needsWarmth === true,
@@ -56,7 +57,7 @@ export function assessLifeCycle(dragon, nearbyDragons = [], context = {}) {
     lifeStage,
     elder,
     ageTicks,
-    growthProgress: lifeStage === "hatchling"
+    growthProgress: ageTicks === null ? null : lifeStage === "hatchling"
       ? Math.min(1, ageTicks / LIFE_STAGE_TICKS.hatchling)
       : lifeStage === "juvenile"
         ? Math.min(1, (ageTicks - LIFE_STAGE_TICKS.hatchling) / LIFE_STAGE_TICKS.juvenile)
