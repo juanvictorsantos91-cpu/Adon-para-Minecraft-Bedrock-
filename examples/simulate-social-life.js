@@ -64,3 +64,15 @@ const waterWithIce = decideDragonBehavior({
   nearbyDragons: [{ id: "ice-01", species: "ice", lifeStage: "adult" }]
 });
 console.log(`Água: ação=${waterWithIce.action}; opções=${waterWithIce.socialInteractions.peacefulInteractions[0]?.options.join(", ")}`);
+
+console.log("\\n=== ritual de comunicação dos Dragões Elétricos ===");
+const electricRitual = decideDragonBehavior({
+  species: "electric", id: "electric-01", lifeStage: "adult",
+  energy: 90, hunger: 90, health: 100, immediateDanger: false,
+  currentTick: 50_000, cloudLayerAvailable: true, cloudFlightSafe: true,
+  nearbyDragons: [
+    { id: "electric-02", species: "electric", lifeStage: "adult", energy: 85, health: 95 },
+    { id: "electric-03", species: "electric", lifeStage: "adult", energy: 80, health: 90 }
+  ]
+});
+console.log(`Elétricos: ação=${electricRitual.action}; participantes=${electricRitual.electricStormRitual?.participantCount ?? 0}; sinal=${electricRitual.electricStormRitual?.signal?.effect ?? "nenhum"}`);
