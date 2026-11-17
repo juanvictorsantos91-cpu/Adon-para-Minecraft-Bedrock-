@@ -178,14 +178,14 @@ function behaviorRules(profile) {
       reason: "Rastreia a origem de vibrações percebidas no solo ou nas paredes."
     },
     {
-      name: "sound-impact-wave", priority: 13.3,
+      name: "sound-impact-wave", priority: 3.8,
       when: s => profile.soundCombat === true && s.sonicImpactRequested === true &&
         s.threatDetected === true && s.energy >= 25,
       action: "perform_sonic_impact_wave",
       reason: "Usa uma onda de pressão para afastar ameaças próximas."
     },
     {
-      name: "sound-disorienting-roar", priority: 13.35,
+      name: "sound-disorienting-roar", priority: 3.85,
       when: s => profile.soundCombat === true && s.disorientingRoarRequested === true &&
         s.threatDetected === true && s.energy >= 30,
       action: "perform_disorienting_roar",
