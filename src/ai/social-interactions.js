@@ -46,6 +46,9 @@ export function assessSocialInteractions(self, nearbyDragons = [], context = {})
   let action = null;
   let targetId = null;
   let kind = null;
+  const earthLavaMigrationOpportunity =
+    (self.species === "earth" && context.migrationDue === true && differentSpecies.some(other => other.species === "lava")) ||
+    (self.species === "lava" && differentSpecies.some(other => other.species === "earth" && other.temporaryTerritoryMigrationDue === true));
   if (context.attackedByDragon === true) {
     action = self.health <= 40 || self.energy <= 25
       ? "retreat_from_dragon_attack"
@@ -56,6 +59,10 @@ export function assessSocialInteractions(self, nearbyDragons = [], context = {})
     action = "challenge_intruding_dragon";
     kind = "territorial_aggression";
     targetId = context.conflictingDragonId ?? null;
+  } else if (earthLavaMigrationOpportunity) {
+    action = "coordinate_temporary_territory_migration";
+    kind = "peaceful_migration";
+    targetId = differentSpecies.find(other => other.species === (self.species === "earth" ? "lava" : "earth"))?.id ?? null;
   } else if (context.socialOpportunity === true && peaceful.length > 0 && profile.sociability >= 0.3) {
     action = "perform_peaceful_cross_species_interaction";
     kind = "peaceful";
@@ -68,7 +75,12 @@ export function assessSocialInteractions(self, nearbyDragons = [], context = {})
     action,
     kind,
     targetId,
-    mixedEarthLavaGroup: mixedEarthLavaPresent(self, differentSpecies)
+    mixedEarthLavaGroup: mixedEarthLavaPresent(self, differentSpecies),
+    migrationRoles: earthLavaMigrationOpportunity ? {
+      earth: "excavate_route_and_temporary_shelters",
+      lava: "warm_subterranean_passages_and_cross_hot_terrain",
+      coordination: "travel_together_between_temporary_territories"
+    } : null
   };
 }
 
