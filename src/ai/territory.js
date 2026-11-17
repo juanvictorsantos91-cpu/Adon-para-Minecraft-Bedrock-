@@ -61,7 +61,7 @@ export function assessTerritory(self, nearbyDragons = [], context = {}) {
   const visitors = isNomadic ? [] : nearbyDragons.filter(other =>
     other && other.id !== self.id && Number.isFinite(other.distance) &&
     other.distance <= radius &&
-    (!context.territoryId || !other.territoryId || other.territoryId !== context.territoryId)
+    (!(other.species === self.species && context.territoryId && other.territoryId === context.territoryId))
   );
   const knownVisitors = visitors.filter(other => other.knownToSelf === true || other.isTamed === true);
   const unknownDragons = visitors.filter(other => other.knownToSelf !== true && other.isTamed !== true);
