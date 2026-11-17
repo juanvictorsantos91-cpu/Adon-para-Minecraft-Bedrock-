@@ -50,7 +50,7 @@ export const behaviorProfiles = {
     socialPattern: "large_groups", preferredGroupSize: 6, groupRange: "large",
     migrationPattern: "long_cycle_nomadic",
     territoryMode: "temporary", territoryCycleDays: 21,
-    preferredActivities: ["establish_temporary_territory", "dig_explore", "tend_nest", "rest_underground", "travel_with_lava_group"],
+    preferredActivities: ["dig_explore", "establish_temporary_territory", "tend_nest", "rest_underground", "travel_with_lava_group"],
     preferredEnvironment: ["forest", "plains", "jungle", "lush", "wooded_hills"],
     threatResponse: "guard_and_block"
   },
