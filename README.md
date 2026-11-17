@@ -20,7 +20,7 @@ A ramificação `feature/dragon-survival-core` adiciona uma primeira base indepe
 - Ritual de comunicação dos Dragões Elétricos: três ou mais adultos saudáveis podem voar acima das nuvens e gerar uma tempestade de raios; respeita segurança, energia, saúde e intervalo mínimo de sete dias Minecraft (168.000 ticks).
 - Migração de longo ciclo para o Dragão Elétrico: ciclo configurável, com referência inicial de 14 dias Minecraft (336.000 ticks), condicionada à segurança da rota.
 - Dragão de Terra nômade: estabelece territórios temporários por ciclos de 21 dias Minecraft (504.000 ticks), explora/escava a região e depois procura outro local; a mudança é adiada se a rota não for segura. O adaptador deve atualizar `lastMigrationTick` após a mudança e sinalizar `temporaryTerritoryMigrationDue` nos dragões de Terra próximos para que Lava possa reconhecer o convite.
-- Migração cooperativa Terra-Lava: durante a mudança de território, Terra pode abrir rotas e abrigos temporários, enquanto Lava ajuda a atravessar terrenos quentes e aquece passagens subterrâneas.
+- Passagem migratória Terra-Lava: durante a mudança, os grupos de Terra podem atravessar temporariamente territórios fixos de Lava sem disparar conflito territorial automático. Lava não acompanha a migração; apenas tolera a passagem quando identifica o marcador de migração de Terra.
 - Planejamento social explícito: Água (3), Fogo (2), Gelo (2), Terra (6), Lava (6); Elétrico mantém padrão solitário. Os tamanhos são metas experimentais de grupo.
 - Reconhecimento de relações entre pais, filhotes, irmãos, parceiros e indivíduos da mesma espécie.
 - Formação de casal apenas entre adultos da mesma espécie, compatíveis, em boas condições e sem parentesco próximo conhecido.
@@ -38,7 +38,7 @@ Os valores desta etapa são parâmetros experimentais para simulação, não bal
 - `src/species/behavior-profiles.js`: personalidade e tendências por espécie.
 - `src/ai/dragon-behavior.js`: decisões comportamentais integradas ao MIS.
 - `src/ai/social-groups.js`: planejamento do tamanho e da coesão dos grupos por espécie, incluindo bandos mistos de Terra e Lava.
-- `src/ai/social-interactions.js`: possibilidades de interações pacíficas e respostas defensivas/agressivas condicionais entre espécies.
+- `src/ai/social-interactions.js`: possibilidades de interações pacíficas, tolerância à passagem migratória de Terra pelo território de Lava e respostas defensivas/agressivas condicionais.
 - `src/ai/dragon-relationships.js`: reconhecimento de parentesco, parceiros e compatibilidade para formação de casais.
 - `src/ai/electric-storm-ritual.js`: condições, participantes e intervalo do ritual coletivo de tempestade elétrica.
 - `src/ai/migration-cycle.js`: agenda de migração de longo ciclo do Dragão Elétrico e do ciclo territorial temporário do Dragão de Terra, medida em ticks do mundo.
@@ -70,7 +70,7 @@ A nova camada de planejamento adiciona quatro avaliações independentes, integr
 
 - **Percepção ambiental** (`src/ai/environment-awareness.js`): reconhece tags de bioma/terreno, recursos úteis e perigos; calcula adequação de habitat, segurança e locais candidatos.
 - **Território e ninhos** (`src/ai/territory.js`): define raios experimentais por espécie, diferencia membros do mesmo grupo de grupos independentes, mede risco de sobreposição e reconhece visitantes de outras espécies sem iniciar combate automático. O Plasma é nômade e não mantém território fixo; Terra mantém territórios temporários em ciclos de 21 dias Minecraft. A proteção física ainda depende do adaptador Bedrock.
-- **Caça** (`src/ai/hunting.js`): filtra presas pela dieta da espécie, distância e risco; exclui animais domesticados, de fazenda ou protegidos pelo jogador; pode sugerir caça cooperativa. A captura e o compartilhamento real ainda dependem do adaptador.
+- **Caça** (`src/ai/hunting.js`): seleciona presas pela dieta, valor nutricional, distância e risco; atribui estilos por espécie (emboscada, rastreamento por eco, caça aquática em grupo, perseguição ou mergulho aéreo); permite cooperação quando o grupo está saudável e com energia; abandona a caça diante de perigo. Exclui animais domesticados, de fazenda ou protegidos pelo jogador. Captura e compartilhamento real ainda dependem do adaptador.
 - **Ciclo de vida** (`src/ai/life-cycle.js`): calcula ovo, filhote, jovem e adulto a partir da idade em ticks, avalia cuidado parental, incubação, eclosão e condições para tentativa de reprodução. Envelhecimento adulto é um marcador experimental, sem morte automática.
 
 Os prazos iniciais de crescimento e envelhecimento são parâmetros experimentais e configuráveis no código; precisam de simulação e balanceamento. Quando o adaptador não informar idade, a fase permanece "unknown" em vez de presumir que todo dragão é filhote.
