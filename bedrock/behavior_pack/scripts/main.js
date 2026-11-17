@@ -57,13 +57,16 @@ function publishIntent(entity, action) {
 function updateDimension(dimension, currentTick) {
   let dragons = [];
   try {
-    dragons = dimension.getEntities({ tags: ["ds:dragon"] });
+    // Todas as espécies Dragon Survival declaram esta família no Behavior Pack.
+    // A etiqueta ds:dragon é adicionada aqui, em vez de ser exigida antes da descoberta.
+    dragons = dimension.getEntities({ families: ["dragon_survival"] });
   } catch {
     return;
   }
 
   for (const entity of dragons) {
     try {
+      if (!entity.hasTag("ds:dragon")) entity.addTag("ds:dragon");
       const nearby = dimension.getEntities({
         location: entity.location,
         maxDistance: QUERY_RADIUS
@@ -72,8 +75,6 @@ function updateDimension(dimension, currentTick) {
       const state = buildDragonSnapshot(entity, nearby, environmentContext, currentTick);
       if (!state) continue;
       const decision = decideDragonBehavior(state);
-      // Publica a janela de migração para que os dragões de Lava próximos
-      // reconheçam a passagem temporária sem tratá-la como invasão.
       if (state.species === "earth" && decision.migrationStatus?.due === true) {
         if (!entity.hasTag("ds:migration_due")) entity.addTag("ds:migration_due");
       } else if (entity.hasTag("ds:migration_due")) {

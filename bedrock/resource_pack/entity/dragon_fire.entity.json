@@ -15,6 +15,9 @@
       "render_controllers": [
         "controller.render.dragon_survival.fire"
       ],
+      "spawn_egg": {
+        "texture": "dragon_survival:fire_dragon_spawn_egg"
+      },
       "animations": {
         "fire_idle": "animation.dragon_survival.fire.idle",
         "fire_walk": "animation.dragon_survival.fire.walk",
@@ -22,9 +25,12 @@
       },
       "animation_controllers": [
         {
-          "controller.animation.dragon_survival.fire": "controller.animation.dragon_survival.fire"
+          "fire_controller": "controller.animation.dragon_survival.fire"
         }
-      ]
+      ],
+      "scripts": {
+        "animate": ["fire_controller"]
+      }
     }
   }
 }
