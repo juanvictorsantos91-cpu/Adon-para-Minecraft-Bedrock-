@@ -15,7 +15,8 @@ A ramificação `feature/dragon-survival-core` adiciona uma primeira base indepe
 - Dietas e preferências alimentares por espécie.
 - Personalidades distintas e tendências comportamentais para as seis espécies.
 - Sistema DBS integrado às prioridades do MIS: proteção de filhotes/ninhos, resposta a ameaças, vínculo com o dono, socialização, descanso, exploração e comandos treinados.
-- Padrões sociais naturais: Água em pequenos grupos; Fogo e Gelo em duplas; Elétrico solitário; Terra e Lava em grandes grupos.
+- Padrões sociais naturais: Água em pequenos grupos; Fogo e Gelo em duplas; Elétrico solitário; Terra e Lava em grandes grupos, inclusive grupos mistos Terra-Lava.
+- Interações entre espécies: cooperação, exploração conjunta, convivência perto de água/calor e sinais sociais pacíficos; respostas agressivas apenas diante de ataque ou conflito territorial, com recuo quando ferido ou com pouca energia.
 - Migração de longo ciclo para o Dragão Elétrico: ciclo configurável, com referência inicial de 14 dias Minecraft (336.000 ticks), condicionada à segurança da rota.
 - Planejamento social explícito: Água (3), Fogo (2), Gelo (2), Terra (6), Lava (6); Elétrico mantém padrão solitário. Os tamanhos são metas experimentais de grupo.
 - Reconhecimento de relações entre pais, filhotes, irmãos, parceiros e indivíduos da mesma espécie.
@@ -33,7 +34,8 @@ Os valores desta etapa são parâmetros experimentais para simulação, não bal
 - `src/species/diets/species-diets.js`: dietas e preferências alimentares.
 - `src/species/behavior-profiles.js`: personalidade e tendências por espécie.
 - `src/ai/dragon-behavior.js`: decisões comportamentais integradas ao MIS.
-- `src/ai/social-groups.js`: planejamento do tamanho e da coesão dos grupos por espécie.
+- `src/ai/social-groups.js`: planejamento do tamanho e da coesão dos grupos por espécie, incluindo bandos mistos de Terra e Lava.
+- `src/ai/social-interactions.js`: possibilidades de interações pacíficas e respostas defensivas/agressivas condicionais entre espécies.
 - `src/ai/dragon-relationships.js`: reconhecimento de parentesco, parceiros e compatibilidade para formação de casais.
 - `src/ai/migration-cycle.js`: agenda de migração de longo ciclo do Dragão Elétrico, medida em ticks do mundo.
 - `tests/dragon-behavior.test.js`: testes do sistema de comportamentos.
