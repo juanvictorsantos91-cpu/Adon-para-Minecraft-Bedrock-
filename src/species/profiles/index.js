@@ -7,6 +7,7 @@ import { lavaDragonProfile } from "./lava.js";
 import { windDragonProfile } from "./wind.js";
 import { soundDragonProfile } from "./sound.js";
 import { poisonDragonProfile } from "./poison.js";
+import { plasmaDragonProfile } from "./plasma.js";
 
 export const speciesProfiles = {
   electric: electricDragonProfile,
@@ -17,7 +18,8 @@ export const speciesProfiles = {
   lava: lavaDragonProfile,
   wind: windDragonProfile,
   sound: soundDragonProfile,
-  poison: poisonDragonProfile
+  poison: poisonDragonProfile,
+  plasma: plasmaDragonProfile
 };
 
 export function getSpeciesProfile(species) {
