@@ -48,8 +48,9 @@ export const behaviorProfiles = {
     aggression: 0.3, caution: 0.75, curiosity: 0.7, protectiveness: 0.95,
     sociability: 0.7, independence: 0.55,
     socialPattern: "large_groups", preferredGroupSize: 6, groupRange: "large",
-    migrationPattern: "local_roaming",
-    preferredActivities: ["dig_explore", "tend_nest", "rest_underground"],
+    migrationPattern: "long_cycle_nomadic",
+    territoryMode: "temporary", territoryCycleDays: 21,
+    preferredActivities: ["establish_temporary_territory", "dig_explore", "tend_nest", "rest_underground", "travel_with_lava_group"],
     preferredEnvironment: ["forest", "plains", "jungle", "lush", "wooded_hills"],
     threatResponse: "guard_and_block"
   },
