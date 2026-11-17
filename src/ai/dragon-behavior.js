@@ -192,6 +192,28 @@ function behaviorRules(profile) {
       reason: "Emite uma frequência intensa para desorientar temporariamente um inimigo."
     },
     {
+      name: "poison-camouflage-mist", priority: 3.5,
+      when: s => profile.poisonCamouflage === true &&
+        s.poisonCamouflageRequested === true && s.camouflageSuitable === true &&
+        (s.threatDetected === true || s.ambushOpportunity === true) && s.energy >= 20,
+      action: "release_camouflage_mist",
+      reason: "Libera uma nuvem de camuflagem somente em sombra ou escuridão; ela bloqueia a visão, mas não concede invisibilidade."
+    },
+    {
+      name: "poison-venom-breath", priority: 3.6,
+      when: s => profile.poisonCombat === true && s.poisonBreathRequested === true &&
+        s.threatDetected === true && s.energy >= 25,
+      action: "breathe_venom",
+      reason: "Bafora veneno em área à frente para atingir ameaças próximas."
+    },
+    {
+      name: "poison-venom-spit", priority: 3.7,
+      when: s => profile.poisonCombat === true && s.poisonSpitRequested === true &&
+        s.threatDetected === true && s.energy >= 15,
+      action: "spit_venom",
+      reason: "Cospe uma quantidade concentrada de veneno contra uma ameaça."
+    },
+    {
       name: "wind-gust-ability", priority: 13.5,
       when: s => profile.windCombat === true && s.windAbilityRequested === true && s.energy > 25 && s.threatDetected === true,
       action: "perform_wind_gust",
