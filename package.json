@@ -7,6 +7,7 @@
     "simulate": "node examples/simulate-zombie.js",
     "simulate:electric": "node examples/simulate-electric-dragon.js",
     "simulate:all": "node examples/simulate-all-dragons.js",
-    "test": "node --test"
+    "test": "node --test",
+    "simulate:social": "node examples/simulate-social-life.js"
   }
 }
