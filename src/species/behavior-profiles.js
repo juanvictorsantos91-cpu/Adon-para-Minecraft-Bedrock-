@@ -73,6 +73,17 @@ export const behaviorProfiles = {
     preferredActivities: ["glide_with_wind", "scan_open_sky", "explore_high_altitude"],
     preferredEnvironment: ["wind", "high_altitude", "open_plains", "mountain"],
     threatResponse: "evade_with_wind", windCombat: true
+  },
+  sound: {
+    temperament: "observant_cautious",
+    aggression: 0.45, caution: 0.85, curiosity: 0.9, protectiveness: 0.65,
+    sociability: 0.6, independence: 0.7,
+    socialPattern: "small_groups", preferredGroupSize: 3, groupRange: "small",
+    migrationPattern: "local_roaming",
+    preferredActivities: ["map_environment_with_echoes", "track_vibrations", "rest_in_quiet_cave"],
+    preferredEnvironment: ["cave", "mountain", "valley", "underground"],
+    threatResponse: "disorient_and_reposition",
+    soundSensing: true, soundCombat: true
   }
 };
 
