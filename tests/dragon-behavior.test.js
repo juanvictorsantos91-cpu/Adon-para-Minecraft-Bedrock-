@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { decideDragonBehavior } from "../src/ai/dragon-behavior.js";
 import { behaviorProfiles, getBehaviorProfile } from "../src/species/behavior-profiles.js";
 import { getSocialGroupPlan } from "../src/ai/social-groups.js";
+import { assessDragonRelationships, classifyDragonRelationship, isEligiblePair } from "../src/ai/dragon-relationships.js";
 
 const healthy = (species, extra = {}) => ({
   species, energy: 90, hunger: 90, health: 100,
@@ -145,9 +146,9 @@ test("dragões elétricos permanecem solitários e migram em ciclos longos segur
 
 test("planejador social respeita o tamanho preferido de cada espécie", () => {
   const cases = [
-    ["water", 3, 1, "seek_group_members"],
-    ["fire", 2, 1, "seek_group_members"],
-    ["ice", 2, 1, "seek_group_members"],
+    ["water", 3, 1, "travel_with_species_group"],
+    ["fire", 2, 1, "travel_with_species_group"],
+    ["ice", 2, 1, "travel_with_species_group"],
     ["earth", 6, 2, "travel_with_species_group"],
     ["lava", 6, 5, "travel_with_species_group"]
   ];
@@ -184,4 +185,69 @@ test("o plano social é incluído nas decisões DBS e não substitui o MIS", () 
 test("o planejador rejeita quantidades inválidas de indivíduos próximos", () => {
   assert.throws(() => getSocialGroupPlan("water", -1), RangeError);
   assert.throws(() => getSocialGroupPlan("water", 1.5), RangeError);
+});
+
+
+test("reconhece pais, filhos, irmãos, parceiros e dragões da mesma espécie", () => {
+  const parent = { id: "p1", species: "earth" };
+  const child = { id: "c1", species: "earth", parentIds: ["p1"] };
+  const sibling = { id: "s1", species: "earth", parentIds: ["p1"] };
+  const partner = { id: "m1", species: "earth" };
+  assert.equal(classifyDragonRelationship(parent, child), "parent");
+  assert.equal(classifyDragonRelationship(child, parent), "child");
+  assert.equal(classifyDragonRelationship(child, sibling), "sibling");
+  assert.equal(classifyDragonRelationship({ id: "x", species: "earth", partnerId: "m1" }, partner), "partner");
+  assert.equal(classifyDragonRelationship(parent, { id: "z", species: "earth" }), "same_species");
+});
+
+test("casais exigem adultos compatíveis, saudáveis, seguros e sem parentesco próximo", () => {
+  const adult = {
+    id: "a", species: "water", lifeStage: "adult", pairCompatible: true,
+    health: 90, energy: 80, safeToPair: true, parentIds: []
+  };
+  const candidate = { ...adult, id: "b" };
+  assert.equal(isEligiblePair(adult, candidate), true);
+  assert.equal(isEligiblePair(adult, { ...candidate, lifeStage: "young" }), false);
+  assert.equal(isEligiblePair(adult, { ...candidate, parentIds: ["a"] }), false);
+  assert.equal(isEligiblePair(adult, { ...candidate, health: 20 }), false);
+  assert.equal(isEligiblePair(adult, { ...candidate, safeToPair: false }), false);
+});
+
+test("MIS/DBS identifica parceiro potencial e não escolhe casal entre parentes", () => {
+  const self = {
+    id: "a", species: "ice", lifeStage: "adult", pairCompatible: true,
+    health: 90, energy: 80, safeToPair: true, parentIds: []
+  };
+  const mate = { ...self, id: "b" };
+  const plan = assessDragonRelationships(self, [mate]);
+  assert.equal(plan.canFormPair, true);
+  assert.equal(plan.mateCandidateId, "b");
+  const sibling = { ...mate, id: "c", parentIds: ["shared-parent"] };
+  const relatedSelf = { ...self, parentIds: ["shared-parent"] };
+  assert.equal(assessDragonRelationships(relatedSelf, [sibling]).canFormPair, false);
+});
+
+test("cuidado parental escolhe proteger, alimentar ou aquecer filhotes", () => {
+  const base = { id: "parent", species: "earth", hasYoung: true };
+  assert.equal(assessDragonRelationships({ ...base, youngInDanger: true }).parentalAction, "protect_young");
+  assert.equal(assessDragonRelationships({ ...base, youngNeedsFood: true }).parentalAction, "feed_young");
+  assert.equal(assessDragonRelationships({ ...base, youngNeedsWarmth: true }).parentalAction, "warm_young");
+  assert.equal(assessDragonRelationships({ ...base, youngNeedsCare: true }).parentalAction, "care_for_young");
+});
+
+test("DBS integra cuidado parental e aproximação de parceiro compatível", () => {
+  const parental = decideDragonBehavior(healthy("earth", {
+    hasYoung: true, youngNeedsFood: true
+  }));
+  assert.equal(parental.action, "feed_young");
+  const self = {
+    id: "a", species: "water", lifeStage: "adult", pairCompatible: true,
+    health: 90, energy: 80, safeToPair: true, parentIds: []
+  };
+  const mate = { ...self, id: "b" };
+  const pair = decideDragonBehavior(healthy("water", {
+    ...self, nearbyDragons: [mate]
+  }));
+  assert.equal(pair.action, "approach_compatible_mate");
+  assert.equal(pair.relationships.mateCandidateId, "b");
 });
