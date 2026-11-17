@@ -21,16 +21,12 @@
       "animations": {
         "fire_idle": "animation.dragon_survival.fire.idle",
         "fire_walk": "animation.dragon_survival.fire.walk",
-        "fire_fly": "animation.dragon_survival.fire.fly"
+        "fire_fly": "animation.dragon_survival.fire.fly",
+        "fire_controller": "controller.animation.dragon_survival.fire"
       },
       "scripts": {
         "animate": ["fire_controller"]
       }
-    },
-    "animation_controllers": [
-      {
-        "fire_controller": "controller.animation.dragon_survival.fire"
-      }
-    ]
+    }
   }
 }
