@@ -8,6 +8,10 @@ export const electricDragonProfile = {
   hungerPerMinute: 0.05,
   starvationGraceMinutes: 60,
   starvationDamagePerMinute: 0.1,
+  lowHungerEnergyMultiplier: 0.5,
+  emergencyReserve: 15,
+  maxNutritionPerMeal: 100,
+  maxEnergyFromMeal: 15,
   healthRecoveryPerMinute: 0.15,
   injuryRecoveryPerMinute: 1,
   activityCosts: {
