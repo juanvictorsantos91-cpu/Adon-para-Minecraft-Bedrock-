@@ -37,3 +37,8 @@ test("Plasma é extremamente raro: somente 1 resultado em 100 passa", () => {
 test("A tentativa só ocorre no intervalo de varredura configurado", () => {
   assert.equal(assessNaturalSpawn("plasma", { ...base, scanDue: false }).reason, "scan_interval_not_reached");
 });
+
+test("Plasma não surge sem coordenadas válidas para avaliar os raios", () => {
+  assert.equal(assessNaturalSpawn("plasma", { ...base, candidateLocation: undefined }).reason,
+    "invalid_candidate_location");
+});
