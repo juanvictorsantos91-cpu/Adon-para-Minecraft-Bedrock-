@@ -74,6 +74,19 @@ export const behaviorProfiles = {
     preferredEnvironment: ["wind", "high_altitude", "open_plains", "mountain"],
     threatResponse: "evade_with_wind", windCombat: true
   },
+  poison: {
+    temperament: "cautious_ambush_predator",
+    aggression: 0.55, caution: 0.9, curiosity: 0.45, protectiveness: 0.45,
+    sociability: 0.2, independence: 0.95,
+    socialPattern: "solitary", preferredGroupSize: 1, groupRange: "individual",
+    migrationPattern: "local_roaming",
+    preferredActivities: ["hide_in_shadows", "stalk_prey", "ambush_from_cover"],
+    preferredEnvironment: ["swamp", "jungle", "dark_forest", "cave"],
+    threatResponse: "retreat_to_cover",
+    poisonCombat: true, poisonCamouflage: true,
+    bodyPlan: "long_serpentine_winged_two_legged",
+    locomotionSupport: "two_legs"
+  },
   sound: {
     temperament: "observant_cautious",
     aggression: 0.45, caution: 0.85, curiosity: 0.9, protectiveness: 0.65,
