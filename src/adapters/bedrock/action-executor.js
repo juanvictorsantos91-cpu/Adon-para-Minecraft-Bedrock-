@@ -34,7 +34,8 @@ export function executeDragonAction(entity, decision, nearbyEntities = [], conte
     }
 
     if (action === "hunt_selected_prey" || action === "hunt_urgent_prey" ||
-        action === "coordinate_cooperative_hunt") {
+        action === "coordinate_cooperative_hunt" || action === "search_food" ||
+        action === "consider_food" || action === "search_food_safely") {
       const prey = findById(nearbyEntities, decision.huntingPlan?.selectedPreyId);
       const tags = prey?.getTags?.() ?? [];
       const energyTag = entity.getTags().find(tag => tag.startsWith("ds:energy:"));
