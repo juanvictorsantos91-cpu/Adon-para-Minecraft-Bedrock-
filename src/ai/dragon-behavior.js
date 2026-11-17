@@ -1,6 +1,7 @@
 import { chooseAction } from "./rule-engine.js";
 import { decideSurvivalAction } from "./survival-decisions.js";
 import { getBehaviorProfile } from "../species/behavior-profiles.js";
+import { getSocialGroupPlan } from "./social-groups.js";
 
 const commandActions = {
   follow: "follow_owner",
@@ -144,7 +145,11 @@ export function decideDragonBehavior(state) {
     action: typeof decision.action === "function" ? decision.action(state) : decision.action,
     system: "DBS",
     species: state.species,
-    temperament: profile.temperament
+    temperament: profile.temperament,
+    groupPlan: getSocialGroupPlan(
+      state.species,
+      Number.isInteger(state.nearbySameSpeciesCount) ? state.nearbySameSpeciesCount : 0
+    )
   };
 }
 
