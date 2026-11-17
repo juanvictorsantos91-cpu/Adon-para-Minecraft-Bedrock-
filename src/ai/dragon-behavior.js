@@ -87,6 +87,12 @@ function behaviorRules(profile) {
       reason: "Realiza uma interação pacífica com outra espécie quando existe oportunidade segura."
     },
     {
+      name: "travel-with-mixed-earth-lava-group", priority: 10,
+      when: s => s.groupPlan?.action === "travel_with_mixed_earth_lava_group" && s.safeToExplore === true,
+      action: "travel_with_mixed_earth_lava_group",
+      reason: "Terra e Lava reconhecem a aliança social e mantêm deslocamento em um grupo misto."
+    },
+    {
       name: "maintain-natural-group", priority: 9,
       when: s => profile.socialPattern !== "solitary" &&
         s.sameSpeciesGroupNearby === true,
@@ -171,10 +177,16 @@ export function decideDragonBehavior(state) {
       })
     : { migratory: profile.migrationPattern === "long_cycle", due: false };
   const socialInteractions = assessSocialInteractions(state, state.nearbyDragons ?? [], state);
+  const groupPlan = getSocialGroupPlan(
+    state.species,
+    Number.isInteger(state.nearbySameSpeciesCount) ? state.nearbySameSpeciesCount : 0,
+    state.nearbyDragons ?? []
+  );
   const enrichedState = {
     ...state,
     relationships,
     socialInteractions,
+    groupPlan,
     migrationDue: state.migrationDue === true || migrationStatus.due
   };
   const decision = chooseAction(enrichedState, behaviorRules(profile), "observe_environment");
@@ -186,11 +198,7 @@ export function decideDragonBehavior(state) {
     temperament: profile.temperament,
     relationships,
     migrationStatus,
-    groupPlan: getSocialGroupPlan(
-      state.species,
-      Number.isInteger(state.nearbySameSpeciesCount) ? state.nearbySameSpeciesCount : 0,
-      state.nearbyDragons ?? []
-    ),
+    groupPlan,
     socialInteractions
   };
 }
