@@ -51,7 +51,7 @@ test("ritual exige camada de nuvens segura e não ocorre sob ameaça", () => {
   );
 });
 
-test("ritual respeita intervalo mínimo de um dia Minecraft", () => {
+test("ritual respeita intervalo mínimo de sete dias Minecraft", () => {
   const result = assessElectricStormRitual(
     dragon("e1", { lastStormRitualTick: 40_000 }),
     [dragon("e2"), dragon("e3")],
