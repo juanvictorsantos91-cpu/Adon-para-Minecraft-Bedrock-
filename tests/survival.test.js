@@ -4,7 +4,7 @@ import { spendEnergy, recoverEnergy, canSpendEnergy } from "../src/survival/ener
 import { reduceHunger, feedHunger } from "../src/survival/hunger.js";
 import { damageHealth, recoverHealth } from "../src/survival/health.js";
 import { applyInjury, progressInjury } from "../src/survival/injuries.js";
-import { tickMetabolism } from "../src/survival/metabolism.js";
+import { tickMetabolism, feedDragon } from "../src/survival/metabolism.js";
 import { decideSurvivalAction } from "../src/ai/survival-decisions.js";
 import { electricDragonProfile } from "../src/species/profiles/electric.js";
 
@@ -56,4 +56,13 @@ test("fome extrema leva o dragão a procurar comida", () => {
     energy: 70, hunger: 10, health: 100, immediateDanger: false
   });
   assert.equal(result.action, "search_food");
+});
+
+test("alimentação recupera fome e energia com limite por refeição", () => {
+  const before = { energy: 40, hunger: 20, health: 100, injury: null };
+  const after = feedDragon(before, electricDragonProfile, {
+    nutrition: 35, energy: 25
+  });
+  assert.equal(after.hunger, 55);
+  assert.equal(after.energy, 55);
 });
