@@ -16,7 +16,8 @@ export function assessEnvironment(species, environment = {}) {
   const tags = new Set([
     ...(Array.isArray(environment.tags) ? environment.tags : []),
     ...(typeof environment.biome === "string" ? [environment.biome] : []),
-    ...(typeof environment.terrain === "string" ? [environment.terrain] : [])
+    ...(typeof environment.terrain === "string" ? [environment.terrain] : []),
+    ...(typeof environment.environment === "string" ? [environment.environment] : [])
   ]);
   const preferredTags = habitatTags[species] ?? profile.preferredEnvironment;
   const matchingTags = preferredTags.filter(tag => tags.has(tag));
