@@ -166,6 +166,20 @@ function behaviorRules(profile) {
       reason: "Escolhe um local seguro e adequado para descansar."
     },
     {
+      name: "sound-group-echo-signal", priority: 12.8,
+      when: s => profile.soundSensing === true && s.groupSignalRequested === true &&
+        s.sameSpeciesGroupNearby === true && s.energy > 12,
+      action: "signal_group_with_echoes",
+      reason: "Envia um padrão de ecos para orientar ou alertar membros próximos do grupo."
+    },
+    {
+      name: "sound-investigate-vibration", priority: 12.9,
+      when: s => profile.soundSensing === true && s.unusualVibrationDetected === true &&
+        s.energy > 15 && s.threatDetected !== true,
+      action: "investigate_unusual_vibration",
+      reason: "Investiga uma vibração incomum antes de decidir se representa presa, ameaça ou alteração no terreno."
+    },
+    {
       name: "sound-echo-localization", priority: 13.2,
       when: s => profile.soundSensing === true && s.soundScanRequested === true && s.energy > 10,
       action: "perform_echo_localization",
