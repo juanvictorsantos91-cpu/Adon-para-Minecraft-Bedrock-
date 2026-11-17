@@ -46,3 +46,21 @@ console.log(
   `família Terra: relação=${family.recognized[0].relationship}; ` +
   `ação parental=${family.parentalAction}`
 );
+
+
+console.log("\\n=== grupo misto Terra + Lava ===");
+const earthWithLava = decideDragonBehavior({
+  species: "earth", energy: 90, hunger: 90, health: 100,
+  immediateDanger: false, safeToExplore: true,
+  nearbyDragons: [{ id: "lava-01", species: "lava", lifeStage: "adult" }],
+  nearbySameSpeciesCount: 0
+});
+console.log(`Terra: ação=${earthWithLava.action}; grupo misto=${earthWithLava.groupPlan.mixedGroup}`);
+
+console.log("\\n=== interação pacífica Água + Gelo ===");
+const waterWithIce = decideDragonBehavior({
+  species: "water", energy: 90, hunger: 90, health: 100,
+  immediateDanger: false, safeToExplore: true, socialOpportunity: true,
+  nearbyDragons: [{ id: "ice-01", species: "ice", lifeStage: "adult" }]
+});
+console.log(`Água: ação=${waterWithIce.action}; opções=${waterWithIce.socialInteractions.peacefulInteractions[0]?.options.join(", ")}`);
