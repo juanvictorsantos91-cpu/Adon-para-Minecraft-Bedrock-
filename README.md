@@ -37,6 +37,7 @@ Os valores desta etapa são parâmetros experimentais para simulação, não bal
 - `src/ai/dragon-relationships.js`: reconhecimento de parentesco, parceiros e compatibilidade para formação de casais.
 - `tests/dragon-behavior.test.js`: testes do sistema de comportamentos.
 - `examples/simulate-all-dragons.js`: simulação comparativa das seis espécies.
+- `examples/simulate-social-life.js`: simulação de grupos, parentesco e cuidado parental.
 - `examples/simulate-electric-dragon.js`: simulação fora do Minecraft.
 - `tests/survival.test.js`: testes automatizados do núcleo.
 
@@ -48,6 +49,7 @@ Com Node.js instalado:
 npm test
 npm run simulate:electric
 npm run simulate:all
+npm run simulate:social
 ```
 
 O DBS é uma camada de decisão: os adaptadores que percebem entidades/ambiente e executam ações reais ainda precisam ser implementados.
