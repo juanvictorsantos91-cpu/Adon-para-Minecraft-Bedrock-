@@ -49,5 +49,5 @@ test("as oito espécies estão registradas no catálogo metabólico", () => {
   assert.deepEqual(Object.keys(speciesProfiles).sort(), [
     "earth", "electric", "fire", "ice", "lava", "sound", "water", "wind"
   ]);
-  assert.equal(Object.keys(behaviorProfiles).length, 8);
+  assert.equal(Object.keys(behaviorProfiles).length, 9);
 });
