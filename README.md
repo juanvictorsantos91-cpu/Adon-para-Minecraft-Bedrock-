@@ -15,6 +15,8 @@ A ramificação `feature/dragon-survival-core` adiciona uma primeira base indepe
 - Dietas e preferências alimentares por espécie.
 - Personalidades distintas e tendências comportamentais para as seis espécies.
 - Sistema DBS integrado às prioridades do MIS: proteção de filhotes/ninhos, resposta a ameaças, vínculo com o dono, socialização, descanso, exploração e comandos treinados.
+- Padrões sociais naturais: Água em pequenos grupos; Fogo e Gelo em duplas; Elétrico solitário; Terra e Lava em grandes grupos.
+- Migração de longo ciclo para o Dragão Elétrico, condicionada à segurança da rota.
 
 Os valores desta etapa são parâmetros experimentais para simulação, não balanceamento final.
 
