@@ -18,6 +18,9 @@ A ramificação `feature/dragon-survival-core` adiciona uma primeira base indepe
 - Padrões sociais naturais: Água em pequenos grupos; Fogo e Gelo em duplas; Elétrico solitário; Terra e Lava em grandes grupos.
 - Migração de longo ciclo para o Dragão Elétrico, condicionada à segurança da rota.
 - Planejamento social explícito: Água (3), Fogo (2), Gelo (2), Terra (6), Lava (6); Elétrico mantém padrão solitário. Os tamanhos são metas experimentais de grupo.
+- Reconhecimento de relações entre pais, filhotes, irmãos, parceiros e indivíduos da mesma espécie.
+- Formação de casal apenas entre adultos da mesma espécie, compatíveis, em boas condições e sem parentesco próximo conhecido.
+- Cuidado parental prioriza proteção, alimentação e aquecimento dos filhotes conforme a necessidade.
 
 Os valores desta etapa são parâmetros experimentais para simulação, não balanceamento final.
 
@@ -31,6 +34,7 @@ Os valores desta etapa são parâmetros experimentais para simulação, não bal
 - `src/species/behavior-profiles.js`: personalidade e tendências por espécie.
 - `src/ai/dragon-behavior.js`: decisões comportamentais integradas ao MIS.
 - `src/ai/social-groups.js`: planejamento do tamanho e da coesão dos grupos por espécie.
+- `src/ai/dragon-relationships.js`: reconhecimento de parentesco, parceiros e compatibilidade para formação de casais.
 - `tests/dragon-behavior.test.js`: testes do sistema de comportamentos.
 - `examples/simulate-all-dragons.js`: simulação comparativa das seis espécies.
 - `examples/simulate-electric-dragon.js`: simulação fora do Minecraft.
