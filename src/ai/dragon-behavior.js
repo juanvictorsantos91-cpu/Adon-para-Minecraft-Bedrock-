@@ -95,7 +95,8 @@ function behaviorRules(profile) {
     {
       name: "maintain-natural-group", priority: 9,
       when: s => profile.socialPattern !== "solitary" &&
-        s.sameSpeciesGroupNearby === true,
+        s.sameSpeciesGroupNearby === true &&
+        s.groupPlan?.action !== "travel_with_mixed_earth_lava_group",
       action: "stay_with_species_group",
       reason: "Mantém a coesão do grupo natural da espécie."
     },
