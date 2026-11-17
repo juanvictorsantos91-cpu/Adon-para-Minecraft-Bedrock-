@@ -72,7 +72,7 @@ export const behaviorProfiles = {
     migrationPattern: "local_roaming",
     preferredActivities: ["glide_with_wind", "scan_open_sky", "explore_high_altitude"],
     preferredEnvironment: ["wind", "high_altitude", "open_plains", "mountain"],
-    threatResponse: "evade_with_wind"
+    threatResponse: "evade_with_wind", windCombat: true
   }
 };
 
