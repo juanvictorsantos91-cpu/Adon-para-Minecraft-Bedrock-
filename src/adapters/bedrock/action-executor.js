@@ -37,6 +37,8 @@ export function executeDragonAction(entity, decision, nearbyEntities = [], conte
         action === "coordinate_cooperative_hunt") {
       const prey = findById(nearbyEntities, decision.huntingPlan?.selectedPreyId);
       const tags = prey?.getTags?.() ?? [];
+      const energyTag = entity.getTags().find(tag => tag.startsWith("ds:energy:"));
+      const currentEnergy = energyTag ? Number(energyTag.slice("ds:energy:".length)) : 100;
       if (!prey || tags.includes("ds:tamed") || tags.includes("ds:owned") ||
           tags.includes("ds:farm") || tags.includes("ds:baby") ||
           tags.includes("ds:protected") || !tags.includes("ds:wild")) {
@@ -44,7 +46,7 @@ export function executeDragonAction(entity, decision, nearbyEntities = [], conte
         return { executed: false, action, reason: "prey_not_verified_as_safe_wild" };
       }
       if (context.threatDetected === true || context.immediateDanger === true ||
-          (entity.getComponent?.("minecraft:health")?.currentValue ?? 100) <= 20) {
+          (entity.getComponent?.("minecraft:health")?.currentValue ?? 100) <= 20 || currentEnergy <= 12) {
         return { executed: false, action, reason: "hunt_abandoned_for_safety" };
       }
       const distance = Math.sqrt(
