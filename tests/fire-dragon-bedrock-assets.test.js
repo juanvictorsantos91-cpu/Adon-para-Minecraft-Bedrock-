@@ -55,3 +55,20 @@ test("Fire Dragon geometry contains the approved basic anatomy", async () => {
     }
   }
 });
+test("Fire Dragon texture is a valid 128x128 PNG", async () => {
+  const png = await readFile(new URL("../bedrock/resource_pack/textures/entity/dragon_fire.png", import.meta.url));
+  assert.equal(png.subarray(0, 8).toString("hex"), "89504e470d0a1a0a");
+  assert.equal(png.readUInt32BE(16), 128);
+  assert.equal(png.readUInt32BE(20), 128);
+});
+
+test("Fire Dragon client entity references its texture, render controller and animations", async () => {
+  const clientEntity = await readJson("../bedrock/resource_pack/entity/dragon_fire.entity.json");
+  const description = clientEntity["minecraft:client_entity"].description;
+  assert.equal(description.textures.default, "textures/entity/dragon_fire");
+  assert.equal(description.render_controllers[0], "controller.render.dragon_survival.fire");
+  assert.ok(description.animation_controllers.some((entry) => entry["controller.animation.dragon_survival.fire"]));
+  assert.equal(description.animations.fire_idle, "animation.dragon_survival.fire.idle");
+  assert.equal(description.animations.fire_walk, "animation.dragon_survival.fire.walk");
+  assert.equal(description.animations.fire_fly, "animation.dragon_survival.fire.fly");
+});
