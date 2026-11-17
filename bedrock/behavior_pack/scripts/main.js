@@ -77,6 +77,10 @@ function updateDimension(dimension, currentTick) {
         entity.removeTag("ds:migration_due");
       }
       publishIntent(entity, decision.action);
+      executeDragonAction(entity, decision, nearby, {
+        threatDetected: state.threatDetected,
+        immediateDanger: environmentContext.immediateHazard === true
+      });
     } catch {
       // Uma entidade inválida não deve interromper a IA das demais.
     }
