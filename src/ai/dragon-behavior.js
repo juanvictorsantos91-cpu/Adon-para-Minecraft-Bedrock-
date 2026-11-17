@@ -3,6 +3,7 @@ import { decideSurvivalAction } from "./survival-decisions.js";
 import { getBehaviorProfile } from "../species/behavior-profiles.js";
 import { getSocialGroupPlan } from "./social-groups.js";
 import { assessDragonRelationships } from "./dragon-relationships.js";
+import { getMigrationStatus } from "./migration-cycle.js";
 
 const commandActions = {
   follow: "follow_owner",
@@ -147,7 +148,20 @@ export function decideDragonBehavior(state) {
 
   const profile = getBehaviorProfile(state.species);
   const relationships = assessDragonRelationships(state, state.nearbyDragons ?? []);
-  const enrichedState = { ...state, relationships };
+  const migrationStatus = Number.isInteger(state.currentTick)
+    ? getMigrationStatus({
+        species: state.species,
+        currentTick: state.currentTick,
+        spawnTick: state.spawnTick,
+        lastMigrationTick: state.lastMigrationTick,
+        cycleDurationTicks: state.migrationCycleTicks
+      })
+    : { migratory: profile.migrationPattern === "long_cycle", due: false };
+  const enrichedState = {
+    ...state,
+    relationships,
+    migrationDue: state.migrationDue === true || migrationStatus.due
+  };
   const decision = chooseAction(enrichedState, behaviorRules(profile), "observe_environment");
   return {
     ...decision,
@@ -156,6 +170,7 @@ export function decideDragonBehavior(state) {
     species: state.species,
     temperament: profile.temperament,
     relationships,
+    migrationStatus,
     groupPlan: getSocialGroupPlan(
       state.species,
       Number.isInteger(state.nearbySameSpeciesCount) ? state.nearbySameSpeciesCount : 0
