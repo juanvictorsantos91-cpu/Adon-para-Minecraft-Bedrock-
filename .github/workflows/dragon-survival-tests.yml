@@ -16,6 +16,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Build Bedrock script bundle
+        run: npm run build:bedrock
       - name: Run unit tests
         run: npm test
       - name: Run electric dragon simulation
