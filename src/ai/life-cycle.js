@@ -32,7 +32,7 @@ export function assessLifeCycle(dragon, nearbyDragons = [], context = {}) {
     care: lifeStage === "hatchling" && (dragon.hunger < 75 || dragon.needsWarmth === true || dragon.needsCare === true)
   };
   const parent = nearbyDragons.find(other =>
-    other && Array.isArray(other.parentIds) && dragon.id && other.parentIds.includes(dragon.id)
+    other && Array.isArray(dragon.parentIds) && dragon.parentIds.includes(other.id)
   );
   const parentCanCare = Boolean(parent && parent.health > 25 && parent.energy > 15);
   let parentalAction = null;
@@ -41,7 +41,8 @@ export function assessLifeCycle(dragon, nearbyDragons = [], context = {}) {
   else if (needs.warmth && parentCanCare) parentalAction = "warm_young";
   else if (needs.care && parentCanCare) parentalAction = "care_for_young";
 
-  const candidate = nearbyDragons.find(other => isEligiblePair(dragon, other)) ?? null;
+  const breedingCandidate = { ...dragon, lifeStage };
+  const candidate = nearbyDragons.find(other => isEligiblePair(breedingCandidate, other)) ?? null;
   const canAttemptBreeding = lifeStage === "adult" &&
     dragon.reproductionCooldownTicks <= 0 &&
     dragon.nestReady === true &&
