@@ -1,7 +1,7 @@
 import { getBehaviorProfile } from "../species/behavior-profiles.js";
 
 const peacefulPairs = {
-  "earth|lava": ["tolerate_earth_migration", "share_shelter_when_safe", "observe_without_hostility"],
+  "earth|lava": ["tolerate_earth_migration", "cooperate_in_excavation", "share_shelter_when_safe", "observe_without_hostility"],
   "ice|water": ["play_near_water", "explore_under_ice"],
   "fire|lava": ["share_warm_ground", "display_strength"],
   "earth|water": ["share_water_source", "coexist_near_river"],
