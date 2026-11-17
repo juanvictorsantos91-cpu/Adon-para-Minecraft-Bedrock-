@@ -36,23 +36,42 @@ export function executeDragonAction(entity, decision, nearbyEntities = [], conte
     if (action === "hunt_selected_prey" || action === "hunt_urgent_prey" ||
         action === "coordinate_cooperative_hunt") {
       const prey = findById(nearbyEntities, decision.huntingPlan?.selectedPreyId);
-      if (!prey || prey.hasTag?.("ds:tamed") || prey.hasTag?.("ds:owned") ||
-          prey.hasTag?.("ds:farm") || !prey.hasTag?.("ds:wild")) {
+      const tags = prey?.getTags?.() ?? [];
+      if (!prey || tags.includes("ds:tamed") || tags.includes("ds:owned") ||
+          tags.includes("ds:farm") || tags.includes("ds:baby") ||
+          tags.includes("ds:protected") || !tags.includes("ds:wild")) {
         entity.addTag("ds:executor:target_unavailable");
-        return { executed: false, action, reason: "prey_not_verified_as_wild" };
+        return { executed: false, action, reason: "prey_not_verified_as_safe_wild" };
       }
-      const direction = normalizedDirection(entity.location, prey.location);
+      if (context.threatDetected === true || context.immediateDanger === true ||
+          (entity.getComponent?.("minecraft:health")?.currentValue ?? 100) <= 20) {
+        return { executed: false, action, reason: "hunt_abandoned_for_safety" };
+      }
       const distance = Math.sqrt(
         (entity.location.x-prey.location.x)**2 +
         (entity.location.y-prey.location.y)**2 +
         (entity.location.z-prey.location.z)**2
       );
+      const direction = normalizedDirection(entity.location, prey.location);
       if (distance > 2.5) {
-        entity.applyImpulse({ x: direction.x * 0.12, y: direction.y * 0.05, z: direction.z * 0.12 });
-        return { executed: true, action, mode: "approach_prey" };
+        entity.applyImpulse({ x: direction.x * 0.12, y: direction.y * 0.035, z: direction.z * 0.12 });
+        entity.addTag("ds:hunt:approaching");
+        return { executed: true, action, mode: "approach_and_pursue", targetId: prey.id };
       }
-      const damaged = prey.applyDamage?.(2);
-      return { executed: Boolean(damaged), action, mode: "melee_attempt", targetId: prey.id };
+      entity.removeTag("ds:hunt:approaching");
+      const beforeHealth = prey.getComponent?.("minecraft:health")?.currentValue;
+      const hit = prey.applyDamage?.(6);
+      const afterHealth = prey.getComponent?.("minecraft:health")?.currentValue;
+      if (hit && Number.isFinite(afterHealth) && afterHealth <= 0) {
+        const hungerTag = entity.getTags().find(tag => tag.startsWith("ds:hunger:"));
+        const hunger = hungerTag ? Number(hungerTag.slice("ds:hunger:".length)) : 100;
+        if (hungerTag) entity.removeTag(hungerTag);
+        entity.addTag("ds:hunger:" + Math.min(100, Math.max(0, hunger) + 30));
+        entity.addTag("ds:hunt:fed");
+        return { executed: true, action, mode: "feed_and_restore_hunger", targetId: prey.id, restoredHunger: 30 };
+      }
+      return { executed: Boolean(hit), action, mode: "attack_prey", targetId: prey.id,
+        damage: hit ? 6 : 0, targetHealthBefore: beforeHealth };
     }
 
     if (action === "perform_wind_gust" || action === "perform_aerial_push") {
