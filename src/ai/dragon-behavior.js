@@ -368,7 +368,8 @@ export function decideDragonBehavior(state) {
         cycleDurationTicks: state.migrationCycleTicks
       })
     : { migratory: profile.migrationPattern === "long_cycle", due: false };
-  const currentTerritory = assessTerritory(state, nearbyDragons, { ...state, migrationDue: migrationStatus.due });
+  const migrationCycle = Math.floor((state.currentTick ?? 0) / (migrationStatus.cycleDurationTicks ?? 1));
+  const currentTerritory = assessTerritory(state, nearbyDragons, { ...state, migrationDue: migrationStatus.due, migrationCycle });
   const socialInteractions = assessSocialInteractions(state, nearbyDragons, { ...state, migrationDue: migrationStatus.due });
   const electricStormRitual = assessElectricStormRitual(state, nearbyDragons, state);
   const groupPlan = getSocialGroupPlan(
