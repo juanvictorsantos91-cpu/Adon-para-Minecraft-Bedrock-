@@ -7,6 +7,8 @@ import { applyInjury, progressInjury } from "../src/survival/injuries.js";
 import { tickMetabolism, feedDragon } from "../src/survival/metabolism.js";
 import { decideSurvivalAction } from "../src/ai/survival-decisions.js";
 import { electricDragonProfile } from "../src/species/profiles/electric.js";
+import { speciesProfiles } from "../src/species/profiles/index.js";
+import { getSpeciesDiet, canEat } from "../src/species/diets/species-diets.js";
 
 test("energia nunca ultrapassa 100 nem fica abaixo de zero", () => {
   assert.equal(spendEnergy(10, 20), 0);
@@ -67,8 +69,6 @@ test("alimentação recupera fome e energia com limite por refeição", () => {
   assert.equal(after.energy, 55);
 });
 
-import { speciesProfiles } from "../src/species/profiles/index.js";
-import { getSpeciesDiet, canEat } from "../src/species/diets/species-diets.js";
 
 test("as seis espécies possuem perfis metabólicos válidos", () => {
   assert.deepEqual(Object.keys(speciesProfiles).sort(), [
