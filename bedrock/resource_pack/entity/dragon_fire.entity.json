@@ -1,0 +1,20 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "dragon_survival:fire_dragon",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/dragon_fire"
+      },
+      "geometry": {
+        "default": "geometry.dragon_survival.fire"
+      },
+      "render_controllers": [
+        "controller.render.default"
+      ]
+    }
+  }
+}
