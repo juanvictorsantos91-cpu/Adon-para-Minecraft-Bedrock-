@@ -11,9 +11,9 @@ A ramificação `feature/dragon-survival-core` adiciona uma primeira base indepe
 - Metabolismo configurável por espécie.
 - Decisões do MIS considerando os três indicadores e perigo imediato.
 - Alimentação que recupera fome e energia com limite por refeição.
-- Perfis experimentais das seis espécies: Elétrico, Água, Gelo, Fogo, Terra e Lava.
+- Perfis experimentais das espécies Elétrico, Água, Gelo, Fogo, Terra, Lava, Vento, Som e Venenoso.
 - Dietas e preferências alimentares por espécie.
-- Personalidades distintas e tendências comportamentais para as seis espécies.
+- Personalidades distintas e tendências comportamentais para as nove espécies.
 - Sistema DBS integrado às prioridades do MIS: proteção de filhotes/ninhos, resposta a ameaças, vínculo com o dono, socialização, descanso, exploração e comandos treinados.
 - Padrões sociais naturais: Água em pequenos grupos; Fogo e Gelo em duplas; Elétrico solitário; Terra e Lava em grandes grupos, inclusive grupos mistos Terra-Lava.
 - Interações entre espécies: cooperação, exploração conjunta, convivência perto de água/calor e sinais sociais pacíficos; respostas agressivas apenas diante de ataque ou conflito territorial, com recuo quando ferido ou com pouca energia.
@@ -31,7 +31,7 @@ Os valores desta etapa são parâmetros experimentais para simulação, não bal
 - `src/ai/rule-engine.js`: motor genérico de regras.
 - `src/ai/survival-decisions.js`: prioridades de sobrevivência do MIS.
 - `src/survival/`: energia, fome, saúde, ferimentos e metabolismo.
-- `src/species/profiles/`: perfis metabólicos das seis espécies.
+- `src/species/profiles/`: perfis metabólicos das nove espécies.
 - `src/species/diets/species-diets.js`: dietas e preferências alimentares.
 - `src/species/behavior-profiles.js`: personalidade e tendências por espécie.
 - `src/ai/dragon-behavior.js`: decisões comportamentais integradas ao MIS.
@@ -41,7 +41,7 @@ Os valores desta etapa são parâmetros experimentais para simulação, não bal
 - `src/ai/electric-storm-ritual.js`: condições, participantes e intervalo do ritual coletivo de tempestade elétrica.
 - `src/ai/migration-cycle.js`: agenda de migração de longo ciclo do Dragão Elétrico, medida em ticks do mundo.
 - `tests/dragon-behavior.test.js`: testes do sistema de comportamentos.
-- `examples/simulate-all-dragons.js`: simulação comparativa das seis espécies.
+- `examples/simulate-all-dragons.js`: simulação comparativa das nove espécies.
 - `examples/simulate-social-life.js`: simulação de grupos, parentesco e cuidado parental.
 - `examples/simulate-electric-dragon.js`: simulação fora do Minecraft.
 - `tests/survival.test.js`: testes automatizados do núcleo.
@@ -136,3 +136,17 @@ A caça exige a tag `ds:wild` na presa. Animais domesticados, próprios ou marca
 O adaptador consulta dragões marcados com `ds:dragon`; cada dragão precisa ter também `ds:species:<espécie>`. Para solicitar a rajada defensiva do Dragão de Vento, a entidade recebe `ds:wind_gust_requested` enquanto o sistema de comando/combate não possui uma interface própria.
 
 A pasta do Behavior Pack pode ser preparada com `npm run build:bedrock`.
+
+
+## Nona espécie: Dragão Venenoso (em desenvolvimento)
+
+O Dragão Venenoso entrou no núcleo experimental com uma anatomia serpentina alada, duas patas como principal suporte de locomoção e corpo projetado para ser o mais comprido do catálogo. Seu perfil comportamental é cauteloso, solitário e especializado em emboscadas.
+
+- **Cuspir veneno**: ataque concentrado contra uma ameaça.
+- **Baforar veneno**: ataque em área à frente do dragão.
+- **Nuvem de camuflagem**: bloqueia temporariamente a visão para fuga ou emboscada, mas não concede invisibilidade.
+- A camuflagem só é elegível quando o contexto informado pelo adaptador confirma sombra ou escuridão (`camouflageSuitable: true`).
+- O núcleo recusa a camuflagem em locais claros e exige energia suficiente.
+- Metabolismo, dieta e custos de energia são parâmetros experimentais, ainda sem balanceamento.
+
+A implementação atual cobre o perfil e o planejamento das decisões. A detecção real de iluminação/sombra, a emissão visual da nuvem e os efeitos de veneno ainda dependem do adaptador, dos componentes/eventos da entidade e de testes dentro do Minecraft.
