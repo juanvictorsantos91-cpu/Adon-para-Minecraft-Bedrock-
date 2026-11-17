@@ -72,6 +72,12 @@ function behaviorRules(profile) {
       reason: "Defende o território quando a condição física permite."
     },
     {
+      name: "attempt-territorial-invasion", priority: 4.4,
+      when: s => s.territory?.invasionPlan?.shouldInvade === true && s.threatDetected !== true,
+      action: "attempt_territory_invasion",
+      reason: "Um indivíduo agressivo, saudável e em condições favoráveis tenta raramente ocupar um território vizinho; a disputa não inicia combate automaticamente."
+    },
+    {
       name: "follow-bonded-owner", priority: 6,
       when: s => s.ownerNearby === true && s.bondLevel >= (profile.independence >= 0.8 ? 3 : 2) && s.trainingCommand !== "stay",
       action: "stay_near_owner",
@@ -369,7 +375,7 @@ export function decideDragonBehavior(state) {
       })
     : { migratory: profile.migrationPattern === "long_cycle", due: false };
   const migrationCycle = Math.floor((state.currentTick ?? 0) / (migrationStatus.cycleDurationTicks ?? 1));
-  const currentTerritory = assessTerritory(state, nearbyDragons, { ...state, migrationDue: migrationStatus.due, migrationCycle });
+  const currentTerritory = assessTerritory(state, nearbyDragons, { ...state, migrationDue: migrationStatus.due, migrationCycle, invasionCycle: Math.floor((state.currentTick ?? 0) / 24000) });
   const socialInteractions = assessSocialInteractions(state, nearbyDragons, { ...state, migrationDue: migrationStatus.due });
   const electricStormRitual = assessElectricStormRitual(state, nearbyDragons, state);
   const groupPlan = getSocialGroupPlan(
