@@ -372,6 +372,8 @@ test("Dragão de Terra migra após 21 dias e coordena mudança com Lava", () => 
     nearbyDragons: [{ id: "lava-1", species: "lava", lifeStage: "adult" }]
   }));
   assert.equal(earth.action, "begin_mixed_earth_lava_migration");
+  assert.equal(earth.territory.relocationDue, true);
+  assert.equal(earth.territory.territoryActive, false);
   assert.equal(earth.socialInteractions.migrationRoles.earth, "excavate_route_and_temporary_shelters");
   assert.equal(earth.socialInteractions.migrationRoles.lava, "warm_subterranean_passages_and_cross_hot_terrain");
 });
