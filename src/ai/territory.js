@@ -66,7 +66,7 @@ export function assessTerritory(self, nearbyDragons = [], context = {}) {
   const knownVisitors = visitors.filter(other => other.knownToSelf === true || other.isTamed === true);
   const unknownDragons = visitors.filter(other => other.knownToSelf !== true && other.isTamed !== true);
   const nestThreatened = context.nestThreatened === true ||
-    visitors.some(other => other.nearNest === true && other.hostile === true);
+    visitors.some(other => other.nearNest === true || other.hostile === true);
   const territoryIntruded = !isNomadic && (context.territoryIntruded === true || visitors.length > 0);
   const canDefend = self.health > 40 && self.energy > 30 && self.injury?.severity !== "severe";
   const action = isNomadic ? "remain_nomadic"
