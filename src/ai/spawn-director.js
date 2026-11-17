@@ -30,6 +30,10 @@ export function assessNaturalSpawn(species, context = {}) {
   if (!Number.isInteger(context.currentTick) || context.currentTick < 0) {
     return { eligible: false, reason: "invalid_world_time" };
   }
+  const candidate = context.candidateLocation;
+  if (!candidate || ![candidate.x, candidate.y, candidate.z].every(Number.isFinite)) {
+    return { eligible: false, reason: "invalid_candidate_location" };
+  }
   if (Number.isInteger(context.lastSpawnTick) &&
       context.currentTick - context.lastSpawnTick < rules.cooldownTicks) {
     return { eligible: false, reason: "global_spawn_cooldown" };
