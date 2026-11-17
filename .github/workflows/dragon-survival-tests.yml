@@ -22,3 +22,5 @@ jobs:
         run: npm run simulate:electric
       - name: Run all dragon profiles simulation
         run: npm run simulate:all
+      - name: Run social life simulation
+        run: npm run simulate:social
