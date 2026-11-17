@@ -6,7 +6,7 @@ export const speciesDiets = {
   earth: { foods: ["land_animals", "minerals"], preferred: ["beef", "mutton", "iron_nugget", "copper_ingot"] },
   lava: { foods: ["meat", "special_food"], preferred: ["beef", "cooked_beef", "magma_cream"] },
   wind: { foods: ["meat", "small_animals", "fish"], preferred: ["rabbit", "chicken", "salmon"] },
-  poison: { foods: ["small_animals", "land_animals", "fish"], preferred: ["rabbit", "chicken", "cod"] },
+  poison: { foods: ["venomous_mobs", "plants"], preferred: ["spider", "cave_spider", "bee", "spider_eye", "poisonous_potato", "mushroom", "red_mushroom", "brown_mushroom"] },
   sound: { foods: ["small_animals", "fish", "meat"], preferred: ["rabbit", "chicken", "salmon"] }
 };
 
