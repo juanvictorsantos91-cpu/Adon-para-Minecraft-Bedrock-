@@ -11,9 +11,9 @@ A ramificação `feature/dragon-survival-core` adiciona uma primeira base indepe
 - Metabolismo configurável por espécie.
 - Decisões do MIS considerando os três indicadores e perigo imediato.
 - Alimentação que recupera fome e energia com limite por refeição.
-- Perfis experimentais das espécies Elétrico, Água, Gelo, Fogo, Terra, Lava, Vento, Som e Venenoso.
+- Perfis experimentais das espécies Elétrico, Água, Gelo, Fogo, Terra, Lava, Vento, Som, Venenoso e Plasma.
 - Dietas e preferências alimentares por espécie.
-- Personalidades distintas e tendências comportamentais para as nove espécies.
+- Personalidades distintas e tendências comportamentais para as dez espécies.
 - Sistema DBS integrado às prioridades do MIS: proteção de filhotes/ninhos, resposta a ameaças, vínculo com o dono, socialização, descanso, exploração e comandos treinados.
 - Padrões sociais naturais: Água em pequenos grupos; Fogo e Gelo em duplas; Elétrico solitário; Terra e Lava em grandes grupos, inclusive grupos mistos Terra-Lava.
 - Interações entre espécies: cooperação, exploração conjunta, convivência perto de água/calor e sinais sociais pacíficos; respostas agressivas apenas diante de ataque ou conflito territorial, com recuo quando ferido ou com pouca energia.
@@ -31,7 +31,7 @@ Os valores desta etapa são parâmetros experimentais para simulação, não bal
 - `src/ai/rule-engine.js`: motor genérico de regras.
 - `src/ai/survival-decisions.js`: prioridades de sobrevivência do MIS.
 - `src/survival/`: energia, fome, saúde, ferimentos e metabolismo.
-- `src/species/profiles/`: perfis metabólicos das nove espécies.
+- `src/species/profiles/`: perfis metabólicos das dez espécies.
 - `src/species/diets/species-diets.js`: dietas e preferências alimentares.
 - `src/species/behavior-profiles.js`: personalidade e tendências por espécie.
 - `src/ai/dragon-behavior.js`: decisões comportamentais integradas ao MIS.
@@ -41,7 +41,7 @@ Os valores desta etapa são parâmetros experimentais para simulação, não bal
 - `src/ai/electric-storm-ritual.js`: condições, participantes e intervalo do ritual coletivo de tempestade elétrica.
 - `src/ai/migration-cycle.js`: agenda de migração de longo ciclo do Dragão Elétrico, medida em ticks do mundo.
 - `tests/dragon-behavior.test.js`: testes do sistema de comportamentos.
-- `examples/simulate-all-dragons.js`: simulação comparativa das nove espécies.
+- `examples/simulate-all-dragons.js`: simulação comparativa das dez espécies.
 - `examples/simulate-social-life.js`: simulação de grupos, parentesco e cuidado parental.
 - `examples/simulate-electric-dragon.js`: simulação fora do Minecraft.
 - `tests/survival.test.js`: testes automatizados do núcleo.
@@ -163,3 +163,17 @@ O Dragão Venenoso entrou no núcleo experimental com uma anatomia serpentina al
 - Metabolismo, dieta e custos de energia são parâmetros experimentais, ainda sem balanceamento.
 
 A implementação atual cobre o perfil e o planejamento das decisões. A detecção real de iluminação/sombra, a emissão visual da nuvem e os efeitos de veneno ainda dependem do adaptador, dos componentes/eventos da entidade e de testes dentro do Minecraft.
+
+## Décima espécie: Dragão de Plasma (em desenvolvimento)
+
+O Dragão de Plasma entrou no núcleo experimental com porte médio, anatomia tradicional de quatro patas e duas asas, comportamento solitário e raridade natural extrema. Sua aparência mantém escamas escuras, fissuras luminosas azuis, violetas e brancas e estruturas dorsais energéticas. O brilho deve diminuir durante a furtividade e aumentar durante a sobrecarga.
+
+- **Sopro de Plasma:** fluxo concentrado de plasma.
+- **Descarga de Plasma:** descarga energética em área próxima.
+- **Projétil Ionizado:** projétil concentrado de energia ionizada.
+- **Sobrecarga:** aumenta temporariamente a potência e o brilho, com alto consumo de energia.
+- **Arco de Plasma:** arcos energéticos contra alvos próximos.
+- **Furtividade:** reduz a luminosidade e procura cobertura; não concede invisibilidade. Também pode reposicionar-se por rotas protegidas.
+- **Reprodução:** mantém o ciclo normal, mas não constrói nem depende de ninhos. O sistema permite iniciar reprodução sem a condição de ninho.
+
+A raridade está registrada como atributo de perfil, mas a taxa real de geração natural ainda não foi implementada. As habilidades e ações furtivas são decisões do núcleo; efeitos visuais, ataques, brilho, geração rara e comportamento físico ainda precisam do adaptador Bedrock e de testes no jogo.
