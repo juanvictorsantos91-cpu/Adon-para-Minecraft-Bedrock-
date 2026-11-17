@@ -358,3 +358,29 @@ test("MIS mantém prioridade sobre interação social em situação crítica", (
   assert.equal(result.system, "MIS");
   assert.equal(result.action, "escape_danger");
 });
+
+
+test("Dragão de Terra migra após 21 dias e coordena mudança com Lava", () => {
+  const cycle = 21 * 24_000;
+  const before = getMigrationStatus({ species: "earth", currentTick: cycle - 1, spawnTick: 0 });
+  assert.equal(before.due, false);
+  assert.equal(before.temporaryTerritory, true);
+  const due = getMigrationStatus({ species: "earth", currentTick: cycle, spawnTick: 0 });
+  assert.equal(due.due, true);
+  const earth = decideDragonBehavior(healthy("earth", {
+    currentTick: cycle, spawnTick: 0, migrationRouteSafe: true,
+    nearbyDragons: [{ id: "lava-1", species: "lava", lifeStage: "adult" }]
+  }));
+  assert.equal(earth.action, "begin_mixed_earth_lava_migration");
+  assert.equal(earth.socialInteractions.migrationRoles.earth, "excavate_route_and_temporary_shelters");
+  assert.equal(earth.socialInteractions.migrationRoles.lava, "warm_subterranean_passages_and_cross_hot_terrain");
+});
+
+test("Dragão de Terra adia mudança de território quando a rota não é segura", () => {
+  const cycle = 21 * 24_000;
+  const result = decideDragonBehavior(healthy("earth", {
+    currentTick: cycle, spawnTick: 0, migrationRouteSafe: false
+  }));
+  assert.notEqual(result.action, "relocate_temporary_territory");
+  assert.equal(result.migrationStatus.due, true);
+});
