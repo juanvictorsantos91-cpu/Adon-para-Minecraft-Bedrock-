@@ -67,7 +67,7 @@ O núcleo ainda não está conectado à Script API e não é um Add-On instaláv
 A nova camada de planejamento adiciona quatro avaliações independentes, integradas ao MIS/DBS:
 
 - **Percepção ambiental** (`src/ai/environment-awareness.js`): reconhece tags de bioma/terreno, recursos úteis e perigos; calcula adequação de habitat, segurança e locais candidatos.
-- **Território e ninhos** (`src/ai/territory.js`): detecta invasores próximos, avalia ameaça ao ninho e pontua locais candidatos para construção. A proteção física do território ainda depende do adaptador Bedrock.
+- **Território e ninhos** (`src/ai/territory.js`): define raios experimentais por espécie, diferencia membros do mesmo grupo de grupos independentes, mede risco de sobreposição e reconhece visitantes de outras espécies sem iniciar combate automático. O Plasma é nômade e não mantém território fixo. A proteção física ainda depende do adaptador Bedrock.
 - **Caça** (`src/ai/hunting.js`): filtra presas pela dieta da espécie, distância e risco; exclui animais domesticados, de fazenda ou protegidos pelo jogador; pode sugerir caça cooperativa. A captura e o compartilhamento real ainda dependem do adaptador.
 - **Ciclo de vida** (`src/ai/life-cycle.js`): calcula ovo, filhote, jovem e adulto a partir da idade em ticks, avalia cuidado parental, incubação, eclosão e condições para tentativa de reprodução. Envelhecimento adulto é um marcador experimental, sem morte automática.
 
