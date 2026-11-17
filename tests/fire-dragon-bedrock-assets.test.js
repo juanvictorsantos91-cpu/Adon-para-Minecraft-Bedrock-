@@ -67,7 +67,8 @@ test("Fire Dragon client entity references its texture, render controller and an
   const description = clientEntity["minecraft:client_entity"].description;
   assert.equal(description.textures.default, "textures/entity/dragon_fire");
   assert.equal(description.render_controllers[0], "controller.render.dragon_survival.fire");
-  assert.ok(description.animation_controllers.some((entry) => entry.fire_controller === "controller.animation.dragon_survival.fire"));
+  assert.ok(clientEntity["minecraft:client_entity"].animation_controllers.some((entry) => entry.fire_controller === "controller.animation.dragon_survival.fire"));
+  assert.equal(Object.hasOwn(description, "animation_controllers"), false, "animation_controllers belongs beside description, not inside it");
   assert.deepEqual(description.scripts.animate, ["fire_controller"]);
   assert.equal(description.spawn_egg.texture, "dragon_survival:fire_dragon_spawn_egg");
   assert.equal(description.animations.fire_idle, "animation.dragon_survival.fire.idle");
@@ -111,4 +112,27 @@ test("Bedrock dragon discovery uses the declared dragon_survival family", async 
   assert.ok(families.includes("dragon_survival"));
   assert.ok(main.includes('getEntities({ families: ["dragon_survival"] })'));
   assert.ok(main.includes('entity.addTag("ds:dragon")'));
+});
+
+
+test("Dragon Survival 0.1.2 manifests and RP dependency are synchronized", async () => {
+  const behavior = await readJson("../bedrock/behavior_pack/manifest.json");
+  const resource = await readJson("../bedrock/resource_pack/manifest.json");
+  assert.deepEqual(behavior.header.version, [0, 1, 2]);
+  assert.deepEqual(resource.header.version, [0, 1, 2]);
+  assert.deepEqual(behavior.modules.map((module) => module.version), [[0, 1, 2], [0, 1, 2]]);
+  assert.deepEqual(resource.modules[0].version, [0, 1, 2]);
+  assert.deepEqual(resource.dependencies[0].version, behavior.header.version);
+  assert.equal(resource.dependencies[0].uuid, behavior.header.uuid);
+});
+
+test("Fire Dragon client entity keeps controller registration at valid client-entity level", async () => {
+  const clientEntity = await readJson("../bedrock/resource_pack/entity/dragon_fire.entity.json");
+  assert.ok(clientEntity["minecraft:client_entity"].description);
+  assert.ok(Array.isArray(clientEntity["minecraft:client_entity"].animation_controllers));
+  assert.equal(
+    clientEntity["minecraft:client_entity"].animation_controllers[0].fire_controller,
+    "controller.animation.dragon_survival.fire"
+  );
+  assert.deepEqual(clientEntity["minecraft:client_entity"].description.scripts.animate, ["fire_controller"]);
 });
