@@ -5,6 +5,7 @@ import { behaviorProfiles, getBehaviorProfile } from "../src/species/behavior-pr
 import { getSocialGroupPlan } from "../src/ai/social-groups.js";
 import { assessDragonRelationships, classifyDragonRelationship, isEligiblePair } from "../src/ai/dragon-relationships.js";
 import { ELECTRIC_MIGRATION_CYCLE_TICKS, getMigrationStatus } from "../src/ai/migration-cycle.js";
+import { assessSocialInteractions } from "../src/ai/social-interactions.js";
 
 const healthy = (species, extra = {}) => ({
   species, energy: 90, hunger: 90, health: 100,
@@ -286,4 +287,74 @@ test("DBS inicia migração elétrica quando o ciclo longo vence e a rota está 
   }));
   assert.equal(result.action, "begin_long_migration");
   assert.equal(result.migrationStatus.due, true);
+});
+
+
+test("Terra e Lava formam grupos mistos e viajam juntas", () => {
+  const lavaNearby = { id: "lava-1", species: "lava", lifeStage: "adult" };
+  const earthNearby = { id: "earth-1", species: "earth", lifeStage: "adult" };
+  const earth = decideDragonBehavior(healthy("earth", {
+    nearbyDragons: [lavaNearby], nearbySameSpeciesCount: 0
+  }));
+  const lava = decideDragonBehavior(healthy("lava", {
+    nearbyDragons: [earthNearby], nearbySameSpeciesCount: 0
+  }));
+  assert.equal(earth.groupPlan.action, "travel_with_mixed_earth_lava_group");
+  assert.equal(lava.groupPlan.action, "travel_with_mixed_earth_lava_group");
+  assert.equal(earth.groupPlan.mixedGroup, true);
+  assert.equal(lava.groupPlan.mixedGroup, true);
+});
+
+test("grupos mistos Terra-Lava contam indivíduos das duas espécies", () => {
+  const plan = getSocialGroupPlan("earth", 2, [
+    { species: "lava", lifeStage: "adult" },
+    { species: "lava", lifeStage: "young" }
+  ]);
+  assert.equal(plan.observedGroupSize, 4);
+  assert.equal(plan.mixedCompanions, 2);
+  assert.equal(plan.seekingMembers, true);
+});
+
+test("interações pacíficas entre espécies são sugeridas sem iniciar combate", () => {
+  const interactions = assessSocialInteractions(
+    { id: "earth-1", species: "earth" },
+    [{ id: "lava-1", species: "lava" }],
+    { socialOpportunity: true }
+  );
+  assert.equal(interactions.kind, "peaceful");
+  assert.equal(interactions.action, "perform_peaceful_cross_species_interaction");
+  assert.ok(interactions.peacefulInteractions[0].options.includes("cooperate_in_excavation"));
+});
+
+test("agressão entre dragões exige provocação ou conflito territorial", () => {
+  const calm = decideDragonBehavior(healthy("fire", {
+    nearbyDragons: [{ id: "water-1", species: "water" }]
+  }));
+  assert.notEqual(calm.action, "challenge_intruding_dragon");
+  const conflict = decideDragonBehavior(healthy("fire", {
+    nearbyDragons: [{ id: "water-1", species: "water" }],
+    territoryConflict: true,
+    conflictingDragonId: "water-1"
+  }));
+  assert.equal(conflict.action, "challenge_intruding_dragon");
+  const attacked = decideDragonBehavior(healthy("ice", {
+    attackedByDragon: true, attackerId: "fire-1"
+  }));
+  assert.equal(attacked.action, "defend_against_dragon");
+});
+
+test("dragão ferido recua diante de ataque de outro dragão", () => {
+  const result = decideDragonBehavior(healthy("water", {
+    health: 30, attackedByDragon: true, attackerId: "fire-1"
+  }));
+  assert.equal(result.action, "retreat_from_dragon_attack");
+});
+
+test("MIS mantém prioridade sobre interação social em situação crítica", () => {
+  const result = decideDragonBehavior(healthy("earth", {
+    energy: 8, immediateDanger: true, socialOpportunity: true,
+    nearbyDragons: [{ id: "lava-1", species: "lava" }]
+  }));
+  assert.equal(result.system, "MIS");
+  assert.equal(result.action, "escape_danger");
 });
