@@ -12,9 +12,9 @@ const healthy = (species, extra = {}) => ({
   immediateDanger: false, safeToExplore: true, ...extra
 });
 
-test("as sete espécies possuem personalidades próprias", () => {
+test("as oito espécies possuem personalidades próprias", () => {
   assert.deepEqual(Object.keys(behaviorProfiles).sort(), [
-    "earth", "electric", "fire", "ice", "lava", "water", "wind"
+    "earth", "electric", "fire", "ice", "lava", "sound", "water", "wind"
   ]);
   for (const profile of Object.values(behaviorProfiles)) {
     for (const trait of ["aggression", "caution", "curiosity", "protectiveness", "sociability", "independence"]) {
