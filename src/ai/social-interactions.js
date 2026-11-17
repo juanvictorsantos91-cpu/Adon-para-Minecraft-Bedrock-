@@ -5,8 +5,16 @@ const peacefulPairs = {
   "ice|water": ["play_near_water", "explore_under_ice"],
   "fire|lava": ["share_warm_ground", "display_strength"],
   "earth|water": ["share_water_source", "coexist_near_river"],
+  "electric|earth": ["patrol_mountain_together", "inspect_mineral_caves"],
+  "electric|fire": ["display_elemental_power", "keep_respectful_distance"],
+  "electric|lava": ["observe_volcanic_storms", "patrol_high_ground"],
   "electric|ice": ["observe_storm", "patrol_mountain_together"],
-  "electric|water": ["signal_during_storm", "keep_safe_distance_near_water"]
+  "electric|water": ["signal_during_storm", "keep_safe_distance_near_water"],
+  "fire|earth": ["practice_strength_display", "share_sunlit_resting_area"],
+  "ice|earth": ["explore_cool_caves", "share_sheltered_nest_area"],
+  "ice|fire": ["exchange_warning_displays", "respect_temperature_boundaries"],
+  "ice|lava": ["observe_steam_from_safe_distance", "avoid_thermal_clash"],
+  "lava|water": ["create_steam_signal", "observe_from_safe_distance"]
 };
 
 function pairKey(a, b) {
