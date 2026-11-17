@@ -8,7 +8,7 @@ const environments = {
   ice: "frozen",
   fire: "hot",
   earth: "underground",
-  lava: "volcanic"
+  lava: "volcanic",\n  wind: "wind"
 };
 
 for (const [species, profile] of Object.entries(speciesProfiles)) {
