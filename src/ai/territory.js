@@ -41,6 +41,44 @@ export function assessTerritorialSpacing(self, nearbyDragons = []) {
   };
 }
 
+
+const MIGRATION_CONFRONTATION_CHANCE = Object.freeze({
+  fire: 0.72, water: 0.38, electric: 0.55, ice: 0.42, earth: 0.45,
+  wind: 0.32, sound: 0.40, poison: 0.78, plasma: 0.60
+});
+
+function stableRoll(seed) {
+  let hash = 2166136261;
+  for (const char of String(seed)) {
+    hash ^= char.charCodeAt(0);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0) / 4294967296;
+}
+
+/**
+ * Dragões de outras espécies consideram o grupo migratório de Terra intruso.
+ * A chance define se partem para confronto ou apenas intimidam/observam.
+ * Lava é a única espécie que tolera a passagem.
+ */
+export function assessEarthMigrationReception(owner, earthDragon, context = {}) {
+  if (!owner || !earthDragon || earthDragon.species !== "earth" ||
+      earthDragon.temporaryTerritoryMigrationDue !== true) {
+    return { applies: false, accepts: false, conflict: false, action: null, chance: 0 };
+  }
+  if (owner.species === "lava") {
+    return { applies: true, accepts: true, conflict: false,
+      action: "tolerate_earth_migration_passage", chance: 0 };
+  }
+  const chance = MIGRATION_CONFRONTATION_CHANCE[owner.species] ?? 0.5;
+  const roll = stableRoll(`${owner.id ?? owner.species}:${earthDragon.id ?? "earth"}:${context.migrationCycle ?? "current"}`);
+  const conflict = roll < chance;
+  return {
+    applies: true, accepts: false, conflict, chance, roll,
+    action: conflict ? "challenge_migrating_earth_group" : "warn_migrating_earth_group"
+  };
+}
+
 export function assessTerritory(self, nearbyDragons = [], context = {}) {
   if (!self || typeof self !== "object" || !Array.isArray(nearbyDragons)) {
     throw new TypeError("Estado do dragão e lista de vizinhos são necessários.");
@@ -60,7 +98,7 @@ export function assessTerritory(self, nearbyDragons = [], context = {}) {
   const unknownDragons = visitors.filter(other => other.knownToSelf !== true && other.isTamed !== true);
   const nestThreatened = context.nestThreatened === true ||
     visitors.some(other => other.nearNest === true || other.hostile === true);
-  const territoryIntruded = !isNomadic && (context.territoryIntruded === true || visitors.length > 0);
+  const territoryIntruded = !isNomadic && (context.territoryIntruded === true || visitors.length > 0 || migratingEarth.length > 0);
   const canDefend = self.health > 40 && self.energy > 30 && self.injury?.severity !== "severe";
   const action = isNomadic ? "remain_nomadic"
     : nestThreatened ? "guard_nest"
@@ -75,7 +113,7 @@ export function assessTerritory(self, nearbyDragons = [], context = {}) {
     relocationDue, territoryIntruded, nestThreatened,
     intruderCount: visitors.length, knownVisitorCount: knownVisitors.length,
     unknownDragonCount: unknownDragons.length, canDefend, action,
-    toleratedEarthMigrationCount: nearbyDragons.filter(other => self.species === "lava" &&
+    migrationReception,\n    toleratedEarthMigrationCount: nearbyDragons.filter(other => self.species === "lava" &&
       other?.species === "earth" && other.temporaryTerritoryMigrationDue === true &&
       Number.isFinite(other.distance) && other.distance <= radius).length,
     spacing: assessTerritorialSpacing(self, nearbyDragons)
