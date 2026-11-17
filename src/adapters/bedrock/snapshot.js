@@ -57,7 +57,8 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
         health: Number(other.getComponent?.("minecraft:health")?.currentValue ?? 100),
         energy: readTaggedNumber(otherTags, NUMBER_PREFIXES.energy, 100),
         lifeStage: otherTags.includes("ds:stage:hatchling") ? "hatchling" :
-          otherTags.includes("ds:stage:juvenile") ? "juvenile" : "adult"
+          otherTags.includes("ds:stage:juvenile") ? "juvenile" : "adult",
+        temporaryTerritoryMigrationDue: otherTags.includes("ds:migration_due")
       });
       continue;
     }
