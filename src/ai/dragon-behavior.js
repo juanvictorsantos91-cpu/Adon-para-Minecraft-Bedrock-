@@ -242,6 +242,20 @@ function behaviorRules(profile) {
       reason: "Cospe uma quantidade concentrada de veneno contra uma ameaça."
     },
     {
+      name: "plasma-storm-charge", priority: 13.1,
+      when: s => profile.plasmaStealth === true && s.thunderstorm === true &&
+        s.energy < 80 && s.threatDetected !== true && s.safeToRest === true,
+      action: "absorb_charge_from_storm",
+      reason: "Aproveita a tempestade para recuperar energia em um ponto protegido, sem se expor desnecessariamente."
+    },
+    {
+      name: "plasma-storm-shelter", priority: 13.15,
+      when: s => profile.plasmaStealth === true && s.thunderstorm === true &&
+        s.stormShelterAvailable === true && s.isExposed === true,
+      action: "seek_shelter_during_storm",
+      reason: "Procura cobertura durante a tempestade para observar o ambiente e reduzir o brilho."
+    },
+    {
       name: "plasma-concealment", priority: 3.3,
       when: s => profile.plasmaStealth === true && s.stealthRequested === true &&
         s.coverAvailable === true && s.isExposed !== true && s.energy >= 12,
