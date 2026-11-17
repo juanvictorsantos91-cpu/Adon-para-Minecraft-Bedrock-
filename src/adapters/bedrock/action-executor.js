@@ -55,12 +55,16 @@ export function executeDragonAction(entity, decision, nearbyEntities = [], conte
       const direction = normalizedDirection(entity.location, prey.location);
       if (distance > 2.5) {
         entity.applyImpulse({ x: direction.x * 0.12, y: direction.y * 0.035, z: direction.z * 0.12 });
+        if (energyTag) entity.removeTag(energyTag);
+        entity.addTag("ds:energy:" + Math.max(0, currentEnergy - 2));
         entity.addTag("ds:hunt:approaching");
         return { executed: true, action, mode: "approach_and_pursue", targetId: prey.id };
       }
       entity.removeTag("ds:hunt:approaching");
       const beforeHealth = prey.getComponent?.("minecraft:health")?.currentValue;
       const hit = prey.applyDamage?.(6);
+      if (energyTag) entity.removeTag(energyTag);
+      entity.addTag("ds:energy:" + Math.max(0, currentEnergy - 5));
       const afterHealth = prey.getComponent?.("minecraft:health")?.currentValue;
       if (hit && ((Number.isFinite(afterHealth) && afterHealth <= 0) ||
           (Number.isFinite(beforeHealth) && beforeHealth <= 6))) {
