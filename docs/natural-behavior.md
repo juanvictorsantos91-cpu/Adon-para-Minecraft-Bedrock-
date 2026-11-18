@@ -1,33 +1,24 @@
-# Rotina natural e autocuidado
+# Rotina natural
 
 O módulo `src/ai/natural-behavior.js` gera intenções cotidianas simples. Ele não executa animações, movimento ou interações diretamente no Minecraft.
 
 ## Atividades
 - Sono em abrigo seguro.
-- Busca por sombra ou abrigo aquecido conforme estresse térmico.
-- Higiene e limpeza das escamas.
-- Banho quando há oportunidade segura.
+- Busca por sombra ou abrigo aquecido diante de condições ambientais extremas.
 - Brincadeiras e prática de movimento para filhotes e juvenis.
-- Exploração motivada pela curiosidade individual.
+- Aproximação pacífica de dragões conhecidos.
+- Exploração motivada pela curiosidade ou independência individual.
 - Observação tranquila do ambiente.
 
 ## Prioridades
 Ameaças, perigo ambiental e necessidades vitais críticas bloqueiam essas atividades. O sistema de sobrevivência e as regras de proteção continuam tendo precedência.
 
 ## Dados esperados do adaptador
-O módulo aceita sinais contextuais como `sleepRequested`, `temperatureStress`, `groomingNeeded`, `bathingOpportunity`, `playOpportunity`, `explorationOpportunity` e `quietObservationOpportunity`. Esses sinais ainda precisam ser produzidos pelo adaptador do mundo; sua ausência não quebra o comportamento existente.
+O módulo aceita sinais contextuais como `sleepRequested`, `temperatureStress`, `playOpportunity`, `explorationOpportunity` e `quietObservationOpportunity`. Esses sinais ainda precisam ser produzidos pelo adaptador do mundo; sua ausência não quebra o comportamento existente.
 
 ## Personalidade
-Os traços individuais podem ser fornecidos em `state.personality` (por exemplo, `curiosity` e `playfulness`) com valores entre 0 e 1. Quando ausentes, o módulo usa o perfil da espécie e padrões conservadores.
+Os traços individuais são curiosidade, sociabilidade, independência e vontade de brincar. Medo, estresse e coragem foram retirados do modelo de personalidade. Higiene, banho e limpeza de escamas também foram removidos das rotinas.
 
-## Variações por espécie
-As ações de higiene e banho variam por espécie: por exemplo, Fogo remove cinzas, Água limpa as escamas na água, Gelo rola na neve e Lava repousa em pedra aquecida. Essas são intenções lógicas; animações e efeitos visuais serão implementados pelo adaptador Bedrock.
+A temperatura continua sendo considerada apenas como condição física: um dragão pode procurar sombra ou abrigo aquecido para evitar dano ambiental. Isso não representa um estado emocional.
 
-## Traços individuais já utilizados
-- Curiosidade: favorece investigação segura.
-- Brincadeira: aumenta atividades lúdicas de filhotes e juvenis.
-- Sociabilidade: favorece aproximação pacífica de indivíduos conhecidos.
-- Independência: favorece exploração individual em áreas próximas.
-- Coragem: pode favorecer uma postura firme de aviso diante de ameaça, desde que saúde e energia estejam boas; não autoriza ataque automático.
-
-Os traços individuais são lidos de tags `ds:trait:<nome>:<valor>` quando disponíveis. Eles não são gerados automaticamente nesta etapa.
+Os traços são lidos de tags `ds:trait:<nome>:<valor>` quando disponíveis. Eles ainda não são gerados automaticamente no nascimento.
