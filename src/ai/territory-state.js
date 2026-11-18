@@ -197,8 +197,12 @@ export function annexTerritoryToDomain(domain, territory, {
     throw new Error("É necessário informar o domínio de origem para anexar uma região já pertencente a outro reino.");
   }
   if (sourceDomain) {
-    if (sourceDomain.status !== "active" || !sourceDomain.territoryIds?.includes(territory.id)) {
-      throw new Error("O domínio de origem não contém esse território ativo.");
+    if (sourceDomain.id === domain.id) {
+      throw new Error("O domínio de origem e o domínio de destino precisam ser diferentes.");
+    }
+    if (sourceDomain.status !== "active" || !sourceDomain.territoryIds?.includes(territory.id) ||
+        territory.domainId !== sourceDomain.id || territory.ownerGroupId !== sourceDomain.ownerGroupId) {
+      throw new Error("O domínio de origem não corresponde ao proprietário e território informados.");
     }
     if (tick < sourceDomain.updatedTick) throw new RangeError("tick não pode retroceder.");
   }
