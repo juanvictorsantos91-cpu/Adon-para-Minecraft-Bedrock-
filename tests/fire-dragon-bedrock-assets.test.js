@@ -106,12 +106,14 @@ test("Fire Dragon has a distinct custom spawn egg texture and localized name", a
 
 test("Bedrock dragon discovery uses the declared dragon_survival family", async () => {
   const main = await readFile(new URL("../bedrock/behavior_pack/scripts/main.js", import.meta.url), "utf8");
+  const initializer = await readFile(new URL("../src/adapters/bedrock/dragon-initializer.js", import.meta.url), "utf8");
   const behavior = await readJson("../bedrock/behavior_pack/entities/fire_dragon.json");
   const families = behavior["minecraft:entity"].components["minecraft:type_family"].family;
 
   assert.ok(families.includes("dragon_survival"));
   assert.ok(main.includes('getEntities({ families: ["dragon_survival"] })'));
-  assert.ok(main.includes('entity.addTag("ds:dragon")'));
+  assert.ok(main.includes("initializeDragonEntity(entity, currentTick)"));
+  assert.ok(initializer.includes('entity.addTag("ds:dragon")'));
 });
 
 test("Dragon Survival 0.1.4 manifests and RP dependency are synchronized", async () => {
