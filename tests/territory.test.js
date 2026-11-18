@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   SPECIES_TERRITORY_RADII, TERRITORY_RULES, getTerritoryRadius,
-  assessTerritorialSpacing, assessTerritory
+  assessTerritorialSpacing, assessTerritory, assessTerritorialInvasion
 } from "../src/ai/territory.js";
 
 test("cada espécie recebe seu raio territorial inicial", () => {
@@ -64,4 +64,51 @@ test("dragão debilitado observa o visitante em vez de desafiar", () => {
   const self = { id: "a", species: "ice", health: 30, energy: 20 };
   const result = assessTerritory(self, [{ id: "b", species: "fire", distance: 20 }], { territoryId: "ice-home" });
   assert.equal(result.action, "observe_intruder_from_safety");
+});
+
+
+test("invasões usam agressividade individual ou o perfil oficial da espécie", () => {
+  const target = { id: "target", species: "water", territoryId: "water-home", distance: 40 };
+  const fire = assessTerritorialInvasion({
+    id: "fire-1", species: "fire", health: 100, energy: 100, hunger: 100
+  }, [target], { invasionCycle: 1 });
+  assert.equal(fire.aggression, 0.9);
+  assert.equal(fire.eligible, true);
+
+  const cautiousFire = assessTerritorialInvasion({
+    id: "fire-2", species: "fire", aggression: 0.2,
+    health: 100, energy: 100, hunger: 100
+  }, [target], { invasionCycle: 1 });
+  assert.equal(cautiousFire.eligible, false);
+  assert.equal(cautiousFire.chance, 0);
+});
+
+test("invasões escolhem o território elegível mais próximo e ignoram dragões domesticados", () => {
+  const result = assessTerritorialInvasion({
+    id: "fire-1", species: "fire", health: 100, energy: 100, hunger: 100
+  }, [
+    { id: "tamed", species: "water", territoryId: "water-player", distance: 5, isTamed: true },
+    { id: "far", species: "ice", territoryId: "ice-far", distance: 90 },
+    { id: "near", species: "wind", territoryId: "wind-near", distance: 20 }
+  ], { invasionCycle: 1 });
+  assert.equal(result.eligible, true);
+  assert.equal(result.targetDragonId, result.shouldInvade ? "near" : null);
+  assert.equal(result.targetTerritoryId, result.shouldInvade ? "wind-near" : null);
+  assert.equal(result.targetDistance, result.shouldInvade ? 20 : null);
+});
+
+test("água, plasma e lava, além de dragões domesticados, nunca iniciam invasões", () => {
+  const target = { id: "target", species: "fire", territoryId: "fire-home", distance: 10 };
+  for (const species of ["water", "plasma", "lava"]) {
+    const result = assessTerritorialInvasion({
+      id: species, species, health: 100, energy: 100, hunger: 100, aggression: 1
+    }, [target]);
+    assert.equal(result.eligible, false);
+    assert.equal(result.shouldInvade, false);
+  }
+  const tamed = assessTerritorialInvasion({
+    id: "tamed-fire", species: "fire", isTamed: true,
+    health: 100, energy: 100, hunger: 100
+  }, [target]);
+  assert.equal(tamed.eligible, false);
 });
