@@ -35,18 +35,17 @@ Medo, estresse e coragem não são traços de personalidade neste projeto. A res
 - Uma ação ambiental não deve ser repetida continuamente: cada comportamento precisa de intervalo ou condição de encerramento.
 
 ## Próximas etapas técnicas
-1. Integrar o adaptador de gravação de personalidade ao evento real de nascimento/spawn; o gerador e a escrita das tags já estão preparados.
-2. Produzir sinais de sono, exploração, brincadeira e observação no adaptador Bedrock.
-3. Integrar anexação territorial à confirmação real de conquista.
-4. Persistir domínios e desgaste territorial no mundo.
-5. Implementar comunicação e memória social simplificada.
+1. Produzir sinais de sono, exploração, brincadeira e observação no adaptador Bedrock.
+2. Integrar anexação territorial à confirmação real de conquista.
+3. Persistir domínios e desgaste territorial no mundo.
+4. Refinar a origem dos eventos sociais pacíficos e protetivos; hostilidade por dano entre dragões já é observada pela ponte.
 
 ## Limites
 As ações físicas no Minecraft precisam de adaptadores próprios e validação posterior no jogo. Não introduzir dezenas de variáveis persistentes antes de confirmar quais são realmente necessárias.
 
 
 ## Continuação: inicialização e persistência
-- Criado um adaptador que gera e grava as quatro tags de personalidade, preservando valores existentes. Falta conectá-lo ao ponto real de nascimento/spawn.
+- Personalidade automática conectada ao evento `world.afterEvents.entitySpawn`, com fallback no primeiro ciclo de IA para entidades existentes. Os quatro traços e o tick de nascimento são gravados uma única vez, preservando valores já existentes.
 - Criado um codec de estado territorial com versão e um adaptador de armazenamento por callbacks. Falta conectar os callbacks à persistência do mundo Bedrock, após validar limites e comportamento da API na versão-alvo.
 - Foram adicionados testes automatizados para os dois adaptadores; ainda precisam ser executados em ambiente Node do projeto.
 
@@ -54,4 +53,4 @@ As ações físicas no Minecraft precisam de adaptadores próprios e validação
 ## Memória social simplificada
 O módulo `src/ai/social-memory.js` mantém até 32 relações recentes por dragão. Ele registra reconhecimento, espécie conhecida, nível de confiança simples (0–3), hostilidade observada, último contato e quantidade de encontros. Confiança aumenta com interações pacíficas/protetivas e diminui quando há hostilidade observada. Apenas ver outro dragão cria reconhecimento, não amizade nem hostilidade.
 
-O adaptador de snapshot lê as tags `ds:known:<id>`, `ds:relation:<id>:trust:<0-3>` e `ds:hostile:<id>` do próprio dragão. A leitura de reconhecimento foi corrigida para consultar a memória do observador, não as tags do indivíduo observado. A atualização da memória e a gravação dessas tags ainda precisam ser conectadas ao ciclo de atualização do MIS e ao armazenamento persistente do mundo.
+O adaptador de snapshot lê as tags `ds:known:<id>`, `ds:relation:<id>:trust:<0-3>` e `ds:hostile:<id>` do próprio dragão. A leitura de reconhecimento foi corrigida para consultar a memória do observador, não as tags do indivíduo observado. O ciclo do MIS atualiza a memória a cada decisão. A ponte Bedrock grava as tags na própria entidade e restaura confiança, hostilidade, último contato e contagem de encontros. A ponte também registra como hostil o dragão que causar dano a outro. A memória é individual, limitada a 32 relações e acompanha as tags da entidade; ainda não é um banco global do mundo.
