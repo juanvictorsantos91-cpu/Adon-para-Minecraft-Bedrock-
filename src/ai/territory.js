@@ -1,4 +1,5 @@
 import { scoreEnvironmentCandidate } from "./environment-awareness.js";
+import { getBehaviorProfile } from "../species/behavior-profiles.js";
 
 export const TERRITORY_RULES = Object.freeze({
   sameSpeciesAvoidOverlap: 128,
@@ -56,14 +57,19 @@ export function assessTerritorialInvasion(self, nearbyDragons = [], context = {}
     throw new TypeError("Estado do dragão e lista de vizinhos são necessários.");
   }
   const excluded = ["water", "plasma", "lava"];
-  const aggression = Number.isFinite(self.aggression) ? self.aggression :
-    ({ fire: 0.9, electric: 0.55, ice: 0.45, earth: 0.3, wind: 0.35, sound: 0.45, poison: 0.55 }[self.species] ?? 0);
-  const targets = excluded.includes(self.species) ? [] : nearbyDragons.filter(other =>
-    other && other.id !== self.id && other.species !== self.species &&
-    Object.hasOwn(SPECIES_TERRITORY_RADII, other.species) && other.territoryId &&
-    Number.isFinite(other.distance) && other.distance >= 0 &&
-    other.distance <= (getTerritoryRadius(other.species) ?? 0) && other.isTamed !== true
-  );
+  const profile = getBehaviorProfile(self.species);
+  const profileAggression = Number.isFinite(profile.aggression) ? profile.aggression : 0;
+  const aggression = Number.isFinite(self.aggression)
+    ? Math.max(0, Math.min(1, self.aggression))
+    : profileAggression;
+  const targets = excluded.includes(self.species) || self.isTamed === true || self.isOwned === true
+    ? [] : nearbyDragons.filter(other =>
+      other && other.id !== self.id && other.species !== self.species &&
+      Object.hasOwn(SPECIES_TERRITORY_RADII, other.species) && other.territoryId &&
+      Number.isFinite(other.distance) && other.distance >= 0 &&
+      other.distance <= (getTerritoryRadius(other.species) ?? 0) &&
+      other.isTamed !== true && other.isOwned !== true
+    ).sort((a, b) => a.distance - b.distance);
   const healthy = self.health >= 60 && self.energy >= 50 && self.hunger >= 30 &&
     self.injury?.severity !== "severe" && self.immediateDanger !== true &&
     self.hasYoung !== true && self.safeToExplore !== false;
@@ -77,6 +83,7 @@ export function assessTerritorialInvasion(self, nearbyDragons = [], context = {}
     eligible, shouldInvade, aggression, chance, roll,
     targetDragonId: shouldInvade ? (target.id ?? null) : null,
     targetTerritoryId: shouldInvade ? target.territoryId : null,
+    targetDistance: shouldInvade ? target.distance : null,
     action: shouldInvade ? "attempt_territory_invasion" : null
   };
 }
