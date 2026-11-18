@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createDragonGroup, updateDragonGroup, InMemoryDragonGroupRepository } from "../src/ai/dragon-groups.js";
-import { writeDragonGroupMembership, writeDragonGroupLeadership } from "../src/adapters/bedrock/dragon-group-writer.js";
+import { writeDragonGroupMembership, writeDragonGroupLeadership, writeDragonGroupState } from "../src/adapters/bedrock/dragon-group-writer.js";
 
 test("cria grupo com identidade estável e líder membro", () => {
   const group = createDragonGroup({ id:"flame-alpha", species:"fire", memberIds:["f1","f2"], createdTick:100 });
@@ -61,4 +61,19 @@ test("writer marca e remove líder sem afetar tags de grupo ou espécie", () => 
   writeDragonGroupLeadership(entity, false);
   assert.equal(tags.has("ds:leader"), false);
   assert.ok(tags.has("ds:energy:80"));
+});
+
+
+test("sincroniza membro e líder a partir do registro persistido", () => {
+  const tags = new Set(["ds:species:fire", "ds:leader", "ds:energy:75"]);
+  const entity = { id: "f2", getTags: () => [...tags], addTag: tag => tags.add(tag), removeTag: tag => tags.delete(tag) };
+  const group = { id: "fire-alpha", status: "active", memberIds: ["f1", "f2"], leaderId: "f2" };
+  assert.deepEqual(writeDragonGroupState(entity, group), { member: true, leader: true });
+  assert.ok(tags.has("ds:group:fire-alpha") && tags.has("ds:leader"));
+  const notLeader = { ...group, leaderId: "f1" };
+  assert.deepEqual(writeDragonGroupState(entity, notLeader), { member: true, leader: false });
+  assert.ok(tags.has("ds:group:fire-alpha") && !tags.has("ds:leader"));
+  assert.deepEqual(writeDragonGroupState(entity, { ...group, memberIds: ["f1"] }), { member: false, leader: false });
+  assert.equal([...tags].some(tag => tag.startsWith("ds:group:") || tag === "ds:leader"), false);
+  assert.ok(tags.has("ds:species:fire") && tags.has("ds:energy:75"));
 });
