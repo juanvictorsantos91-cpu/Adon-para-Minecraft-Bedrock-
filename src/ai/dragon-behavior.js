@@ -102,6 +102,12 @@ function behaviorRules(profile) {
         : "Inicia uma grande migração quando o ciclo natural da espécie chega e a rota é segura."
     },
     {
+      name: "avoid-remembered-hostile-dragon", priority: 8.7,
+      when: s => s.knownHostileNearby === true && s.threatDetected !== true,
+      action: "keep_distance_from_known_hostile_dragon",
+      reason: "Evita aproximação de um indivíduo que já demonstrou hostilidade, sem iniciar combate por conta própria."
+    },
+    {
       name: "respond-to-dragon-aggression", priority: 9,
       when: s => s.socialInteractions?.action && s.socialInteractions.kind !== "peaceful",
       action: s => s.socialInteractions.action,
@@ -420,6 +426,7 @@ export function decideDragonBehavior(state) {
     relationships,
     socialMemory,
     socialMemoryTags: socialTags,
+    knownHostileNearby: rememberedNearbyDragons.some(other => other?.hostile === true),
     naturalBehavior,
     socialInteractions,
     environmentAssessment,
