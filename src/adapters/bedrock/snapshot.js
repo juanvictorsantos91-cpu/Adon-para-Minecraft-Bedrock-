@@ -77,7 +77,7 @@ function readSocialMemory(tags) {
     records.set(id, record);
   }
   for (const tag of tags) {
-    const match = tag.match(/^ds:seen:(.+):(\\d+)$/);
+    const match = tag.match(/^ds:seen:(.+):(\d+)$/);
     if (!match) continue;
     let id;
     try { id = decodeURIComponent(match[1]); } catch { id = match[1]; }
@@ -86,7 +86,7 @@ function readSocialMemory(tags) {
     records.set(id, record);
   }
   for (const tag of tags) {
-    const match = tag.match(/^ds:encounters:(.+):(\\d+)$/);
+    const match = tag.match(/^ds:encounters:(.+):(\d+)$/);
     if (!match) continue;
     let id;
     try { id = decodeURIComponent(match[1]); } catch { id = match[1]; }
