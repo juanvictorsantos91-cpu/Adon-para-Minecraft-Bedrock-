@@ -148,3 +148,86 @@ export class InMemoryTerritoryRepository {
     return this.#territories.delete(id);
   }
 }
+
+
+/**
+ * Cria um domínio territorial (reino) composto por territórios independentes.
+ * O território-capital continua sendo um território normal do domínio.
+ */
+export function createTerritoryDomain({ id, ownerGroupId, capitalTerritoryId, createdTick }) {
+  const domainId = requiredText(id, "id");
+  const owner = requiredText(ownerGroupId, "ownerGroupId");
+  const capitalId = requiredText(capitalTerritoryId, "capitalTerritoryId");
+  validTick(createdTick, "createdTick");
+  return {
+    id: domainId,
+    ownerGroupId: owner,
+    capitalTerritoryId: capitalId,
+    territoryIds: [capitalId],
+    createdTick,
+    updatedTick: createdTick,
+    revision: 1,
+    history: [{ type: "domain_created", tick: createdTick, capitalTerritoryId: capitalId }]
+  };
+}
+
+/**
+ * Anexa um território conquistado ao domínio sem apagar nem abandonar
+ * o território de origem. Preserva ID, centro e raio da região anexada.
+ */
+export function annexTerritoryToDomain(domain, territory, { tick, reason = "conquest" }) {
+  if (!domain || !Array.isArray(domain.territoryIds)) {
+    throw new TypeError("Domínio territorial inválido.");
+  }
+  assertActive(territory);
+  validTick(tick);
+  if (tick < domain.updatedTick || tick < territory.updatedTick) {
+    throw new RangeError("tick não pode retroceder.");
+  }
+  if (domain.territoryIds.includes(territory.id)) {
+    throw new Error("Este território já faz parte do domínio.");
+  }
+  if (territory.id === domain.capitalTerritoryId) {
+    throw new Error("A capital não pode ser anexada novamente.");
+  }
+
+  const previousOwnerGroupId = territory.ownerGroupId;
+  const annexedTerritory = {
+    ...territory,
+    ownerGroupId: domain.ownerGroupId,
+    domainId: domain.id,
+    updatedTick: tick,
+    revision: territory.revision + 1,
+    history: [...territory.history, {
+      type: "annexed_to_domain",
+      tick,
+      fromOwnerGroupId: previousOwnerGroupId,
+      toOwnerGroupId: domain.ownerGroupId,
+      domainId: domain.id,
+      reason
+    }]
+  };
+  const nextDomain = {
+    ...domain,
+    territoryIds: [...domain.territoryIds, territory.id],
+    updatedTick: tick,
+    revision: domain.revision + 1,
+    history: [...domain.history, {
+      type: "territory_annexed",
+      tick,
+      territoryId: territory.id,
+      previousOwnerGroupId,
+      domainId: domain.id,
+      reason
+    }]
+  };
+  return { domain: nextDomain, territory: annexedTerritory };
+}
+
+/** Retorna cópia da lista de regiões que compõem o domínio. */
+export function getDomainTerritoryIds(domain) {
+  if (!domain || !Array.isArray(domain.territoryIds)) {
+    throw new TypeError("Domínio territorial inválido.");
+  }
+  return [...domain.territoryIds];
+}
