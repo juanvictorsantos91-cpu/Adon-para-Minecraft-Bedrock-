@@ -47,7 +47,7 @@ As ações físicas no Minecraft precisam de adaptadores próprios e validação
 ## Continuação: inicialização e persistência
 - Personalidade automática conectada ao evento `world.afterEvents.entitySpawn`, com fallback no primeiro ciclo de IA para entidades existentes. Os quatro traços e o tick de nascimento são gravados uma única vez, preservando valores já existentes.
 - Criado um codec de estado territorial com versão e um adaptador de armazenamento por callbacks. Falta conectar os callbacks à persistência do mundo Bedrock, após validar limites e comportamento da API na versão-alvo.
-- Foram adicionados testes automatizados para os dois adaptadores; ainda precisam ser executados em ambiente Node do projeto.
+- Os testes automatizados dos adaptadores e da integração foram executados com sucesso no GitHub Actions: 201 testes aprovados, sem falhas. A compilação do núcleo e as simulações integradas também passaram.
 
 
 ## Memória social simplificada
