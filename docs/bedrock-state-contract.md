@@ -71,4 +71,4 @@ O snapshot também lê os seguintes sinais quando fornecidos pelo adaptador ou p
 - `ds:trait:independence:<0..1>`
 - `ds:trait:playfulness:<0..1>`
 
-Essas tags são sinais de entrada, não produtores automáticos. Valores de personalidade ausentes permanecem ausentes no snapshot; o MIS usa o perfil da espécie ou padrões conservadores como fallback. As atividades dependem de condições seguras e nunca substituem as prioridades de sobrevivência.
+Essas tags são sinais de entrada, não produtores automáticos. Os quatro traços individuais são curiosidade, sociabilidade, independência e vontade de brincar. Medo, estresse e coragem não são traços de personalidade; higiene e banho não fazem parte das rotinas. Valores ausentes permanecem ausentes no snapshot; o MIS usa o perfil da espécie ou padrões conservadores como fallback. As atividades dependem de condições seguras e nunca substituem as prioridades de sobrevivência.
