@@ -36,11 +36,13 @@ test("snapshot permite agressividade individual dentro do intervalo de 0 a 1", (
 });
 
 test("snapshot transmite domesticação, propriedade e relações dos dragões próximos", () => {
-  const self = entity("self", ["ds:species:fire", "ds:group:flame%3Aalpha", "ds:known:tamed", "ds:hostile:hostile", "ds:relation:tamed:trust:2"]);
+  const self = entity("self", ["ds:species:fire", "ds:group:flame%3Aalpha", "ds:leader", "ds:known:tamed", "ds:hostile:hostile", "ds:relation:tamed:trust:2"]);
   const tamed = entity("tamed", ["ds:species:water", "ds:group:river-pack", "ds:tamed", "ds:owned", "ds:territory:water-home"], { x: 5, y: 64, z: 0 });
   const hostile = entity("hostile", ["ds:species:ice", "ds:near_nest", "ds:territory:ice-home"], { x: 8, y: 64, z: 0 });
   const state = buildDragonSnapshot(self, [tamed, hostile]);
   assert.equal(state.groupId, "flame:alpha");
+  assert.equal(state.isGroupLeader, true);
+  assert.equal(state.sameSpeciesGroupNearby, false);
   assert.equal(state.nearbyDragons[0].groupId, "river-pack");
   assert.equal(state.nearbyDragons[0].isTamed, true);
   assert.equal(state.nearbyDragons[0].isOwned, true);
@@ -107,4 +109,17 @@ test("snapshot restaura recência e quantidade de encontros da memória social",
   assert.equal(relation.hostile, true);
   assert.equal(relation.lastSeenTick, 9600);
   assert.equal(relation.encounters, 7);
+});
+
+test("snapshot reconhece membro da mesma patrulha e líder em entidades próximas", () => {
+  const self = entity("fire-leader", ["ds:species:fire", "ds:group:fire-patrol", "ds:leader"]);
+  const member = entity("fire-member", ["ds:species:fire", "ds:group:fire-patrol"], { x: 3, y: 64, z: 0 });
+  const other = entity("fire-outsider", ["ds:species:fire", "ds:group:other-patrol", "ds:leader"], { x: 5, y: 64, z: 0 });
+  const state = buildDragonSnapshot(self, [member, other]);
+  assert.equal(state.isGroupLeader, true);
+  assert.equal(state.sameSpeciesGroupNearby, true);
+  assert.equal(state.nearbyDragons[0].isGroupLeader, false);
+  assert.equal(state.nearbyDragons[1].isGroupLeader, true);
+  assert.equal(state.nearbyDragons[0].groupId, state.groupId);
+  assert.notEqual(state.nearbyDragons[1].groupId, state.groupId);
 });
