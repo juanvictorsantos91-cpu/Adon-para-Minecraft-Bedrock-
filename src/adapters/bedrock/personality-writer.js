@@ -42,7 +42,7 @@ export function initializeDragonPersonality(entity, {
     initialized: written.length > 0,
     traits: Object.fromEntries([...existing]
       .flatMap(tag => {
-        const match = tag.match(/^ds:trait:(curiosity|sociability|independence|playfulness):([0-9]*\\.?[0-9]+)$/);
+        const match = tag.match(/^ds:trait:(curiosity|sociability|independence|playfulness):([0-9]*\.?[0-9]+)$/);
         return match ? [[match[1], Number(match[2])]] : [];
       })),
     writtenTags: written
