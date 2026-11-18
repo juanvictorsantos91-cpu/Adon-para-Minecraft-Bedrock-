@@ -19,3 +19,6 @@ O módulo aceita sinais contextuais como `sleepRequested`, `temperatureStress`, 
 
 ## Personalidade
 Os traços individuais podem ser fornecidos em `state.personality` (por exemplo, `curiosity` e `playfulness`) com valores entre 0 e 1. Quando ausentes, o módulo usa o perfil da espécie e padrões conservadores.
+
+## Variações por espécie
+As ações de higiene e banho variam por espécie: por exemplo, Fogo remove cinzas, Água limpa as escamas na água, Gelo rola na neve e Lava repousa em pedra aquecida. Essas são intenções lógicas; animações e efeitos visuais serão implementados pelo adaptador Bedrock.
