@@ -1,4 +1,4 @@
-const SCHEMA_VERSION = 1;
+const SCHEMA_VERSION = 2;
 
 function clone(value) {
   return JSON.parse(JSON.stringify(value));
@@ -23,18 +23,21 @@ function validateRecordArray(value, label, key = "id") {
 export function serializeTerritoryWorldState({
   savedTick,
   territories = [],
-  domains = []
+  domains = [],
+  groups = []
 }) {
   if (!Number.isInteger(savedTick) || savedTick < 0) {
     throw new RangeError("savedTick precisa ser um inteiro não negativo.");
   }
   validateRecordArray(territories, "territórios");
   validateRecordArray(domains, "domínios");
+  validateRecordArray(groups, "grupos");
   const payload = {
     schemaVersion: SCHEMA_VERSION,
     savedTick,
     territories: clone(territories),
-    domains: clone(domains)
+    domains: clone(domains),
+    groups: clone(groups)
   };
   return JSON.stringify(payload);
 }
@@ -49,7 +52,7 @@ export function deserializeTerritoryWorldState(serialized) {
   } catch {
     throw new Error("Estado territorial contém JSON inválido.");
   }
-  if (payload?.schemaVersion !== SCHEMA_VERSION) {
+  if (![1, SCHEMA_VERSION].includes(payload?.schemaVersion)) {
     throw new Error(`Versão de estado territorial não suportada: ${payload?.schemaVersion}.`);
   }
   if (!Number.isInteger(payload.savedTick) || payload.savedTick < 0) {
@@ -57,7 +60,9 @@ export function deserializeTerritoryWorldState(serialized) {
   }
   validateRecordArray(payload.territories, "territórios");
   validateRecordArray(payload.domains, "domínios");
-  return clone(payload);
+  const groups = payload.groups ?? [];
+  validateRecordArray(groups, "grupos");
+  return { ...clone(payload), schemaVersion: SCHEMA_VERSION, groups: clone(groups) };
 }
 
 /**
