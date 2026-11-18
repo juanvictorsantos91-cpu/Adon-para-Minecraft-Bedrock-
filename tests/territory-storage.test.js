@@ -17,6 +17,12 @@ test("serializa e restaura territórios e reinos sem perder histórico ou campos
   assert.deepEqual(restored, { schemaVersion: 2, ...state, groups: [] });
 });
 
+
+test("migra leitura do esquema 1 para esquema 2 sem perder reinos", () => {
+  const legacy = JSON.stringify({ schemaVersion: 1, ...state });
+  assert.deepEqual(deserializeTerritoryWorldState(legacy), { schemaVersion: 2, ...state, groups: [] });
+});
+
 test("rejeita versão de esquema desconhecida", () => {
   assert.throws(() => deserializeTerritoryWorldState(JSON.stringify({ ...state, schemaVersion: 99 })), /não suportada/);
 });
