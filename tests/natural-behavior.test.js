@@ -21,8 +21,8 @@ test("responde ao ciclo de sono apenas em local seguro", () => {
 });
 
 test("adapta-se a calor ou frio extremos sem transformar isso em personalidade", () => {
-  assert.equal(assessNaturalBehavior({ ...safe, temperatureStress: "too_hot" }, profile).action, "seek_shade_or_cool_area");
-  assert.equal(assessNaturalBehavior({ ...safe, temperatureStress: "too_cold" }, profile).action, "seek_warm_shelter");
+  assert.equal(assessNaturalBehavior({ ...safe, temperatureCondition: "too_hot" }, profile).action, "seek_shade_or_cool_area");
+  assert.equal(assessNaturalBehavior({ ...safe, temperatureCondition: "too_cold" }, profile).action, "seek_warm_shelter");
 });
 
 test("filhotes podem brincar quando estão seguros e com energia", () => {
