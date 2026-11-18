@@ -140,7 +140,7 @@ export function assessTerritory(self, nearbyDragons = [], context = {}) {
   // Dragões domesticados ou pertencentes ao jogador são visitantes conhecidos,
   // não invasores hostis por padrão.
   const threateningVisitors = visitors.filter(other =>
-    other.isTamed !== true && other.isOwned !== true && other.hostile !== false
+    other.isTamed !== true && other.isOwned !== true
   );
   const migratingEarth = self.species !== "earth" && self.species !== "lava"
     ? threateningVisitors.filter(other => other.species === "earth" && other.temporaryTerritoryMigrationDue === true)
