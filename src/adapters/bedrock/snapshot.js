@@ -1,7 +1,10 @@
+import { getBehaviorProfile } from "../../species/behavior-profiles.js";
+
 const SPECIES_PREFIX = "ds:species:";
 const NUMBER_PREFIXES = Object.freeze({
   energy: "ds:energy:",
   hunger: "ds:hunger:",
+  aggression: "ds:aggression:",
   spawnTick: "ds:spawn_tick:"
 });
 
@@ -15,6 +18,15 @@ export function readTaggedNumber(tags, prefix, fallback) {
 export function readSpecies(tags) {
   const tag = tags.find(value => value.startsWith(SPECIES_PREFIX));
   return tag ? tag.slice(SPECIES_PREFIX.length) : null;
+}
+
+function readTaggedId(tags, prefix) {
+  const tag = tags.find(value => value.startsWith(prefix));
+  return tag ? tag.slice(prefix.length) : null;
+}
+
+function hasRelationshipTag(tags, prefix, id) {
+  return tags.includes(prefix) || (id != null && tags.includes(`${prefix}:${id}`));
 }
 
 export function distanceBetween(a, b) {
@@ -33,13 +45,23 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
   const species = readSpecies(tags);
   if (!species) return null;
 
+  const profile = getBehaviorProfile(species);
   const healthComponent = entity.getComponent?.("minecraft:health");
   const health = Number.isFinite(healthComponent?.currentValue)
     ? healthComponent.currentValue
     : 100;
   const energy = readTaggedNumber(tags, NUMBER_PREFIXES.energy, 100);
   const hunger = readTaggedNumber(tags, NUMBER_PREFIXES.hunger, 100);
+  const aggression = Math.max(0, Math.min(1,
+    readTaggedNumber(tags, NUMBER_PREFIXES.aggression, profile.aggression ?? 0)
+  ));
   const spawnTick = readTaggedNumber(tags, NUMBER_PREFIXES.spawnTick, currentTick);
+  const territoryId = readTaggedId(tags, "ds:territory:");
+  const isTamed = tags.includes("ds:tamed");
+  const isOwned = tags.includes("ds:owned") || tags.some(tag => tag.startsWith("ds:owner:"));
+  const injurySeverity = tags.includes("ds:injury:severe") ? "severe" :
+    tags.includes("ds:injury:moderate") ? "moderate" :
+    tags.includes("ds:injury:minor") ? "minor" : "none";
 
   const nearbyDragons = [];
   const nearbyPrey = [];
@@ -56,10 +78,16 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
         distance,
         health: Number(other.getComponent?.("minecraft:health")?.currentValue ?? 100),
         energy: readTaggedNumber(otherTags, NUMBER_PREFIXES.energy, 100),
+        hunger: readTaggedNumber(otherTags, NUMBER_PREFIXES.hunger, 100),
+        isTamed: otherTags.includes("ds:tamed"),
+        isOwned: otherTags.includes("ds:owned") || otherTags.some(tag => tag.startsWith("ds:owner:")),
+        knownToSelf: hasRelationshipTag(otherTags, "ds:known", entity.id),
+        hostile: hasRelationshipTag(otherTags, "ds:hostile", entity.id),
+        nearNest: otherTags.includes("ds:near_nest"),
         lifeStage: otherTags.includes("ds:stage:hatchling") ? "hatchling" :
           otherTags.includes("ds:stage:juvenile") ? "juvenile" : "adult",
         temporaryTerritoryMigrationDue: otherTags.includes("ds:migration_due"),
-        territoryId: otherTags.find(tag => tag.startsWith("ds:territory:"))?.slice("ds:territory:".length) ?? null
+        territoryId: readTaggedId(otherTags, "ds:territory:")
       });
       continue;
     }
@@ -89,6 +117,13 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
   return {
     id: entity.id,
     species,
+    aggression,
+    territoryId,
+    isTamed,
+    isOwned,
+    hasYoung: tags.includes("ds:has_young"),
+    injury: { severity: injurySeverity },
+    immediateDanger: environmentContext.immediateHazard === true || tags.includes("ds:immediate_danger"),
     energy,
     hunger,
     health,
@@ -104,7 +139,6 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
     environment: environmentContext.environment ?? "unknown",
     safeToExplore: environmentContext.immediateHazard !== true,
     safeToRest: environmentContext.immediateHazard !== true,
-    threatDetected: nearbyHostiles.length > 0 || environmentContext.hostileMobsNearby === true,
     ownerNearby: tags.includes("ds:owner_nearby"),
     windAbilityRequested: tags.includes("ds:wind_gust_requested"),
     bondLevel: readTaggedNumber(tags, "ds:bond:", 0),
