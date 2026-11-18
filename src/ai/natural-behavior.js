@@ -84,6 +84,18 @@ export function assessNaturalBehavior(state, profile) {
     return { eligible: true, action: "play_and_practice_movement", category: "play", reason: "young_play_instinct" };
   }
 
+  const sociability = trait(state, profile, "sociability", 0.5);
+  if (state.socialOpportunity === true && state.knownDragonNearby === true &&
+      safeToExplore && sociability >= 0.6) {
+    return { eligible: true, action: "approach_known_dragon_peacefully", category: "social", reason: "sociability" };
+  }
+
+  const independence = trait(state, profile, "independence", 0.5);
+  if (state.soloExplorationOpportunity === true && safeToExplore && independence >= 0.7 &&
+      state.hunger > 20 && state.energy > 25) {
+    return { eligible: true, action: "explore_independently_nearby", category: "exploration", reason: "independence" };
+  }
+
   const curiosity = trait(state, profile, "curiosity", 0.5);
   if (state.explorationOpportunity === true && safeToExplore && curiosity >= 0.6 &&
       state.hunger > 20 && state.energy > 25) {
