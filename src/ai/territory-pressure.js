@@ -82,6 +82,9 @@ export function applyDomainRaid(domain, territory, {
     .find(event => event.type === "annexed_to_domain");
   const previousOwnerGroupId = annexation?.fromOwnerGroupId ?? territory.ownerGroupId;
   const previousDomainId = annexation?.previousDomainId ?? null;
+  if (released && previousDomainId && !sourceDomain) {
+    throw new Error("É necessário informar o domínio anterior para restaurar uma região de outro reino.");
+  }
 
   const nextDomain = {
     ...domain,
