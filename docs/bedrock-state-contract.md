@@ -53,3 +53,22 @@ O adaptador já lê os campos descritos quando as tags estão presentes. A cria�
 persistente de territórios, a atribuição automática de propriedade/domesticação
 e a conquista física continuam sendo tarefas separadas. Elas não são consideradas
 concluídas por esta alteração e exigirão validação posterior no Minecraft.
+
+
+## Sinais de rotina e personalidade
+
+O snapshot também lê os seguintes sinais quando fornecidos pelo adaptador ou por tags:
+- `ds:sleep_requested`
+- `ds:grooming_needed`
+- `ds:bathing_opportunity`
+- `ds:play_opportunity`
+- `ds:exploration_opportunity`
+- `ds:quiet_observation`
+- `ds:temperature:too_hot` ou `ds:temperature:too_cold`
+- `ds:trait:curiosity:<0..1>`
+- `ds:trait:courage:<0..1>`
+- `ds:trait:sociability:<0..1>`
+- `ds:trait:independence:<0..1>`
+- `ds:trait:playfulness:<0..1>`
+
+Essas tags são sinais de entrada, não produtores automáticos. Valores de personalidade ausentes permanecem ausentes no snapshot; o MIS usa o perfil da espécie ou padrões conservadores como fallback. As atividades dependem de condições seguras e nunca substituem as prioridades de sobrevivência.
