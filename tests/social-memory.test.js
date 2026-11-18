@@ -54,5 +54,6 @@ test("gera tags compatíveis com o snapshot e codifica IDs", () => {
 test("impede tempo regressivo e identificadores vazios", () => {
   const memory = updateSocialMemory([{ entityId: "dragon-f", lastSeenTick: 50 }], [], 40);
   assert.equal(memory[0].lastSeenTick, 50);
+  assert.throws(() => updateSocialMemory(memory, [{ entityId: "dragon-f" }], 40), /não pode retroceder/);
   assert.throws(() => updateSocialMemory([], [{ entityId: "" }], 1), /identificador/);
 });
