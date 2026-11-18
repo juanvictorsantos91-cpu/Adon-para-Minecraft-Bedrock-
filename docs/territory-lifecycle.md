@@ -18,3 +18,13 @@ O módulo `src/ai/territory-state.js` mantém o estado lógico de um território
 
 ## Próxima integração
 A camada de decisão territorial poderá solicitar uma operação, mas somente o sistema que confirmar o evento de conquista poderá chamar `transferTerritory`. A implementação Bedrock futura deverá persistir os registros e recuperar o estado ao carregar o mundo.
+
+
+## Domínios e anexação (reinos)
+Um domínio representa um reino composto por vários territórios independentes.
+- `createTerritoryDomain` inicia um domínio com uma capital e sua primeira região.
+- `annexTerritoryToDomain` incorpora uma região conquistada sem abandonar nem apagar a região original ou a região conquistada.
+- A região anexada conserva seu ID, centro, raio e histórico, mas passa a pertencer ao domínio vencedor.
+- Se a região pertencia a outro domínio, a operação exige o registro do domínio de origem, remove a região da lista antiga e atualiza seu histórico.
+- Se o domínio derrotado perder sua última região, passa ao estado `dissolved`; se ainda tiver regiões, continua ativo e pode escolher nova capital quando a antiga for anexada.
+- A anexação lógica só deve ser chamada depois que o sistema de disputa confirmar a conquista. Ela não altera blocos nem fronteiras físicas do mundo.
