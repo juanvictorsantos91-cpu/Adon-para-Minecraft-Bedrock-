@@ -82,6 +82,8 @@ export function socialMemoryTags(memory = []) {
     return [
       `ds:known:${safeId}`,
       `ds:relation:${safeId}:trust:${clamp(item.trust ?? 0, 0, MAX_TRUST)}`,
+      ...(Number.isInteger(item.lastSeenTick) && item.lastSeenTick >= 0 ? [`ds:seen:${safeId}:${item.lastSeenTick}`] : []),
+      ...(Number.isInteger(item.encounters) && item.encounters > 0 ? [`ds:encounters:${safeId}:${item.encounters}`] : []),
       ...(item.hostile ? [`ds:hostile:${safeId}`] : [])
     ];
   }).flat();
