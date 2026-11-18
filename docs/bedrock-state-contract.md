@@ -80,4 +80,6 @@ O adaptador `src/adapters/bedrock/personality-writer.js` fornece `initializeDrag
 - `ds:relation:<entity-id>:trust:<0-3>`: confiança social limitada.
 - `ds:hostile:<entity-id>`: hostilidade anteriormente observada.
 
-Os identificadores são codificados com URL encoding ao gerar tags pelo módulo social. O snapshot aceita tags legadas sem codificação. A memória é limitada a 32 indivíduos recentes no núcleo; sua gravação persistente e atualização automática ainda não estão ligadas ao ciclo principal.
+Os identificadores são codificados com URL encoding ao gerar tags pelo módulo social. O snapshot aceita tags legadas sem codificação. A memória é limitada a 32 indivíduos recentes no núcleo. O ciclo principal do MIS atualiza essa memória a cada decisão quando recebe `currentTick`, reconhece dragões observados e devolve `socialMemory` e `socialMemoryTags` no resultado, inclusive quando uma necessidade vital domina a ação. Confiança e hostilidade só mudam quando o adaptador fornece eventos pontuais em `socialObservations` com `interaction: "peaceful"`, `"protective"` ou `"hostile"`. Esses eventos devem ser consumidos uma única vez pelo chamador, não reenviados em todos os ticks.
+
+A gravação efetiva das tags na entidade e a persistência entre reinicializações ainda dependem do adaptador Bedrock e do armazenamento do mundo; a integração lógica do MIS não equivale a persistência automática.
