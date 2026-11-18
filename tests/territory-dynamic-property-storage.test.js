@@ -33,7 +33,7 @@ test("grava e restaura estado territorial dividido em vários chunks UTF-8", () 
   const large = state(1200);
   large.territories[0].note = "🐉".repeat(500);
   assert.ok(storage.save(large) > 256);
-  assert.deepEqual(storage.load(), { schemaVersion: 1, ...large });
+  assert.deepEqual(storage.load(), { schemaVersion: 2, ...large });
 });
 
 test("uma falha antes da troca do ponteiro preserva a última gravação válida", () => {
@@ -42,7 +42,7 @@ test("uma falha antes da troca do ponteiro preserva a última gravação válida
   storage.save(state(100));
   world.failAfterSuccessfulWrites(1);
   assert.throws(() => storage.save(state(200, "-new")), /simulated write failure/);
-  assert.deepEqual(storage.load(), { schemaVersion: 1, ...state(100) });
+  assert.deepEqual(storage.load(), { schemaVersion: 2, ...state(100) });
 });
 
 test("recupera o slot anterior se o slot apontado estiver corrompido", () => {
@@ -53,7 +53,7 @@ test("recupera o slot anterior se o slot apontado estiver corrompido", () => {
   const active = world.getDynamicProperty("ds:territory_v1:active");
   const manifest = JSON.parse(world.getDynamicProperty(`ds:territory_v1:${active}:manifest`));
   world.setDynamicProperty(`ds:territory_v1:${active}:0`, "corrupted");
-  assert.deepEqual(storage.load(), { schemaVersion: 1, ...state(100) });
+  assert.deepEqual(storage.load(), { schemaVersion: 2, ...state(100) });
   assert.ok(manifest.chunks >= 1);
 });
 
