@@ -58,3 +58,6 @@ Este documento registra uma direção de design, não uma implementação conclu
 
 ## Atualização de implementação
 A primeira camada de rotina natural foi criada e integrada às regras do MIS: sono, busca de sombra/abrigo aquecido, higiene, banho, brincadeira juvenil e exploração por curiosidade. O módulo também aceita traços individuais de curiosidade e brincadeira. As atividades dependem de sinais contextuais fornecidos pelo adaptador; sem esses sinais, o comportamento anterior permanece.
+
+## Personalidade individual já estruturada
+O módulo `src/species/personality.js` gera cinco traços determinísticos por identificador de indivíduo, com pequenas variações em torno do perfil da espécie. O snapshot lê os valores persistidos como tags `ds:trait:<nome>:<valor>`. Ainda falta conectar o gerador ao processo de nascimento e gravar as tags no mundo.
