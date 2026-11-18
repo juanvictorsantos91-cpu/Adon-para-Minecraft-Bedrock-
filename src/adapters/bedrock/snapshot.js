@@ -41,6 +41,17 @@ function readTaggedId(tags, prefix) {
   return tag ? tag.slice(prefix.length) : null;
 }
 
+function readTrait(tags, name) {
+  const value = readTaggedNumber(tags, `ds:trait:${name}:`, undefined);
+  return Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : undefined;
+}
+
+function readTemperatureStress(tags, environmentContext) {
+  if (tags.includes("ds:temperature:too_hot")) return "too_hot";
+  if (tags.includes("ds:temperature:too_cold")) return "too_cold";
+  return environmentContext.temperatureStress ?? null;
+}
+
 function hasRelationshipTag(tags, prefix, id) {
   return tags.includes(prefix) || (id != null && tags.includes(`${prefix}:${id}`));
 }
@@ -154,6 +165,20 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
     environment: environmentContext.environment ?? "unknown",
     safeToExplore: environmentContext.immediateHazard !== true,
     safeToRest: environmentContext.immediateHazard !== true,
+    sleepRequested: tags.includes("ds:sleep_requested"),
+    groomingNeeded: tags.includes("ds:grooming_needed"),
+    bathingOpportunity: tags.includes("ds:bathing_opportunity") || environmentContext.bathingOpportunity === true,
+    playOpportunity: tags.includes("ds:play_opportunity") || environmentContext.playOpportunity === true,
+    explorationOpportunity: tags.includes("ds:exploration_opportunity") || environmentContext.explorationOpportunity === true,
+    quietObservationOpportunity: tags.includes("ds:quiet_observation") || environmentContext.quietObservationOpportunity === true,
+    temperatureStress: readTemperatureStress(tags, environmentContext),
+    personality: Object.fromEntries([
+      ["curiosity", readTrait(tags, "curiosity")],
+      ["courage", readTrait(tags, "courage")],
+      ["sociability", readTrait(tags, "sociability")],
+      ["independence", readTrait(tags, "independence")],
+      ["playfulness", readTrait(tags, "playfulness")]
+    ].filter(([, value]) => Number.isFinite(value))),
     ownerNearby: tags.includes("ds:owner_nearby"),
     windAbilityRequested: tags.includes("ds:wind_gust_requested"),
     bondLevel: readTaggedNumber(tags, "ds:bond:", 0),
