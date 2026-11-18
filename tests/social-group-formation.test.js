@@ -30,7 +30,8 @@ test("água exige o tamanho-alvo do perfil e ignora espécies incompatíveis", (
     ]
   });
   assert.equal(result.targetGroupSize, 3);
-  assert.equal(result.shouldForm, false);
+  assert.equal(result.shouldForm, true);
+  assert.equal(result.status, "formation_candidate");
   assert.deepEqual(result.candidateIds, ["w2", "w3"]);
 });
 
