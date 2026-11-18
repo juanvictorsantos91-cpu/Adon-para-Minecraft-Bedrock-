@@ -5,59 +5,41 @@ Fazer cada dragão parecer um animal com hábitos e preferências próprios, sem
 
 O MIS continua sendo baseado em regras. As decisões combinam:
 1. Necessidades vitais (saúde, fome, energia).
-2. Segurança e ameaças.
+2. Segurança e ameaças reais.
 3. Perfil comportamental da espécie.
 4. Traços individuais estáveis.
 5. Contexto recente (horário, clima, relações e acontecimentos lembrados).
 
-## Comportamentos propostos
+## Comportamentos
+- Alternar entre procurar alimento, explorar, patrulhar, descansar, dormir e observar.
+- Filhotes e juvenis podem brincar e praticar movimentos quando estão seguros.
+- Dragões podem se aproximar de indivíduos conhecidos conforme sua sociabilidade.
+- Indivíduos mais independentes podem preferir pequenas explorações individuais.
+- Comunicação por postura, aproximação, afastamento, vocalização e alertas.
+- Vínculos e memória social limitada para reconhecer membros do grupo, parceiros e treinador.
 
-### 1. Rotina natural
-Alternar entre procurar alimento, explorar, patrulhar, descansar, dormir e observar. A rotina é flexível: necessidades e perigos sempre podem interrompê-la.
-
-### 2. Autocuidado
-Ações curtas de limpeza, banho, aquecimento, busca por sombra e abrigo. Cada espécie recebe preferências compatíveis com seu habitat e fisiologia.
-
-### 3. Brincadeira e curiosidade
-Filhotes brincam e investigam com maior frequência. Adultos também podem explorar objetos ou locais, desde que estejam seguros e sem necessidades urgentes.
-
-### 4. Comunicação
-Sinais simples por postura, aproximação, afastamento, vocalização e alerta. O significado depende da espécie e do relacionamento entre os indivíduos.
-
-### 5. Medo e estresse
-Ameaças recentes podem aumentar temporariamente a cautela. O dragão pode procurar abrigo, evitar a origem do perigo e recuperar a tranquilidade gradualmente.
-
-### 6. Vínculos e memória
-Reconhecer indivíduos conhecidos, lembrar ameaças recentes e demonstrar preferência por membros do grupo, parceiro ou treinador. Memórias devem ser limitadas e expirar quando deixam de ser úteis.
-
-## Traços individuais
-Gerar no nascimento cinco tendências estáveis, em escala de 0 a 1:
+## Personalidade individual
+Gerar no nascimento quatro tendências estáveis, em escala de 0 a 1:
 - curiosidade;
-- coragem;
 - sociabilidade;
 - independência;
-- brincadeira.
+- vontade de brincar.
 
-Os valores individuais complementam, mas não substituem, o perfil da espécie. Dois dragões da mesma espécie podem agir de modo diferente sem perder seu comportamento natural.
+Medo, estresse e coragem não são traços de personalidade neste projeto. A resposta a ameaças continua baseada na espécie, saúde, energia e contexto real. Higiene, banho e limpeza de escamas foram retirados por não acrescentarem o suficiente à experiência de jogo.
 
 ## Regras de prioridade
 - Saúde, fome, energia crítica e perigo imediato têm prioridade máxima.
 - Proteção de filhotes, ninho e vínculos importantes vem em seguida, conforme o contexto.
-- Rotina, autocuidado, socialização e brincadeiras só ocorrem quando são seguros.
+- Rotina, socialização e brincadeiras só ocorrem quando são seguros.
+- Condições físicas extremas, como calor ou frio perigosos, continuam sendo tratadas como riscos ambientais, não como emoções.
 - Uma ação ambiental não deve ser repetida continuamente: cada comportamento precisa de intervalo ou condição de encerramento.
 
-## Implementação por etapas
-1. Rotina e autocuidado, usando os dados já percebidos pelo adaptador.
-2. Traços individuais e pequenas variações de decisão.
-3. Estresse temporário e recuperação.
-4. Comunicação e memória social simplificada.
+## Próximas etapas técnicas
+1. Conectar o gerador de personalidade ao nascimento e persistir os quatro traços.
+2. Produzir sinais de sono, exploração, brincadeira e observação no adaptador Bedrock.
+3. Integrar anexação territorial à confirmação real de conquista.
+4. Persistir domínios e desgaste territorial no mundo.
+5. Implementar comunicação e memória social simplificada.
 
 ## Limites
-Este documento registra uma direção de design, não uma implementação concluída. As ações físicas no Minecraft precisam de adaptadores próprios e validação posterior no jogo. Não introduzir dezenas de novas variáveis persistentes antes de confirmar quais são realmente necessárias.
-
-
-## Atualização de implementação
-A primeira camada de rotina natural foi criada e integrada às regras do MIS: sono, busca de sombra/abrigo aquecido, higiene, banho, brincadeira juvenil e exploração por curiosidade. O módulo também aceita traços individuais de curiosidade e brincadeira. As atividades dependem de sinais contextuais fornecidos pelo adaptador; sem esses sinais, o comportamento anterior permanece.
-
-## Personalidade individual já estruturada
-O módulo `src/species/personality.js` gera cinco traços determinísticos por identificador de indivíduo, com pequenas variações em torno do perfil da espécie. O snapshot lê os valores persistidos como tags `ds:trait:<nome>:<valor>`. Ainda falta conectar o gerador ao processo de nascimento e gravar as tags no mundo.
+As ações físicas no Minecraft precisam de adaptadores próprios e validação posterior no jogo. Não introduzir dezenas de variáveis persistentes antes de confirmar quais são realmente necessárias.
