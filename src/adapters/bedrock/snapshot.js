@@ -49,7 +49,7 @@ function readTrait(tags, name) {
 function readTemperatureCondition(tags, environmentContext) {
   if (tags.includes("ds:temperature:too_hot")) return "too_hot";
   if (tags.includes("ds:temperature:too_cold")) return "too_cold";
-  return environmentContext.temperatureStress ?? null;
+  return environmentContext.temperatureCondition ?? null;
 }
 
 function hasRelationshipTag(tags, prefix, id) {
