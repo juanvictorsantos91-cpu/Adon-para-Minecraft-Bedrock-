@@ -46,7 +46,7 @@ function readTrait(tags, name) {
   return Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : undefined;
 }
 
-function readTemperatureStress(tags, environmentContext) {
+function readTemperatureCondition(tags, environmentContext) {
   if (tags.includes("ds:temperature:too_hot")) return "too_hot";
   if (tags.includes("ds:temperature:too_cold")) return "too_cold";
   return environmentContext.temperatureStress ?? null;
@@ -169,7 +169,7 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
     playOpportunity: tags.includes("ds:play_opportunity") || environmentContext.playOpportunity === true,
     explorationOpportunity: tags.includes("ds:exploration_opportunity") || environmentContext.explorationOpportunity === true,
     quietObservationOpportunity: tags.includes("ds:quiet_observation") || environmentContext.quietObservationOpportunity === true,
-    temperatureStress: readTemperatureStress(tags, environmentContext),
+    temperatureCondition: readTemperatureCondition(tags, environmentContext),
     personality: Object.fromEntries([
       ["curiosity", readTrait(tags, "curiosity")],
       ["sociability", readTrait(tags, "sociability")],
