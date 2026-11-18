@@ -114,6 +114,8 @@ test("rejeita gravação de revisão antiga e remoção com tick retroativo", ()
   const group = lifecycle.form({
     id: "fire-alpha", species: "fire", dragons: fireRoster(), createdTick: 50
   });
-  assert.throws(() => lifecycle.repository.save({ ...group, revision: 0 }), /revisão mais recente/);
+  const newer = { ...group, revision: 2, updatedTick: 60 };
+  lifecycle.repository.save(newer);
+  assert.throws(() => lifecycle.repository.save(group), /revisão mais recente/);
   assert.throws(() => lifecycle.repository.remove("fire-alpha", 10), /Tick de remoção/);
 });
