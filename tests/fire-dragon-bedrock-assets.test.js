@@ -32,6 +32,16 @@ test("Fire Dragon geometry contains the approved basic anatomy", async () => {
   ]) assert.ok(names.has(required), `Missing required bone: ${required}`);
 
   assert.equal([...names].filter((name) => name.includes("_leg_")).length, 4);
+  assert.equal([...names].filter((name) => name.startsWith("wing_") && !name.startsWith("wing_membrane_")).length, 2);
+  assert.ok(names.has("chest_core"));
+  assert.ok(names.has("shoulder_armor_left") && names.has("shoulder_armor_right"));
+  const byName = Object.fromEntries(bones.map((bone) => [bone.name, bone]));
+  assert.ok((byName.wing_left.cubes?.length ?? 0) >= 6);
+  assert.ok((byName.wing_right.cubes?.length ?? 0) >= 6);
+  assert.ok((byName.tail_base.cubes?.length ?? 0) >= 3);
+  assert.ok((byName.head.cubes?.length ?? 0) >= 4);
+  const rotatedCubes = bones.flatMap((bone) => bone.cubes ?? []).filter((cube) => cube.rotation?.some((angle) => angle !== 0));
+  assert.ok(rotatedCubes.length >= 10, "Expected rotated parts to avoid a purely box-like silhouette");
   for (const bone of bones) for (const cube of bone.cubes ?? []) {
     assert.equal(cube.origin.length, 3);
     assert.equal(cube.size.length, 3);
@@ -104,14 +114,15 @@ test("Bedrock dragon discovery uses the declared dragon_survival family", async 
   assert.ok(main.includes('entity.addTag("ds:dragon")'));
 });
 
-test("Dragon Survival 0.1.3 manifests and RP dependency are synchronized", async () => {
+test("Dragon Survival 0.1.4 manifests and RP dependency are synchronized", async () => {
   const behavior = await readJson("../bedrock/behavior_pack/manifest.json");
   const resource = await readJson("../bedrock/resource_pack/manifest.json");
 
-  assert.deepEqual(behavior.header.version, [0, 1, 3]);
-  assert.deepEqual(resource.header.version, [0, 1, 3]);
-  assert.deepEqual(behavior.modules.map((module) => module.version), [[0, 1, 3], [0, 1, 3]]);
-  assert.deepEqual(resource.modules[0].version, [0, 1, 3]);
+  assert.deepEqual(behavior.header.version, [0, 1, 4]);
+  assert.deepEqual(resource.header.version, [0, 1, 4]);
+  assert.deepEqual(behavior.modules.map((module) => module.version), [[0, 1, 4], [0, 1, 4]]);
+  assert.deepEqual(resource.modules[0].version, [0, 1, 4]);
   assert.deepEqual(resource.dependencies[0].version, behavior.header.version);
+  assert.deepEqual(behavior.header.version, [0, 1, 4]);
   assert.equal(resource.dependencies[0].uuid, behavior.header.uuid);
 });
