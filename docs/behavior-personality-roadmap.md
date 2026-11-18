@@ -43,3 +43,9 @@ Medo, estresse e coragem não são traços de personalidade neste projeto. A res
 
 ## Limites
 As ações físicas no Minecraft precisam de adaptadores próprios e validação posterior no jogo. Não introduzir dezenas de variáveis persistentes antes de confirmar quais são realmente necessárias.
+
+
+## Continuação: inicialização e persistência
+- Criado um adaptador que gera e grava as quatro tags de personalidade, preservando valores existentes. Falta conectá-lo ao ponto real de nascimento/spawn.
+- Criado um codec de estado territorial com versão e um adaptador de armazenamento por callbacks. Falta conectar os callbacks à persistência do mundo Bedrock, após validar limites e comportamento da API na versão-alvo.
+- Foram adicionados testes automatizados para os dois adaptadores; ainda precisam ser executados em ambiente Node do projeto.
