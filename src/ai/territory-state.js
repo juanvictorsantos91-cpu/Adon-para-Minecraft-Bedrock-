@@ -164,6 +164,9 @@ export function createTerritoryDomain({ id, ownerGroupId, capitalTerritoryId, cr
     ownerGroupId: owner,
     capitalTerritoryId: capitalId,
     territoryIds: [capitalId],
+    coreTerritoryIds: [capitalId],
+    expansionIntegrity: {},
+    lastRaidTick: createdTick,
     status: "active",
     createdTick,
     updatedTick: createdTick,
@@ -227,6 +230,8 @@ export function annexTerritoryToDomain(domain, territory, {
   const nextDomain = {
     ...domain,
     territoryIds: [...domain.territoryIds, territory.id],
+    coreTerritoryIds: [...(domain.coreTerritoryIds ?? [domain.territoryIds[0]] )],
+    expansionIntegrity: { ...(domain.expansionIntegrity ?? {}), [territory.id]: 1 },
     updatedTick: tick,
     revision: domain.revision + 1,
     history: [...domain.history, {
