@@ -252,6 +252,7 @@ export function annexTerritoryToDomain(domain, territory, {
     nextSourceDomain = {
       ...sourceDomain,
       territoryIds: remainingIds,
+      expansionIntegrity: Object.fromEntries(Object.entries(sourceDomain.expansionIntegrity ?? {}).filter(([id]) => id !== territory.id)),
       capitalTerritoryId: sourceDomain.capitalTerritoryId === territory.id
         ? (remainingIds[0] ?? null) : sourceDomain.capitalTerritoryId,
       status: dissolved ? "dissolved" : "active",
