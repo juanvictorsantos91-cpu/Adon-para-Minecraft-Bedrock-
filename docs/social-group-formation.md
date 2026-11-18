@@ -1,19 +1,34 @@
-# Avaliação de formação de grupos sociais
+# Organização social, liderança e patrulhas territoriais
 
-O módulo `src/ai/social-group-formation.js` transforma observações explícitas de entidades próximas em uma proposta determinística de formação de grupo.
+## Tamanhos de referência
 
-## Políticas usadas
+| Espécie | Membros por grupo | Organização |
+|---|---:|---|
+| Fogo | 6 | Grupo territorial com vínculos de casal internos |
+| Água | 6 | Grupo territorial de patrulha distribuída |
+| Gelo | 6 | Grupo territorial com vínculos de casal internos |
+| Terra | 10 | Grupo grande de proteção e patrulha |
+| Lava | 8 | Grupo territorial grande |
+| Vento | 6 | Grupo territorial móvel e disperso |
+| Som | 6 | Grupo territorial coordenado por sinais |
+| Elétrico | 1 | Solitário; ritual de tempestade continua temporário |
+| Veneno | 1 | Solitário |
+| Plasma | 1 | Solitário |
 
-- Fogo e Gelo: pares (tamanho-alvo 2).
-- Água: pequenos grupos (tamanho-alvo 3).
-- Terra e Lava: grupos grandes (tamanho-alvo 6); podem ser compatíveis entre si.
-- Elétrico, Veneno e Plasma: permanecem solitários. O ritual de tempestade dos Elétricos continua sendo uma exceção comportamental temporária, não uma associação permanente.
-- Vento e Som: seguem os tamanhos-alvo definidos nos perfis atuais.
+Os tamanhos são alvos mínimos para formação. Grupos podem crescer quando houver capacidade territorial e membros disponíveis; não há limite máximo artificial nesta etapa.
 
-## Critérios
+## Pares dentro dos grupos
 
-Um candidato precisa ter ID e espécie cadastrados, ser da mesma espécie (ou Terra/Lava), estar dentro do raio informado, não estar indisponível e não possuir associação explícita a outro grupo. Duplicatas são descartadas.
+Fogo e Gelo podem registrar vínculos de casal como pares internos sem dividir o grupo territorial em pequenas famílias independentes. Os membros sem vínculo de casal continuam integrados ao mesmo grupo.
 
-## Limite de segurança
+## Patrulha distribuída
 
-A função retorna uma intenção `request_group_formation_confirmation`; ela não cria IDs, não altera tags, não salva grupos e não considera proximidade como prova de amizade ou associação. O runtime Bedrock ainda precisa de um evento confiável de confirmação antes de chamar o gravador de associação. Nenhuma formação automática foi ativada no jogo nesta etapa.
+O grupo não precisa caminhar como uma manada. Seus indivíduos ou pares percorrem setores diferentes do território, em patrulhas independentes. O plano de patrulha só usa setores territoriais reais fornecidos pelo mundo; não cria coordenadas nem fronteiras fictícias. O líder supervisiona a cobertura e a resposta a ameaças.
+
+## Liderança
+
+Cada grupo possui um líder. A seleção considera liderança, experiência, saúde, energia, proteção do grupo e agressividade controlada. O líder recebe papel explícito `territory_leader` e marcador lógico `leader`; o destaque visual final no Minecraft ainda depende de integração de recursos/entidade.
+
+## Limites de integração
+
+A criação organizada só ocorre depois de confirmação explícita da formação. Esta camada é lógica e testável; não foi conectada ainda a eventos reais de patrulha, combate, navegação ou desenho visual dentro do Bedrock.
