@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [feature/dragon-survival-core]
+    branches: [feature/dragon-survival-core, feature/mis-bedrock-data-contract]
 
 jobs:
   node-tests:
