@@ -267,3 +267,34 @@ export function getDomainTerritoryIds(domain) {
   }
   return [...domain.territoryIds];
 }
+
+
+/** Repositório em memória para domínios; não grava dados no mundo Bedrock. */
+export class InMemoryTerritoryDomainRepository {
+  #domains = new Map();
+
+  get(id) {
+    const domain = this.#domains.get(id);
+    return domain ? structuredClone(domain) : null;
+  }
+
+  save(domain) {
+    if (!domain || typeof domain.id !== "string" ||
+        !["active", "dissolved"].includes(domain.status) ||
+        !Array.isArray(domain.territoryIds)) {
+      throw new TypeError("Registro de domínio inválido.");
+    }
+    const current = this.#domains.get(domain.id);
+    if (current && domain.revision < current.revision) {
+      throw new Error("Não é possível sobrescrever uma revisão mais recente.");
+    }
+    this.#domains.set(domain.id, structuredClone(domain));
+    return this.get(domain.id);
+  }
+
+  list({ status } = {}) {
+    return [...this.#domains.values()]
+      .filter(domain => status === undefined || domain.status === status)
+      .map(domain => structuredClone(domain));
+  }
+}
