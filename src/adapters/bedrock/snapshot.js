@@ -38,7 +38,9 @@ function readHealthPercent(entity) {
 
 function readTaggedId(tags, prefix) {
   const tag = tags.find(value => value.startsWith(prefix));
-  return tag ? tag.slice(prefix.length) : null;
+  if (!tag) return null;
+  const value = tag.slice(prefix.length);
+  try { return decodeURIComponent(value); } catch { return value; }
 }
 
 function readTrait(tags, name) {
