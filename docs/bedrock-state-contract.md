@@ -59,14 +59,11 @@ concluídas por esta alteração e exigirão validação posterior no Minecraft.
 
 O snapshot também lê os seguintes sinais quando fornecidos pelo adaptador ou por tags:
 - `ds:sleep_requested`
-- `ds:grooming_needed`
-- `ds:bathing_opportunity`
 - `ds:play_opportunity`
 - `ds:exploration_opportunity`
 - `ds:quiet_observation`
 - `ds:temperature:too_hot` ou `ds:temperature:too_cold`
 - `ds:trait:curiosity:<0..1>`
-- `ds:trait:courage:<0..1>`
 - `ds:trait:sociability:<0..1>`
 - `ds:trait:independence:<0..1>`
 - `ds:trait:playfulness:<0..1>`
