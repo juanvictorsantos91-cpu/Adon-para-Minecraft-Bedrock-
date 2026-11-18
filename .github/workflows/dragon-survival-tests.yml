@@ -22,6 +22,8 @@ jobs:
         run: node --check bedrock/behavior_pack/scripts/main.js
       - name: Check generated core syntax
         run: node --check bedrock/behavior_pack/scripts/core/adapters/bedrock/dragon-initializer.js
+      - name: Check social memory adapter syntax
+        run: node --check bedrock/behavior_pack/scripts/core/adapters/bedrock/social-memory-writer.js
       - name: Run unit tests
         run: npm test
       - name: Run electric dragon simulation
