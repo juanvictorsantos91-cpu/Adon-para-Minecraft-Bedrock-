@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createDragonGroup, updateDragonGroup, InMemoryDragonGroupRepository } from "../src/ai/dragon-groups.js";
-import { writeDragonGroupMembership } from "../src/adapters/bedrock/dragon-group-writer.js";
+import { writeDragonGroupMembership, writeDragonGroupLeadership } from "../src/adapters/bedrock/dragon-group-writer.js";
 
 test("cria grupo com identidade estável e líder membro", () => {
   const group = createDragonGroup({ id:"flame-alpha", species:"fire", memberIds:["f1","f2"], createdTick:100 });
@@ -50,4 +50,15 @@ test("writer substitui somente a tag de grupo e preserva tags alheias", () => {
   assert.ok(tags.has("ds:species:fire") && tags.has("ds:energy:80"));
   writeDragonGroupMembership(entity,null);
   assert.equal([...tags].some(t=>t.startsWith("ds:group:")),false);
+});
+
+test("writer marca e remove líder sem afetar tags de grupo ou espécie", () => {
+  const tags = new Set(["ds:species:fire", "ds:group:flame-01", "ds:energy:80"]);
+  const entity = { getTags: () => [...tags], addTag: tag => tags.add(tag), removeTag: tag => tags.delete(tag) };
+  writeDragonGroupLeadership(entity, true);
+  assert.ok(tags.has("ds:leader"));
+  assert.ok(tags.has("ds:group:flame-01") && tags.has("ds:species:fire"));
+  writeDragonGroupLeadership(entity, false);
+  assert.equal(tags.has("ds:leader"), false);
+  assert.ok(tags.has("ds:energy:80"));
 });
