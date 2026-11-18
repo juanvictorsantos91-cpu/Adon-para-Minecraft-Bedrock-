@@ -14,3 +14,16 @@ export function writeDragonGroupMembership(entity, groupId) {
   if (groupId !== null) entity.addTag(prefix + encodeURIComponent(groupId.trim()));
   return groupId;
 }
+
+/** Marca o líder com uma tag própria, preservando identidade de grupo e demais tags. */
+export function writeDragonGroupLeadership(entity, isLeader) {
+  if (!entity || typeof entity.getTags !== "function" ||
+      typeof entity.addTag !== "function" || typeof entity.removeTag !== "function") {
+    throw new TypeError("Entidade precisa oferecer getTags, addTag e removeTag.");
+  }
+  if (typeof isLeader !== "boolean") throw new TypeError("isLeader precisa ser booleano.");
+  const tag = "ds:leader";
+  if (isLeader) entity.addTag(tag);
+  else entity.removeTag(tag);
+  return isLeader;
+}
