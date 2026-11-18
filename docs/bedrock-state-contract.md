@@ -82,4 +82,8 @@ O adaptador `src/adapters/bedrock/personality-writer.js` fornece `initializeDrag
 
 Os identificadores são codificados com URL encoding ao gerar tags pelo módulo social. O snapshot aceita tags legadas sem codificação. A memória é limitada a 32 indivíduos recentes no núcleo. O ciclo principal do MIS atualiza essa memória a cada decisão quando recebe `currentTick`, reconhece dragões observados e devolve `socialMemory` e `socialMemoryTags` no resultado, inclusive quando uma necessidade vital domina a ação. Confiança e hostilidade só mudam quando o adaptador fornece eventos pontuais em `socialObservations` com `interaction: "peaceful"`, `"protective"` ou `"hostile"`. Esses eventos devem ser consumidos uma única vez pelo chamador, não reenviados em todos os ticks.
 
-A gravação efetiva das tags na entidade e a persistência entre reinicializações ainda dependem do adaptador Bedrock e do armazenamento do mundo; a integração lógica do MIS não equivale a persistência automática.
+O adaptador `src/adapters/bedrock/social-memory-writer.js` grava a memória no conjunto de tags da própria entidade, removendo apenas tags antigas pertencentes à memória social. A ponte em `bedrock/behavior_pack/scripts/main.js` chama esse gravador após cada decisão. A memória restaura confiança, hostilidade, último tick observado e quantidade de encontros por meio das tags `ds:seen` e `ds:encounters`.
+
+A ponte também observa `world.afterEvents.entityHurt`: quando um dragão causa dano a outro dragão, a vítima registra o agressor como hostil. O evento é acumulado e consumido no próximo ciclo de decisão da vítima. A falha ao gravar tags não interrompe a execução da ação do dragão.
+
+A memória social agora possui persistência por tags de entidade entre ciclos e recarregamentos da entidade, desde que o Bedrock preserve suas tags. Isso não equivale a um banco de dados global do mundo; os registros acompanham cada entidade e respeitam o limite de 32 relações por indivíduo.
