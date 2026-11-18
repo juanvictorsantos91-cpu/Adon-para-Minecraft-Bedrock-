@@ -41,3 +41,7 @@ O módulo `src/ai/territory-pressure.js` acrescenta desgaste territorial para re
 - A avaliação de risco não inicia ataques sozinha. O sistema de combate ou evento deve confirmar a incursão antes de chamar `applyDomainRaid`.
 
 Assim, um reino pode perder gradualmente suas conquistas e voltar ao tamanho original, sem ter seu núcleo destruído por ataques repetidos. O desgaste é um estado lógico; fronteiras físicas e persistência no mundo Bedrock ainda não foram implementadas.
+
+
+## Armazenamento versionado do estado territorial
+O adaptador `src/adapters/bedrock/territory-storage.js` serializa territórios e domínios em um envelope JSON versionado (`schemaVersion: 1`). O armazenamento real é injetado por callbacks `read` e `write`, evitando assumir um limite de tamanho ou uma API de persistência ainda não validada no Bedrock. O chamador deve salvar em momentos seguros e restaurar o estado ao carregar o mundo. A integração com propriedades dinâmicas e a política de divisão em vários registros ainda ficam pendentes.
