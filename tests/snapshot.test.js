@@ -71,13 +71,14 @@ test("snapshot lê sinais de rotina e traços individuais sem inventar valores a
   const dragon = entity("young-fire", [
     "ds:species:fire", "ds:stage:juvenile",
     "ds:trait:curiosity:0.91", "ds:trait:playfulness:0.88",
-    "ds:sleep_requested", "ds:grooming_needed",
+    "ds:sleep_requested", "ds:grooming_needed", "ds:trait:courage:0.99",
     "ds:play_opportunity", "ds:temperature:too_hot"
   ]);
   const state = buildDragonSnapshot(dragon, [], { immediateHazard: false });
   assert.equal(state.personality.curiosity, 0.91);
   assert.equal(state.personality.playfulness, 0.88);
   assert.equal(state.personality.courage, undefined);
+  assert.equal(state.groomingNeeded, undefined);
   assert.equal(state.sleepRequested, true);
   assert.equal(state.groomingNeeded, true);
   assert.equal(state.playOpportunity, true);
