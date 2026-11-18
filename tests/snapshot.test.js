@@ -20,6 +20,7 @@ test("snapshot herda agressividade do perfil e lê estado territorial do dragão
   const state = buildDragonSnapshot(dragon, [], { immediateHazard: false }, 1200);
   assert.equal(state.aggression, 0.9);
   assert.equal(state.territoryId, "fire-north");
+  assert.equal(state.groupId, null);
   assert.equal(state.hasYoung, true);
   assert.equal(state.injury.severity, "minor");
   assert.equal(state.isTamed, false);
@@ -35,10 +36,12 @@ test("snapshot permite agressividade individual dentro do intervalo de 0 a 1", (
 });
 
 test("snapshot transmite domesticação, propriedade e relações dos dragões próximos", () => {
-  const self = entity("self", ["ds:species:fire", "ds:known:tamed", "ds:hostile:hostile", "ds:relation:tamed:trust:2"]);
-  const tamed = entity("tamed", ["ds:species:water", "ds:tamed", "ds:owned", "ds:territory:water-home"], { x: 5, y: 64, z: 0 });
+  const self = entity("self", ["ds:species:fire", "ds:group:flame%3Aalpha", "ds:known:tamed", "ds:hostile:hostile", "ds:relation:tamed:trust:2"]);
+  const tamed = entity("tamed", ["ds:species:water", "ds:group:river-pack", "ds:tamed", "ds:owned", "ds:territory:water-home"], { x: 5, y: 64, z: 0 });
   const hostile = entity("hostile", ["ds:species:ice", "ds:near_nest", "ds:territory:ice-home"], { x: 8, y: 64, z: 0 });
   const state = buildDragonSnapshot(self, [tamed, hostile]);
+  assert.equal(state.groupId, "flame:alpha");
+  assert.equal(state.nearbyDragons[0].groupId, "river-pack");
   assert.equal(state.nearbyDragons[0].isTamed, true);
   assert.equal(state.nearbyDragons[0].isOwned, true);
   assert.equal(state.nearbyDragons[0].knownToSelf, true);
