@@ -82,6 +82,6 @@ test("snapshot lê sinais de rotina e traços individuais sem inventar valores a
   assert.equal(state.sleepRequested, true);
   assert.equal(state.groomingNeeded, true);
   assert.equal(state.playOpportunity, true);
-  assert.equal(state.temperatureStress, "too_hot");
+  assert.equal(state.temperatureCondition, "too_hot");
   assert.equal(state.safeToRest, true);
 });
