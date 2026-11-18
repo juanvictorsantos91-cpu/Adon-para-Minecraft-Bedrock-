@@ -60,6 +60,8 @@ function behaviorRules(profile) {
       when: s => s.threatDetected === true,
       action: s => {
         if (s.health <= 40 || s.energy <= 25) return "retreat_to_safety";
+        if (Number.isFinite(s.personality?.courage) && s.personality.courage >= 0.85 &&
+            s.health >= 70 && s.energy >= 50) return "stand_ground_and_warn";
         if (profile.aggression >= 0.7) return "confront_threat";
         if (profile.caution >= 0.8) return "keep_distance_and_observe";
         return profile.threatResponse;
