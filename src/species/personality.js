@@ -1,6 +1,6 @@
 import { getBehaviorProfile } from "./behavior-profiles.js";
 
-const TRAITS = Object.freeze(["curiosity", "courage", "sociability", "independence", "playfulness"]);
+const TRAITS = Object.freeze(["curiosity", "sociability", "independence", "playfulness"]);
 
 function stableHash(value) {
   let hash = 2166136261;
@@ -32,7 +32,6 @@ export function generatePersonalityTraits({ seed, species, variation = 0.2 }) {
   const profile = getBehaviorProfile(species);
   const baseline = {
     curiosity: profile.curiosity ?? 0.5,
-    courage: Number.isFinite(profile.caution) ? 1 - profile.caution : 0.5,
     sociability: profile.sociability ?? 0.5,
     independence: profile.independence ?? 0.5,
     playfulness: profile.playfulness ?? 0.45
