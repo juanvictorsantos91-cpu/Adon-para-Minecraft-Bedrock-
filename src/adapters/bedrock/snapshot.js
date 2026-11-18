@@ -219,7 +219,7 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
     nearbyHostiles,
     threatDetected: nearbyHostiles.length > 0 || environmentContext.hostileMobsNearby === true,
     nearbySameSpeciesCount: nearbyDragons.filter(dragon => dragon.species === species).length,
-    sameSpeciesGroupNearby: nearbyDragons.some(dragon => dragon.species === species),
+    sameSpeciesGroupNearby: groupId != null && nearbyDragons.some(dragon => dragon.groupId === groupId),
     environmentContext,
     environment: environmentContext.environment ?? "unknown",
     safeToExplore: environmentContext.immediateHazard !== true,
