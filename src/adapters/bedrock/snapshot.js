@@ -53,7 +53,39 @@ function readTemperatureCondition(tags, environmentContext) {
 }
 
 function hasRelationshipTag(tags, prefix, id) {
-  return tags.includes(prefix) || (id != null && tags.includes(`${prefix}:${id}`));
+  if (id == null) return false;
+  const encoded = encodeURIComponent(String(id));
+  return tags.includes(`${prefix}:${id}`) || tags.includes(`${prefix}:${encoded}`);
+}
+
+function readSocialMemory(tags) {
+  const records = new Map();
+  for (const tag of tags) {
+    const match = tag.match(/^ds:known:(.+)$/);
+    if (!match) continue;
+    let id;
+    try { id = decodeURIComponent(match[1]); } catch { id = match[1]; }
+    if (id) records.set(id, { entityId: id, known: true, trust: 0, hostile: false });
+  }
+  for (const tag of tags) {
+    const match = tag.match(/^ds:relation:(.+):trust:([0-3])$/);
+    if (!match) continue;
+    let id;
+    try { id = decodeURIComponent(match[1]); } catch { id = match[1]; }
+    const record = records.get(id) ?? { entityId: id, known: true, hostile: false };
+    record.trust = Number(match[2]);
+    records.set(id, record);
+  }
+  for (const tag of tags) {
+    const match = tag.match(/^ds:hostile:(.+)$/);
+    if (!match) continue;
+    let id;
+    try { id = decodeURIComponent(match[1]); } catch { id = match[1]; }
+    const record = records.get(id) ?? { entityId: id, known: true, trust: 0 };
+    record.hostile = true;
+    records.set(id, record);
+  }
+  return [...records.values()];
 }
 
 export function distanceBetween(a, b) {
@@ -107,8 +139,8 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
         hunger: clampPercent(readTaggedNumber(otherTags, NUMBER_PREFIXES.hunger, 100)),
         isTamed: otherTags.includes("ds:tamed"),
         isOwned: otherTags.includes("ds:owned") || otherTags.some(tag => tag.startsWith("ds:owner:")),
-        knownToSelf: hasRelationshipTag(otherTags, "ds:known", entity.id),
-        hostile: hasRelationshipTag(otherTags, "ds:hostile", entity.id),
+        knownToSelf: hasRelationshipTag(tags, "ds:known", other.id),
+        hostile: hasRelationshipTag(tags, "ds:hostile", other.id),
         nearNest: otherTags.includes("ds:near_nest"),
         lifeStage: otherTags.includes("ds:stage:hatchling") ? "hatchling" :
           otherTags.includes("ds:stage:juvenile") ? "juvenile" : "adult",
@@ -156,6 +188,7 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
     spawnTick,
     currentTick,
     nearbyDragons,
+    socialMemory: readSocialMemory(tags),
     nearbyPrey,
     nearbyHostiles,
     threatDetected: nearbyHostiles.length > 0 || environmentContext.hostileMobsNearby === true,
