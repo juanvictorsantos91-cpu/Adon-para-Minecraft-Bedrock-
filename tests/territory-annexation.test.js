@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   createTerritory, createTerritoryDomain, annexTerritoryToDomain,
-  getDomainTerritoryIds
+  getDomainTerritoryIds, InMemoryTerritoryDomainRepository
 } from "../src/ai/territory-state.js";
 
 function setup() {
@@ -125,4 +125,15 @@ test("não permite anexar território de reino rival sem atualizar o reino de or
   assert.throws(() => annexTerritoryToDomain(fireRealm, rivalRegion, {
     tick: 400
   }), /domínio de origem/);
+});
+
+test("repositório de domínios mantém cópias isoladas e filtra por estado", () => {
+  const { domain } = setup();
+  const repository = new InMemoryTerritoryDomainRepository();
+  repository.save(domain);
+  const copy = repository.get(domain.id);
+  copy.territoryIds.push("fake-region");
+  assert.deepEqual(repository.get(domain.id).territoryIds, ["fire-capital"]);
+  assert.equal(repository.list({ status: "active" }).length, 1);
+  assert.throws(() => repository.save({ ...domain, revision: 0 }), /revisão mais recente/);
 });
