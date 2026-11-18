@@ -32,3 +32,20 @@ Cada grupo possui um líder. A seleção considera liderança, experiência, sa�
 ## Limites de integração
 
 A criação organizada só ocorre depois de confirmação explícita da formação. Esta camada é lógica e testável; não foi conectada ainda a eventos reais de patrulha, combate, navegação ou desenho visual dentro do Bedrock.
+
+
+## Persistência e ciclo de vida
+
+O módulo `src/ai/persistent-dragon-groups.js` oferece um repositório persistente sobre o armazenamento mundial de territórios. Ele grava a lista de grupos sem substituir territórios ou domínios já salvos, mantém o tick mundial monotônico e permite consultar grupos por estado.
+
+A fachada de ciclo de vida aceita operações explícitas de formação, atualização e encerramento. A atualização exige a lista completa dos membros restantes para eleger um sucessor com dados de liderança; os vínculos internos são preservados apenas quando os dois indivíduos continuam no grupo. Grupos encerrados mantêm seu histórico e deixam de aparecer na consulta de grupos ativos.
+
+O adaptador `writeDragonGroupState` sincroniza o registro com as tags de uma entidade: identidade do grupo e marcador de líder são atualizados juntos, sem alterar tags de energia, espécie ou outras mecânicas.
+
+## Limites atuais após esta etapa
+
+- O armazenamento persistente e o ciclo de vida lógico estão implementados e cobertos por testes automatizados.
+- A sincronização de tags está disponível como adaptador explícito, mas ainda não é executada automaticamente no ciclo principal do mundo.
+- Não há formação automática, descoberta automática de casais ou sucessão baseada em atributos coletados em tempo real.
+- O runtime ainda precisa de uma fonte confiável de setores territoriais e de eventos de associação para ativar patrulhas físicas.
+- Nenhum teste dentro do Minecraft foi realizado nesta etapa.
