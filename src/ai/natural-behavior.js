@@ -27,10 +27,10 @@ export function assessNaturalBehavior(state, profile) {
   if (state.sleepRequested === true && safeToRest) {
     return { eligible: true, action: "sleep_in_safe_shelter", category: "rest", reason: "sleep_cycle" };
   }
-  if (state.temperatureStress === "too_hot" && safeToRest) {
+  if (state.temperatureCondition === "too_hot" && safeToRest) {
     return { eligible: true, action: "seek_shade_or_cool_area", category: "environment_adaptation", reason: "overheating" };
   }
-  if (state.temperatureStress === "too_cold" && safeToRest) {
+  if (state.temperatureCondition === "too_cold" && safeToRest) {
     return { eligible: true, action: "seek_warm_shelter", category: "environment_adaptation", reason: "cold_exposure" };
   }
   const stage = state.lifeStage;
