@@ -66,13 +66,6 @@ function readSlot(world, base, slot) {
   return { slot, generation: manifest.generation, serialized, chunks: manifest.chunks };
 }
 
-function removeSlot(world, base, slot, count) {
-  for (let index = 0; index < count; index++) {
-    world.setDynamicProperty(slotKey(base, slot, String(index)), undefined);
-  }
-  world.setDynamicProperty(slotKey(base, slot, "manifest"), undefined);
-}
-
 /**
  * Adaptador real para propriedades dinâmicas do mundo Bedrock.
  * Usa dois slots e troca o ponteiro somente após gravar e validar o novo slot,
@@ -122,12 +115,12 @@ export function createBedrockTerritoryWorldStorage({
       const serialized = serializeTerritoryWorldState(state);
       const activeValue = world.getDynamicProperty(`${key}:${POINTER_SUFFIX}`);
       const active = SLOT_NAMES.includes(activeValue) ? activeValue : null;
-      const current = active ? readSlot(world, key, active) : null;
-      const generation = Math.max(
-        current?.generation ?? 0,
-        ...SLOT_NAMES.map(slot => readSlot(world, key, slot)?.generation ?? 0)
-      ) + 1;
-      const target = active === "a" ? "b" : "a";
+      const validSlots = SLOT_NAMES.map(slot => readSlot(world, key, slot)).filter(Boolean);
+      const current = (active && validSlots.find(item => item.slot === active)) ||
+        validSlots.sort((a, b) => b.generation - a.generation)[0] || null;
+      const generation = Math.max(0, ...validSlots.map(item => item.generation)) + 1;
+      // Sempre grava no slot que não contém a última cópia válida.
+      const target = current ? (current.slot === "a" ? "b" : "a") : (active === "b" ? "b" : "a");
       const chunks = splitUtf8(serialized, maxChunkBytes);
 
       // Escreve o conteúdo e o manifesto antes de atualizar o ponteiro ativo.
@@ -147,15 +140,7 @@ export function createBedrockTerritoryWorldStorage({
       }
       world.setDynamicProperty(`${key}:${POINTER_SUFFIX}`, target);
 
-      // A limpeza é secundária: falhas aqui não invalidam o commit já apontado.
-      if (active) {
-        try {
-          const previous = readSlot(world, key, active);
-          removeSlot(world, key, active, previous?.chunks ?? 0);
-        } catch {
-          // Um slot antigo órfão pode ser limpo em uma gravação futura.
-        }
-      }
+      // O slot anterior é mantido como cópia de recuperação.
       return utf8Bytes(serialized);
     }
   };
