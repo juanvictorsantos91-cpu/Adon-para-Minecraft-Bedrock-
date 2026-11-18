@@ -107,7 +107,14 @@ function updateDimension(dimension, currentTick) {
       const environmentContext = inferEnvironment(dimension, entity.location);
       const state = buildDragonSnapshot(entity, nearby, environmentContext, currentTick);
       if (!state) continue;
+      state.socialObservations = pendingSocialObservations.get(entity.id) ?? [];
+      pendingSocialObservations.delete(entity.id);
       const decision = decideDragonBehavior(state);
+      try {
+        writeSocialMemory(entity, decision.socialMemory ?? []);
+      } catch {
+        // Uma falha de persistência não deve impedir a ação do dragão neste ciclo.
+      }
       if (state.species === "earth" && decision.migrationStatus?.due === true) {
         if (!entity.hasTag("ds:migration_due")) entity.addTag("ds:migration_due");
       } else if (entity.hasTag("ds:migration_due")) {
