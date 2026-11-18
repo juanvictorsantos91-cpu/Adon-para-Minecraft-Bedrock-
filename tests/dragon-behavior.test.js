@@ -104,30 +104,33 @@ test("espécie desconhecida é rejeitada", () => {
   assert.throws(() => getBehaviorProfile("unknown"), RangeError);
 });
 
-test("padrões sociais naturais são diferentes por espécie", () => {
-  assert.equal(getBehaviorProfile("water").socialPattern, "small_groups");
-  assert.equal(getBehaviorProfile("fire").socialPattern, "pairs");
-  assert.equal(getBehaviorProfile("ice").socialPattern, "pairs");
+test("padrões sociais naturais usam grupos territoriais e exceções solitárias", () => {
+  for (const species of ["water", "fire", "ice", "earth", "lava", "wind", "sound"]) {
+    assert.equal(getBehaviorProfile(species).socialPattern, "territorial_groups");
+    assert.ok(getBehaviorProfile(species).preferredGroupSize > 4);
+    assert.equal(getBehaviorProfile(species).patrolStyle, "distributed_patrol");
+  }
+  assert.equal(getBehaviorProfile("fire").internalPairing, true);
+  assert.equal(getBehaviorProfile("ice").internalPairing, true);
   assert.equal(getBehaviorProfile("electric").socialPattern, "solitary");
-  assert.equal(getBehaviorProfile("earth").socialPattern, "large_groups");
-  assert.equal(getBehaviorProfile("lava").socialPattern, "large_groups");
+  assert.equal(getBehaviorProfile("poison").socialPattern, "solitary");
+  assert.equal(getBehaviorProfile("plasma").socialPattern, "solitary");
+  assert.equal(getBehaviorProfile("earth").preferredGroupSize, 10);
+  assert.equal(getBehaviorProfile("lava").preferredGroupSize, 8);
   assert.equal(getBehaviorProfile("electric").migrationPattern, "long_cycle");
 });
 
-test("água, fogo, gelo, terra e lava procuram seus grupos naturais", () => {
-  const cases = [
-    ["water", "travel_in_small_group"],
-    ["fire", "travel_in_pair"],
-    ["ice", "travel_in_pair"],
-    ["earth", "travel_in_large_group"],
-    ["lava", "travel_in_large_group"]
-  ];
-  for (const [species, expected] of cases) {
+test("dragões sociais procuram completar grupos e patrulhar territórios", () => {
+  for (const species of ["water", "fire", "ice", "earth", "lava"]) {
     const result = decideDragonBehavior(healthy(species, {
       nearbySameSpeciesCount: 2, safeToExplore: true
     }));
-    assert.equal(result.action, expected);
+    assert.equal(result.action, "seek_group_members");
   }
+  const complete = decideDragonBehavior(healthy("fire", {
+    nearbySameSpeciesCount: 5, safeToExplore: true
+  }));
+  assert.equal(complete.action, "organize_territory_patrol_group");
 });
 
 test("dragões elétricos permanecem solitários e migram em ciclos longos seguros", () => {
@@ -149,11 +152,11 @@ test("dragões elétricos permanecem solitários e migram em ciclos longos segur
 
 test("planejador social respeita o tamanho preferido de cada espécie", () => {
   const cases = [
-    ["water", 3, 1, "travel_with_species_group"],
-    ["fire", 2, 1, "travel_with_species_group"],
-    ["ice", 2, 1, "travel_with_species_group"],
-    ["earth", 6, 2, "travel_with_species_group"],
-    ["lava", 6, 5, "travel_with_species_group"]
+    ["water", 6, 1, "seek_group_members"],
+    ["fire", 6, 1, "seek_group_members"],
+    ["ice", 6, 1, "seek_group_members"],
+    ["earth", 10, 2, "seek_group_members"],
+    ["lava", 8, 5, "organize_territory_patrol_group"]
   ];
 
   for (const [species, target, nearby, action] of cases) {
@@ -175,8 +178,8 @@ test("o plano social é incluído nas decisões DBS e não substitui o MIS", () 
   const normal = decideDragonBehavior(healthy("water", {
     nearbySameSpeciesCount: 1
   }));
-  assert.equal(normal.groupPlan.targetGroupSize, 3);
-  assert.equal(normal.groupPlan.action, "travel_with_species_group");
+  assert.equal(normal.groupPlan.targetGroupSize, 6);
+  assert.equal(normal.groupPlan.action, "seek_group_members");
 
   const critical = decideDragonBehavior(healthy("water", {
     energy: 10, immediateDanger: true, nearbySameSpeciesCount: 2
@@ -300,8 +303,8 @@ test("Terra e Lava formam grupos mistos e viajam juntas", () => {
   const lava = decideDragonBehavior(healthy("lava", {
     nearbyDragons: [earthNearby], nearbySameSpeciesCount: 0
   }));
-  assert.equal(earth.groupPlan.action, "travel_with_mixed_earth_lava_group");
-  assert.equal(lava.groupPlan.action, "travel_with_mixed_earth_lava_group");
+  assert.equal(earth.groupPlan.action, "seek_group_members");
+  assert.equal(lava.groupPlan.action, "seek_group_members");
   assert.equal(earth.groupPlan.mixedGroup, true);
   assert.equal(lava.groupPlan.mixedGroup, true);
 });
