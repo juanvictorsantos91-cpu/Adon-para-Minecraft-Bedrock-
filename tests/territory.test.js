@@ -125,3 +125,18 @@ test("dragão domesticado ou do jogador é visitante amigável, não invasor ter
   assert.equal(result.friendlyVisitorCount, 1);
   assert.equal(result.action, "patrol_territory");
 });
+
+
+test("outras espécies só entram na disputa quando a agressividade individual aumenta", () => {
+  const target = { id: "target", species: "water", territoryId: "water-home", distance: 35 };
+  const normalElectric = assessTerritorialInvasion({
+    id: "electric-normal", species: "electric", health: 100, energy: 100, hunger: 100
+  }, [target]);
+  const unusuallyAggressiveElectric = assessTerritorialInvasion({
+    id: "electric-aggressive", species: "electric", aggression: 0.82,
+    health: 100, energy: 100, hunger: 100
+  }, [target]);
+  assert.equal(normalElectric.eligible, false);
+  assert.equal(unusuallyAggressiveElectric.eligible, true);
+  assert.equal(unusuallyAggressiveElectric.aggression, 0.82);
+});
