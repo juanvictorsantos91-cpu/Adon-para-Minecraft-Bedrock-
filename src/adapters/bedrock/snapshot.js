@@ -20,6 +20,22 @@ export function readSpecies(tags) {
   return tag ? tag.slice(SPECIES_PREFIX.length) : null;
 }
 
+function clampPercent(value, fallback = 100) {
+  const numeric = Number.isFinite(value) ? value : fallback;
+  return Math.max(0, Math.min(100, numeric));
+}
+
+function readHealthPercent(entity) {
+  const component = entity.getComponent?.("minecraft:health");
+  const current = component?.currentValue;
+  if (!Number.isFinite(current)) return 100;
+  const maximum = Number.isFinite(component?.effectiveMax) && component.effectiveMax > 0
+    ? component.effectiveMax
+    : Number.isFinite(component?.defaultValue) && component.defaultValue > 0
+      ? component.defaultValue : 100;
+  return clampPercent((current / maximum) * 100);
+}
+
 function readTaggedId(tags, prefix) {
   const tag = tags.find(value => value.startsWith(prefix));
   return tag ? tag.slice(prefix.length) : null;
@@ -46,12 +62,11 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
   if (!species) return null;
 
   const profile = getBehaviorProfile(species);
-  const healthComponent = entity.getComponent?.("minecraft:health");
-  const health = Number.isFinite(healthComponent?.currentValue)
-    ? healthComponent.currentValue
-    : 100;
-  const energy = readTaggedNumber(tags, NUMBER_PREFIXES.energy, 100);
-  const hunger = readTaggedNumber(tags, NUMBER_PREFIXES.hunger, 100);
+  // O núcleo do MIS usa escalas percentuais de 0 a 100, independentemente
+  // do máximo absoluto configurado na entidade Bedrock (por exemplo, 120 HP).
+  const health = readHealthPercent(entity);
+  const energy = clampPercent(readTaggedNumber(tags, NUMBER_PREFIXES.energy, 100));
+  const hunger = clampPercent(readTaggedNumber(tags, NUMBER_PREFIXES.hunger, 100));
   const aggression = Math.max(0, Math.min(1,
     readTaggedNumber(tags, NUMBER_PREFIXES.aggression, profile.aggression ?? 0)
   ));
