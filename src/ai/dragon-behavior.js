@@ -10,6 +10,7 @@ import { assessEnvironment } from "./environment-awareness.js";
 import { assessTerritory } from "./territory.js";
 import { assessHuntingPlan } from "./hunting.js";
 import { assessLifeCycle } from "./life-cycle.js";
+import { assessNaturalBehavior } from "./natural-behavior.js";
 
 const commandActions = {
   follow: "follow_owner",
@@ -172,6 +173,12 @@ function behaviorRules(profile) {
       when: s => s.safeToRest === true && s.energy < 65,
       action: "rest_in_preferred_habitat",
       reason: "Escolhe um local seguro e adequado para descansar."
+    },
+    {
+      name: "natural-daily-routine", priority: 14.5,
+      when: s => s.naturalBehavior?.eligible === true && s.naturalBehavior?.action,
+      action: s => s.naturalBehavior.action,
+      reason: "Executa hábitos naturais e autocuidado quando necessidades vitais e segurança permitem."
     },
     {
       name: "sound-group-echo-signal", priority: 8.5,
@@ -365,6 +372,7 @@ export function decideDragonBehavior(state) {
   }
 
   const relationships = assessDragonRelationships(state, nearbyDragons);
+  const naturalBehavior = assessNaturalBehavior(state, profile);
   const migrationStatus = Number.isInteger(state.currentTick)
     ? getMigrationStatus({
         species: state.species,
@@ -389,6 +397,7 @@ export function decideDragonBehavior(state) {
     hasYoung: state.hasYoung ?? lifeCycle.needs.protection,
     ...state,
     relationships,
+    naturalBehavior,
     socialInteractions,
     environmentAssessment,
     territory: currentTerritory,
@@ -406,6 +415,7 @@ export function decideDragonBehavior(state) {
     species: state.species,
     temperament: profile.temperament,
     relationships,
+    naturalBehavior,
     ...worldAssessment,
     territory: currentTerritory,
     migrationStatus,
