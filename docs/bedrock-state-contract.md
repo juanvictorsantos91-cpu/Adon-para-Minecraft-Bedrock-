@@ -73,3 +73,11 @@ Essas tags são sinais de entrada, não produtores automáticos. Os quatro traç
 
 ## Gravação dos traços individuais
 O adaptador `src/adapters/bedrock/personality-writer.js` fornece `initializeDragonPersonality`, que gera e grava as quatro tags de personalidade em uma entidade Bedrock. O fluxo real de nascimento/spawn ainda precisa chamar essa função. A presença do adaptador não significa que os traços já sejam atribuídos automaticamente no mundo.
+
+
+## Memória social individual
+- `ds:known:<entity-id>`: indivíduo reconhecido pelo dragão que carrega a tag.
+- `ds:relation:<entity-id>:trust:<0-3>`: confiança social limitada.
+- `ds:hostile:<entity-id>`: hostilidade anteriormente observada.
+
+Os identificadores são codificados com URL encoding ao gerar tags pelo módulo social. O snapshot aceita tags legadas sem codificação. A memória é limitada a 32 indivíduos recentes no núcleo; sua gravação persistente e atualização automática ainda não estão ligadas ao ciclo principal.
