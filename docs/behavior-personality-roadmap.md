@@ -49,3 +49,9 @@ As ações físicas no Minecraft precisam de adaptadores próprios e validação
 - Criado um adaptador que gera e grava as quatro tags de personalidade, preservando valores existentes. Falta conectá-lo ao ponto real de nascimento/spawn.
 - Criado um codec de estado territorial com versão e um adaptador de armazenamento por callbacks. Falta conectar os callbacks à persistência do mundo Bedrock, após validar limites e comportamento da API na versão-alvo.
 - Foram adicionados testes automatizados para os dois adaptadores; ainda precisam ser executados em ambiente Node do projeto.
+
+
+## Memória social simplificada
+O módulo `src/ai/social-memory.js` mantém até 32 relações recentes por dragão. Ele registra reconhecimento, espécie conhecida, nível de confiança simples (0–3), hostilidade observada, último contato e quantidade de encontros. Confiança aumenta com interações pacíficas/protetivas e diminui quando há hostilidade observada. Apenas ver outro dragão cria reconhecimento, não amizade nem hostilidade.
+
+O adaptador de snapshot lê as tags `ds:known:<id>`, `ds:relation:<id>:trust:<0-3>` e `ds:hostile:<id>` do próprio dragão. A leitura de reconhecimento foi corrigida para consultar a memória do observador, não as tags do indivíduo observado. A atualização da memória e a gravação dessas tags ainda precisam ser conectadas ao ciclo de atualização do MIS e ao armazenamento persistente do mundo.
