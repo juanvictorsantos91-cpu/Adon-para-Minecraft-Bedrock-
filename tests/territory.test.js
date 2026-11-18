@@ -92,9 +92,10 @@ test("invasões escolhem o território elegível mais próximo e ignoram dragõe
     { id: "near", species: "wind", territoryId: "wind-near", distance: 20 }
   ], { invasionCycle: 1 });
   assert.equal(result.eligible, true);
+  assert.equal(result.selectedTargetDragonId, "near");
+  assert.equal(result.selectedTargetTerritoryId, "wind-near");
+  assert.equal(result.selectedTargetDistance, 20);
   assert.equal(result.targetDragonId, result.shouldInvade ? "near" : null);
-  assert.equal(result.targetTerritoryId, result.shouldInvade ? "wind-near" : null);
-  assert.equal(result.targetDistance, result.shouldInvade ? 20 : null);
 });
 
 test("água, plasma e lava, além de dragões domesticados, nunca iniciam invasões", () => {
