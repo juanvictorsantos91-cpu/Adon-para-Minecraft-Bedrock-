@@ -96,3 +96,14 @@ O adaptador `src/adapters/bedrock/territory-dynamic-property-storage.js` conecta
 A gravação usa dois slots alternados: primeiro grava os blocos, depois um manifesto com geração, tamanho e checksum, verifica o conteúdo e só então troca o ponteiro ativo. O slot anterior é mantido como cópia de recuperação. Se o slot apontado estiver incompleto ou corrompido, a leitura tenta recuperar a outra cópia válida. Isso protege contra falhas parciais de gravação, mas não substitui backups do mundo.
 
 **Limite atual:** o adaptador está implementado e coberto por testes com um host simulado, mas ainda não foi conectado ao ciclo de vida dos reinos. A ponte ainda não possui uma fonte confiável de criação/identificação de grupos e territórios; portanto, não grava domínios fictícios nem inventa proprietários. A integração será feita quando o produtor real de território e o evento de conquista estiverem definidos e testáveis.
+
+
+## Identidade de grupos de dragões
+
+O núcleo `src/ai/dragon-groups.js` agora modela grupos persistentes com ID estável, espécie, membros, líder, território de referência, revisão e histórico. A atualização de composição registra entradas e saídas; se o último membro sair, o grupo é encerrado sem apagar seu histórico.
+
+A ponte Bedrock lê `ds:group:<id-codificado>` no snapshot e expõe `groupId` para o MIS. O adaptador `writeDragonGroupMembership` altera somente essa família de tags e preserva as demais. A ausência de `ds:group` significa **sem grupo identificado**; o sistema não deduz amizade ou parentesco apenas pela proximidade.
+
+O armazenamento territorial evoluiu para o esquema 2, incluindo a coleção `groups`. O leitor continua aceitando dados do esquema 1 e os normaliza para esquema 2 com uma lista de grupos vazia, permitindo migração sem descartar os territórios e reinos já salvos.
+
+**Integração ainda pendente:** o modelo de grupos e a leitura/escrita de identidade estão prontos e testados, mas ainda não existe um produtor de agrupamento natural confiável no ciclo do jogo. Por isso, não atribuí grupos automaticamente, não alterei a formação de bandos e ainda não criei reinos no mundo. O próximo passo é ligar a identidade a eventos reais de formação, separação e migração de grupos.
