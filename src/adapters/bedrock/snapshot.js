@@ -136,6 +136,7 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
   const spawnTick = readTaggedNumber(tags, NUMBER_PREFIXES.spawnTick, currentTick);
   const territoryId = readTaggedId(tags, "ds:territory:");
   const groupId = readTaggedId(tags, "ds:group:");
+  const isGroupLeader = tags.includes("ds:leader");
   const isTamed = tags.includes("ds:tamed");
   const isOwned = tags.includes("ds:owned") || tags.some(tag => tag.startsWith("ds:owner:"));
   const injurySeverity = tags.includes("ds:injury:severe") ? "severe" :
@@ -167,7 +168,8 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
           otherTags.includes("ds:stage:juvenile") ? "juvenile" : "adult",
         temporaryTerritoryMigrationDue: otherTags.includes("ds:migration_due"),
         territoryId: readTaggedId(otherTags, "ds:territory:"),
-        groupId: readTaggedId(otherTags, "ds:group:")
+        groupId: readTaggedId(otherTags, "ds:group:"),
+        isGroupLeader: otherTags.includes("ds:leader")
       });
       continue;
     }
@@ -200,6 +202,7 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
     aggression,
     territoryId,
     groupId,
+    isGroupLeader,
     isTamed,
     isOwned,
     hasYoung: tags.includes("ds:has_young"),
