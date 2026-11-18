@@ -28,3 +28,16 @@ Um domínio representa um reino composto por vários territórios independentes.
 - Se a região pertencia a outro domínio, a operação exige o registro do domínio de origem, remove a região da lista antiga e atualiza seu histórico.
 - Se o domínio derrotado perder sua última região, passa ao estado `dissolved`; se ainda tiver regiões, continua ativo e pode escolher nova capital quando a antiga for anexada.
 - A anexação lógica só deve ser chamada depois que o sistema de disputa confirmar a conquista. Ela não altera blocos nem fronteiras físicas do mundo.
+
+
+## Pressão de ataques e perda gradual de expansão
+
+O módulo `src/ai/territory-pressure.js` acrescenta desgaste territorial para reinos que cresceram por anexação:
+- Um reino com regiões anexadas passa a ser elegível para incursões recorrentes a cada 12.000 ticks (meio dia de Minecraft).
+- A chance aumenta conforme cresce o número de regiões anexadas, podendo chegar a 90%.
+- Uma incursão confirmada reduz 5% do controle de uma região anexada por padrão.
+- Após perder todo o controle de uma região, ela retorna ao antigo proprietário; se pertencia a outro reino, o domínio anterior precisa ser fornecido para restaurar sua lista.
+- A capital e os territórios originais registrados como núcleo não podem ser perdidos por esse mecanismo.
+- A avaliação de risco não inicia ataques sozinha. O sistema de combate ou evento deve confirmar a incursão antes de chamar `applyDomainRaid`.
+
+Assim, um reino pode perder gradualmente suas conquistas e voltar ao tamanho original, sem ter seu núcleo destruído por ataques repetidos. O desgaste é um estado lógico; fronteiras físicas e persistência no mundo Bedrock ainda não foram implementadas.
