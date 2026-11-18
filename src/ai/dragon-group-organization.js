@@ -77,7 +77,7 @@ export function createOrganizedDragonGroup({
 }
 
 export function updateOrganizedDragonGroup(group, {
-  addDragons = [], removeMemberIds = [], tick, pairBonds, homeTerritoryId
+  addDragons = [], removeMemberIds = [], remainingDragons = [], tick, pairBonds, homeTerritoryId
 }) {
   const profile = getBehaviorProfile(group.species);
   const updated = updateDragonGroup(group, {
@@ -87,11 +87,15 @@ export function updateOrganizedDragonGroup(group, {
   if (updated.status === "disbanded") {
     return { ...updated, pairBonds: [], leader: null };
   }
-  const roster = [...addDragons];
-  const remainingLeader = roster.find(dragon => dragon.id === updated.leaderId);
-  const leaderId = remainingLeader ? updated.leaderId :
-    (removeMemberIds.includes(group.leaderId) ? selectDragonGroupLeader(roster) : updated.leaderId);
-  if (!updated.memberIds.includes(leaderId)) throw new Error("Não há dados suficientes para escolher o novo líder; forneça os membros restantes.");
+  if (!Array.isArray(remainingDragons) ||
+      remainingDragons.length !== updated.memberIds.length ||
+      remainingDragons.some(dragon => !updated.memberIds.includes(dragon.id)) ||
+      updated.memberIds.some(id => !remainingDragons.some(dragon => dragon.id === id))) {
+    throw new Error("remainingDragons precisa conter os dados de todos os membros ativos após a atualização.");
+  }
+  const leaderId = updated.memberIds.includes(group.leaderId)
+    ? group.leaderId
+    : selectDragonGroupLeader(remainingDragons);
   const candidatePairs = pairBonds ?? (group.pairBonds ?? []);
   const nextPairs = normalizePairBonds(candidatePairs, updated.memberIds, group.species);
   return {
