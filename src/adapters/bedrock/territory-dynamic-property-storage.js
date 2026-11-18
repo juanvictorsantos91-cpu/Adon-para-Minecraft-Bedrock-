@@ -4,8 +4,30 @@ const DEFAULT_CHUNK_BYTES = 7000;
 const POINTER_SUFFIX = "active";
 const SLOT_NAMES = ["a", "b"];
 
+function forEachUtf8Byte(value, callback) {
+  for (const character of value) {
+    const codePoint = character.codePointAt(0);
+    if (codePoint <= 0x7f) callback(codePoint);
+    else if (codePoint <= 0x7ff) {
+      callback(0xc0 | (codePoint >> 6));
+      callback(0x80 | (codePoint & 0x3f));
+    } else if (codePoint <= 0xffff) {
+      callback(0xe0 | (codePoint >> 12));
+      callback(0x80 | ((codePoint >> 6) & 0x3f));
+      callback(0x80 | (codePoint & 0x3f));
+    } else {
+      callback(0xf0 | (codePoint >> 18));
+      callback(0x80 | ((codePoint >> 12) & 0x3f));
+      callback(0x80 | ((codePoint >> 6) & 0x3f));
+      callback(0x80 | (codePoint & 0x3f));
+    }
+  }
+}
+
 function utf8Bytes(value) {
-  return new TextEncoder().encode(value).length;
+  let length = 0;
+  forEachUtf8Byte(value, () => length++);
+  return length;
 }
 
 function splitUtf8(value, maxBytes) {
@@ -29,10 +51,10 @@ function splitUtf8(value, maxBytes) {
 
 function checksum(value) {
   let hash = 2166136261;
-  for (const byte of new TextEncoder().encode(value)) {
+  forEachUtf8Byte(value, byte => {
     hash ^= byte;
     hash = Math.imul(hash, 16777619);
-  }
+  });
   return (hash >>> 0).toString(16).padStart(8, "0");
 }
 
@@ -146,13 +168,3 @@ export function createBedrockTerritoryWorldStorage({
   };
 }
 
-function storageSerializer(state) {
-  // O serializador comum aplica a validação de esquema e dos registros.
-  const probe = new Map();
-  const storage = createTerritoryWorldStorage({
-    read: key => probe.get(key),
-    write: (key, value) => probe.set(key, value)
-  });
-  storage.save(state);
-  return probe.get("ds:territory_state_v1");
-}
