@@ -45,3 +45,24 @@ test("snapshot transmite domesticação, propriedade e relações dos dragões p
   assert.equal(state.nearbyDragons[1].hostile, true);
   assert.equal(state.nearbyDragons[1].nearNest, true);
 });
+
+
+test("snapshot converte vida absoluta do Bedrock para percentual de 0 a 100", () => {
+  const dragon = {
+    id: "fire-120hp",
+    location: { x: 0, y: 64, z: 0 },
+    getTags: () => ["ds:species:fire", "ds:energy:150", "ds:hunger:-5"],
+    getComponent: () => ({ currentValue: 60, effectiveMax: 120 })
+  };
+  const neighbor = {
+    id: "water-120hp",
+    location: { x: 2, y: 64, z: 0 },
+    getTags: () => ["ds:species:water"],
+    getComponent: () => ({ currentValue: 120, effectiveMax: 120 })
+  };
+  const state = buildDragonSnapshot(dragon, [neighbor]);
+  assert.equal(state.health, 50);
+  assert.equal(state.energy, 100);
+  assert.equal(state.hunger, 0);
+  assert.equal(state.nearbyDragons[0].health, 100);
+});
