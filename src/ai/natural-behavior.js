@@ -7,32 +7,6 @@ function trait(state, profile, name, fallback = 0.5) {
   return Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : fallback;
 }
 
-const SPECIES_GROOMING_ACTION = Object.freeze({
-  fire: "shake_ash_from_scales",
-  water: "clean_scales_in_water",
-  electric: "discharge_static_from_scales",
-  ice: "clean_scales_with_snow",
-  earth: "dust_bathe_and_clean_scales",
-  lava: "brush_cooled_rock_from_scales",
-  wind: "preen_wings_in_breeze",
-  sound: "clean_sensory_crests",
-  poison: "shed_old_scale_residue",
-  plasma: "stabilize_plasma_fissures"
-});
-
-const SPECIES_BATHING_ACTION = Object.freeze({
-  fire: "roll_in_warm_ash",
-  water: "bathe_or_swim",
-  electric: "refresh_in_light_rain",
-  ice: "roll_in_snow",
-  earth: "take_a_dust_bath",
-  lava: "rest_on_warm_stone",
-  wind: "bathe_in_clean_rain",
-  sound: "rinse_sensory_crests",
-  poison: "refresh_in_clean_mist",
-  plasma: "cool_and_stabilize_plasma_surface"
-});
-
 export function assessNaturalBehavior(state, profile) {
   if (!state || typeof state !== "object" || !profile || typeof profile !== "object") {
     throw new TypeError("Estado e perfil comportamental são necessários.");
@@ -54,10 +28,10 @@ export function assessNaturalBehavior(state, profile) {
     return { eligible: true, action: "sleep_in_safe_shelter", category: "rest", reason: "sleep_cycle" };
   }
   if (state.temperatureStress === "too_hot" && safeToRest) {
-    return { eligible: true, action: "seek_shade_or_cool_area", category: "self_care", reason: "overheating" };
+    return { eligible: true, action: "seek_shade_or_cool_area", category: "environment_adaptation", reason: "overheating" };
   }
   if (state.temperatureStress === "too_cold" && safeToRest) {
-    return { eligible: true, action: "seek_warm_shelter", category: "self_care", reason: "cold_stress" };
+    return { eligible: true, action: "seek_warm_shelter", category: "environment_adaptation", reason: "cold_exposure" };
   }
   if (state.groomingNeeded === true && safeToRest) {
     return {
