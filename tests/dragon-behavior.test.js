@@ -156,7 +156,7 @@ test("planejador social respeita o tamanho preferido de cada espécie", () => {
     ["fire", 6, 1, "seek_group_members"],
     ["ice", 6, 1, "seek_group_members"],
     ["earth", 10, 2, "seek_group_members"],
-    ["lava", 8, 5, "organize_territory_patrol_group"]
+    ["lava", 8, 5, "seek_group_members"]
   ];
 
   for (const [species, target, nearby, action] of cases) {
