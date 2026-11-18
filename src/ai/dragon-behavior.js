@@ -127,29 +127,26 @@ function behaviorRules(profile) {
     },
     {
       name: "travel-with-mixed-earth-lava-group", priority: 10,
-      when: s => s.groupPlan?.action === "travel_with_mixed_earth_lava_group" && s.safeToExplore === true,
-      action: "travel_with_mixed_earth_lava_group",
-      reason: "Terra e Lava reconhecem a aliança social e mantêm deslocamento em um grupo misto."
+      when: s => s.groupPlan?.mixedGroup === true && s.groupPlan?.action === "organize_territory_patrol_group" && s.safeToExplore === true,
+      action: "coordinate_mixed_territory_patrol",
+      reason: "Terra e Lava coordenam patrulhas distribuídas em um território compartilhado sem precisar caminhar como manada."
     },
     {
       name: "maintain-natural-group", priority: 9,
       when: s => profile.socialPattern !== "solitary" &&
         s.sameSpeciesGroupNearby === true &&
         s.groupPlan?.action !== "travel_with_mixed_earth_lava_group",
-      action: "stay_with_species_group",
-      reason: "Mantém a coesão do grupo natural da espécie."
+      action: "continue_distributed_territory_patrol",
+      reason: "Mantém a defesa territorial por patrulhas independentes, sem exigir que todos caminhem juntos."
     },
     {
       name: "form-natural-group", priority: 10,
       when: s => profile.socialPattern !== "solitary" &&
         Number.isFinite(s.nearbySameSpeciesCount) &&
         s.nearbySameSpeciesCount >= 1 && s.safeToExplore === true,
-      action: () => ({
-        pairs: "travel_in_pair",
-        small_groups: "travel_in_small_group",
-        large_groups: "travel_in_large_group"
-      }[profile.socialPattern]),
-      reason: "Procura formar ou integrar o tipo de grupo característico da espécie."
+      action: s => s.groupPlan?.action === "organize_territory_patrol_group"
+        ? "organize_territory_patrol_group" : "seek_group_members",
+      reason: "Procura completar um grupo territorial e organizar patrulhas independentes conforme a espécie."
     },
     {
       name: "form-compatible-pair", priority: 11,
