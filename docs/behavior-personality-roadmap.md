@@ -54,3 +54,7 @@ Os valores individuais complementam, mas não substituem, o perfil da espécie. 
 
 ## Limites
 Este documento registra uma direção de design, não uma implementação concluída. As ações físicas no Minecraft precisam de adaptadores próprios e validação posterior no jogo. Não introduzir dezenas de novas variáveis persistentes antes de confirmar quais são realmente necessárias.
+
+
+## Atualização de implementação
+A primeira camada de rotina natural foi criada e integrada às regras do MIS: sono, busca de sombra/abrigo aquecido, higiene, banho, brincadeira juvenil e exploração por curiosidade. O módulo também aceita traços individuais de curiosidade e brincadeira. As atividades dependem de sinais contextuais fornecidos pelo adaptador; sem esses sinais, o comportamento anterior permanece.
