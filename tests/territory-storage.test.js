@@ -14,7 +14,7 @@ const state = {
 
 test("serializa e restaura territórios e reinos sem perder histórico ou campos", () => {
   const restored = deserializeTerritoryWorldState(serializeTerritoryWorldState(state));
-  assert.deepEqual(restored, { schemaVersion: 1, ...state });
+  assert.deepEqual(restored, { schemaVersion: 2, ...state });
 });
 
 test("rejeita versão de esquema desconhecida", () => {
@@ -36,7 +36,7 @@ test("adaptador grava e carrega usando callbacks do host", () => {
   });
   assert.equal(storage.load(), null);
   assert.ok(storage.save(state) > 0);
-  assert.deepEqual(storage.load(), { schemaVersion: 1, ...state });
+  assert.deepEqual(storage.load(), { schemaVersion: 2, ...state });
 });
 
 test("não assume armazenamento quando callbacks estão ausentes", () => {
