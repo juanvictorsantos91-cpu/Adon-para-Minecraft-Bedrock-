@@ -14,7 +14,7 @@ O módulo `src/ai/natural-behavior.js` gera intenções cotidianas simples. Ele 
 Ameaças, perigo ambiental e necessidades vitais críticas bloqueiam essas atividades. O sistema de sobrevivência e as regras de proteção continuam tendo precedência.
 
 ## Dados esperados do adaptador
-O módulo aceita sinais contextuais como `sleepRequested`, `temperatureStress`, `playOpportunity`, `explorationOpportunity` e `quietObservationOpportunity`. Esses sinais ainda precisam ser produzidos pelo adaptador do mundo; sua ausência não quebra o comportamento existente.
+O módulo aceita sinais contextuais como `sleepRequested`, `temperatureCondition`, `playOpportunity`, `explorationOpportunity` e `quietObservationOpportunity`. Esses sinais ainda precisam ser produzidos pelo adaptador do mundo; sua ausência não quebra o comportamento existente.
 
 ## Personalidade
 Os traços individuais são curiosidade, sociabilidade, independência e vontade de brincar. Medo, estresse e coragem foram retirados do modelo de personalidade. Higiene, banho e limpeza de escamas também foram removidos das rotinas.
