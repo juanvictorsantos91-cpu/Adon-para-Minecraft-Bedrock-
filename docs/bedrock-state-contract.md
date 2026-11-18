@@ -69,3 +69,7 @@ O snapshot também lê os seguintes sinais quando fornecidos pelo adaptador ou p
 - `ds:trait:playfulness:<0..1>`
 
 Essas tags são sinais de entrada, não produtores automáticos. Os quatro traços individuais são curiosidade, sociabilidade, independência e vontade de brincar. Medo, estresse e coragem não são traços de personalidade; higiene e banho não fazem parte das rotinas. Valores ausentes permanecem ausentes no snapshot; o MIS usa o perfil da espécie ou padrões conservadores como fallback. As atividades dependem de condições seguras e nunca substituem as prioridades de sobrevivência.
+
+
+## Gravação dos traços individuais
+O adaptador `src/adapters/bedrock/personality-writer.js` fornece `initializeDragonPersonality`, que gera e grava as quatro tags de personalidade em uma entidade Bedrock. O fluxo real de nascimento/spawn ainda precisa chamar essa função. A presença do adaptador não significa que os traços já sejam atribuídos automaticamente no mundo.
