@@ -113,3 +113,15 @@ test("água, plasma e lava, além de dragões domesticados, nunca iniciam invas�
   }, [target]);
   assert.equal(tamed.eligible, false);
 });
+
+
+test("dragão domesticado ou do jogador é visitante amigável, não invasor territorial", () => {
+  const self = { id: "wild", species: "fire", health: 90, energy: 90 };
+  const result = assessTerritory(self, [
+    { id: "pet", species: "water", distance: 20, territoryId: "water-home", isTamed: true, isOwned: true }
+  ], { territoryId: "fire-home" });
+  assert.equal(result.territoryIntruded, false);
+  assert.equal(result.intruderCount, 0);
+  assert.equal(result.friendlyVisitorCount, 1);
+  assert.equal(result.action, "patrol_territory");
+});
