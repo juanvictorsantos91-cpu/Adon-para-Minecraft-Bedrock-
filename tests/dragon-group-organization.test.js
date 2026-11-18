@@ -1,7 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  createOrganizedDragonGroup, selectDragonGroupLeader, createTerritoryPatrolPlan
+  createOrganizedDragonGroup, selectDragonGroupLeader, createTerritoryPatrolPlan,
+  updateOrganizedDragonGroup
 } from "../src/ai/dragon-group-organization.js";
 
 const roster = (species, count, prefix = species) =>
@@ -41,10 +42,7 @@ test("Lava usa oito membros e Terra/Lava podem compartilhar estrutura de grupo",
 });
 
 test("seleciona líder pelo perfil e desempata pelo ID", () => {
-  const dragons = [
-    { id: "b", leadership: 0.5 },
-    { id: "a", leadership: 0.5 }
-  ];
+  const dragons = [{ id: "b", leadership: 0.5 }, { id: "a", leadership: 0.5 }];
   assert.equal(selectDragonGroupLeader(dragons), "a");
 });
 
@@ -60,6 +58,18 @@ test("plano distribui patrulhas e mantém casais juntos sem formar manada", () =
   assert.deepEqual(plan.assignments[0].memberIds, [dragons[0].id, dragons[1].id].sort());
   assert.equal(new Set(plan.assignments.map(item => item.sectorId)).size, 4);
   assert.equal(plan.leaderDuty, "coordinate_and_oversee_patrol_sectors");
+});
+
+test("troca líder quando o atual sai, usando o elenco completo remanescente", () => {
+  const dragons = roster("water", 6);
+  const group = createOrganizedDragonGroup({ id: "water-01", species: "water", dragons, createdTick: 0 });
+  const remaining = dragons.slice(1);
+  remaining[0].leadership = 1;
+  const updated = updateOrganizedDragonGroup(group, {
+    removeMemberIds: [group.leaderId], remainingDragons: remaining, tick: 5
+  });
+  assert.equal(updated.leaderId, remaining[0].id);
+  assert.equal(updated.leader.role, "territory_leader");
 });
 
 test("grupos solitários não podem ser criados como grupos sociais", () => {
