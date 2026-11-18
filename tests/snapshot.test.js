@@ -1,0 +1,47 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { buildDragonSnapshot, readTaggedNumber } from "../src/adapters/bedrock/snapshot.js";
+
+function entity(id, tags, location = { x: 0, y: 64, z: 0 }, typeId = "dragon:entity") {
+  return {
+    id, typeId, location,
+    getTags: () => [...tags],
+    getComponent: component => component === "minecraft:health"
+      ? { currentValue: 100, effectiveMax: 100 }
+      : undefined
+  };
+}
+
+test("snapshot herda agressividade do perfil e lê estado territorial do dragão", () => {
+  const dragon = entity("fire-1", [
+    "ds:species:fire", "ds:energy:85", "ds:hunger:70",
+    "ds:territory:fire-north", "ds:has_young", "ds:injury:minor"
+  ]);
+  const state = buildDragonSnapshot(dragon, [], { immediateHazard: false }, 1200);
+  assert.equal(state.aggression, 0.9);
+  assert.equal(state.territoryId, "fire-north");
+  assert.equal(state.hasYoung, true);
+  assert.equal(state.injury.severity, "minor");
+  assert.equal(state.isTamed, false);
+  assert.equal(state.isOwned, false);
+});
+
+test("snapshot permite agressividade individual dentro do intervalo de 0 a 1", () => {
+  const dragon = entity("wind-1", ["ds:species:wind", "ds:aggression:0.82"]);
+  assert.equal(buildDragonSnapshot(dragon).aggression, 0.82);
+  const invalid = entity("wind-2", ["ds:species:wind", "ds:aggression:4"]);
+  assert.equal(buildDragonSnapshot(invalid).aggression, 1);
+  assert.equal(readTaggedNumber([], "ds:aggression:", 0.35), 0.35);
+});
+
+test("snapshot transmite domesticação, propriedade e relações dos dragões próximos", () => {
+  const self = entity("self", ["ds:species:fire"]);
+  const tamed = entity("tamed", ["ds:species:water", "ds:tamed", "ds:owned", "ds:territory:water-home", "ds:known:self"], { x: 5, y: 64, z: 0 });
+  const hostile = entity("hostile", ["ds:species:ice", "ds:hostile:self", "ds:near_nest", "ds:territory:ice-home"], { x: 8, y: 64, z: 0 });
+  const state = buildDragonSnapshot(self, [tamed, hostile]);
+  assert.equal(state.nearbyDragons[0].isTamed, true);
+  assert.equal(state.nearbyDragons[0].isOwned, true);
+  assert.equal(state.nearbyDragons[0].knownToSelf, true);
+  assert.equal(state.nearbyDragons[1].hostile, true);
+  assert.equal(state.nearbyDragons[1].nearNest, true);
+});
