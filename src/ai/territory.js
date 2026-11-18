@@ -81,6 +81,9 @@ export function assessTerritorialInvasion(self, nearbyDragons = [], context = {}
   const shouldInvade = eligible && roll < chance;
   return {
     eligible, shouldInvade, aggression, chance, roll,
+    selectedTargetDragonId: target?.id ?? null,
+    selectedTargetTerritoryId: target?.territoryId ?? null,
+    selectedTargetDistance: target?.distance ?? null,
     targetDragonId: shouldInvade ? (target.id ?? null) : null,
     targetTerritoryId: shouldInvade ? target.territoryId : null,
     targetDistance: shouldInvade ? target.distance : null,
