@@ -1,4 +1,5 @@
 import { createOrganizedDragonGroup, updateOrganizedDragonGroup } from "./dragon-group-organization.js";
+import { updateDragonGroup } from "./dragon-groups.js";
 
 function clone(value) {
   return JSON.parse(JSON.stringify(value));
@@ -110,7 +111,6 @@ export function createPersistentDragonGroupLifecycle(storage) {
     disband(groupId, tick) {
       const current = repository.get(groupId);
       if (!current) return null;
-      const { updateDragonGroup } = inputHelpers;
       const ended = updateDragonGroup(current, {
         removeMemberIds: [...current.memberIds],
         tick
@@ -124,5 +124,3 @@ export function createPersistentDragonGroupLifecycle(storage) {
   };
 }
 
-import { updateDragonGroup } from "./dragon-groups.js";
-const inputHelpers = { updateDragonGroup };
