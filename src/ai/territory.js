@@ -151,7 +151,8 @@ export function assessTerritory(self, nearbyDragons = [], context = {}) {
   );
   const earthMigrationTargets = self.species === "earth" && relocationDue
     ? nearbyDragons.filter(other => other && other.species !== "earth" &&
-        Number.isFinite(other.distance) && other.territoryId &&
+        other.isTamed !== true && other.isOwned !== true &&
+        Number.isFinite(other.distance) && other.distance >= 0 && other.territoryId &&
         other.distance <= (getTerritoryRadius(other.species) ?? 0))
         .map(owner => assessEarthMigrationReception(owner, { ...self, temporaryTerritoryMigrationDue: true }, { migrationCycle: context.migrationCycle }))
     : [];
