@@ -511,3 +511,24 @@ test("memória social também é atualizada quando uma necessidade vital domina 
   assert.equal(result.action, "escape_danger");
   assert.equal(result.socialMemory[0].entityId, "ice-observer");
 });
+
+
+test("dragão evita indivíduo com hostilidade lembrada sem iniciar combate", () => {
+  const result = decideDragonBehavior(healthy("water", {
+    id: "water-observer",
+    currentTick: 400,
+    socialMemory: [{
+      entityId: "fire-known-hostile",
+      species: "fire",
+      known: true,
+      trust: 0,
+      hostile: true,
+      lastSeenTick: 390,
+      encounters: 2,
+      lastInteraction: "hostile"
+    }],
+    nearbyDragons: [{ id: "fire-known-hostile", species: "fire" }]
+  }));
+  assert.equal(result.action, "keep_distance_from_known_hostile_dragon");
+  assert.equal(result.socialMemory[0].hostile, true);
+});
