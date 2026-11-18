@@ -34,7 +34,7 @@ export function assessDomainAttackPressure(domain, { tick }) {
   const elapsedTicks = Math.max(0, tick - lastRaidTick);
   const eligible = expansionIds.length > 0 && elapsedTicks >= ATTACK_INTERVAL_TICKS;
   const attackChance = eligible
-    ? Math.min(0.9, 0.35 + expansionIds.length * 0.12)
+    ? Math.min(0.9, 0.55 + expansionIds.length * 0.12)
     : 0;
   const cycle = Math.floor(tick / ATTACK_INTERVAL_TICKS);
   const roll = eligible ? stableRoll(`domain-raid:${domain.id}:${cycle}`) : 1;
@@ -89,7 +89,7 @@ export function applyDomainRaid(domain, territory, {
   const nextDomain = {
     ...domain,
     territoryIds: released ? domain.territoryIds.filter(id => id !== territory.id) : [...domain.territoryIds],
-    expansionIntegrity: { ...(domain.expansionIntegrity ?? {}), [territory.id]: nextIntegrity },
+    expansionIntegrity: released\n      ? Object.fromEntries(Object.entries(domain.expansionIntegrity ?? {}).filter(([id]) => id !== territory.id))\n      : { ...(domain.expansionIntegrity ?? {}), [territory.id]: nextIntegrity },
     lastRaidTick: tick,
     updatedTick: tick,
     revision: (domain.revision ?? 0) + 1,
