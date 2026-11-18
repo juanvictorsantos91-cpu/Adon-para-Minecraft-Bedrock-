@@ -450,3 +450,64 @@ test("o DBS só escolhe invasão quando o plano raro é elegível", () => {
   if (result.territory.invasionPlan.shouldInvade) assert.equal(result.action, "attempt_territory_invasion");
   else assert.notEqual(result.action, "attempt_territory_invasion");
 });
+
+
+test("MIS reconhece dragões observados e expõe tags de memória social", () => {
+  const result = decideDragonBehavior(healthy("fire", {
+    id: "fire-observer",
+    currentTick: 120,
+    nearbyDragons: [{ id: "water-known", species: "water" }]
+  }));
+  assert.equal(result.socialMemory.length, 1);
+  assert.deepEqual(result.socialMemory[0], {
+    entityId: "water-known",
+    species: "water",
+    known: true,
+    trust: 0,
+    hostile: false,
+    lastSeenTick: 120,
+    encounters: 1,
+    lastInteraction: null
+  });
+  assert.ok(result.socialMemoryTags.includes("ds:known:water-known"));
+  assert.ok(result.socialMemoryTags.includes("ds:relation:water-known:trust:0"));
+});
+
+test("MIS só altera confiança ou hostilidade com evento social explícito", () => {
+  const first = decideDragonBehavior(healthy("fire", {
+    id: "fire-observer",
+    currentTick: 200,
+    nearbyDragons: [{ id: "water-known", species: "water" }]
+  }));
+  const peaceful = decideDragonBehavior(healthy("fire", {
+    id: "fire-observer",
+    currentTick: 220,
+    socialMemory: first.socialMemory,
+    nearbyDragons: [{ id: "water-known", species: "water" }],
+    socialObservations: [{ entityId: "water-known", interaction: "peaceful" }]
+  }));
+  assert.equal(peaceful.socialMemory[0].trust, 1);
+  assert.equal(peaceful.socialMemory[0].hostile, false);
+
+  const hostile = decideDragonBehavior(healthy("fire", {
+    id: "fire-observer",
+    currentTick: 240,
+    socialMemory: peaceful.socialMemory,
+    nearbyDragons: [{ id: "water-known", species: "water" }],
+    socialObservations: [{ entityId: "water-known", interaction: "hostile" }]
+  }));
+  assert.equal(hostile.socialMemory[0].hostile, true);
+  assert.equal(hostile.socialMemory[0].trust, 0);
+  assert.ok(hostile.socialMemoryTags.includes("ds:hostile:water-known"));
+});
+
+test("memória social também é atualizada quando uma necessidade vital domina a decisão", () => {
+  const result = decideDragonBehavior(healthy("fire", {
+    currentTick: 300,
+    energy: 10,
+    immediateDanger: true,
+    nearbyDragons: [{ id: "ice-observer", species: "ice" }]
+  }));
+  assert.equal(result.action, "escape_danger");
+  assert.equal(result.socialMemory[0].entityId, "ice-observer");
+});
