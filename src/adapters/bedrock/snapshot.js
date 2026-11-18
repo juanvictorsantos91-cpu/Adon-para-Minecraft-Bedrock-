@@ -166,15 +166,12 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
     safeToExplore: environmentContext.immediateHazard !== true,
     safeToRest: environmentContext.immediateHazard !== true,
     sleepRequested: tags.includes("ds:sleep_requested"),
-    groomingNeeded: tags.includes("ds:grooming_needed"),
-    bathingOpportunity: tags.includes("ds:bathing_opportunity") || environmentContext.bathingOpportunity === true,
     playOpportunity: tags.includes("ds:play_opportunity") || environmentContext.playOpportunity === true,
     explorationOpportunity: tags.includes("ds:exploration_opportunity") || environmentContext.explorationOpportunity === true,
     quietObservationOpportunity: tags.includes("ds:quiet_observation") || environmentContext.quietObservationOpportunity === true,
     temperatureStress: readTemperatureStress(tags, environmentContext),
     personality: Object.fromEntries([
       ["curiosity", readTrait(tags, "curiosity")],
-      ["courage", readTrait(tags, "courage")],
       ["sociability", readTrait(tags, "sociability")],
       ["independence", readTrait(tags, "independence")],
       ["playfulness", readTrait(tags, "playfulness")]
