@@ -3,6 +3,7 @@ import { decideDragonBehavior } from "./core/ai/dragon-behavior.js";
 import { buildDragonSnapshot, actionIntentTag } from "./core/adapters/bedrock/snapshot.js";
 import { executeDragonAction } from "./core/adapters/bedrock/action-executor.js";
 import { writeSocialMemory } from "./core/adapters/bedrock/social-memory-writer.js";
+import { initializeDragonEntity } from "./core/adapters/bedrock/dragon-initializer.js";
 
 const TICK_INTERVAL = 40;
 const QUERY_RADIUS = 32;
@@ -38,6 +39,22 @@ try {
   world.afterEvents.entityHurt.subscribe(queueHostileSocialObservation);
 } catch {
   // Se o evento não estiver disponível nesta versão, a memória ainda registra encontros.
+}
+
+function initializeSpawnedDragon(event) {
+  const entity = event?.entity;
+  if (!entity?.typeId?.startsWith("dragon_survival:")) return;
+  try {
+    initializeDragonEntity(entity, system.currentTick);
+  } catch {
+    // A inicialização será tentada novamente quando a entidade entrar no ciclo de IA.
+  }
+}
+
+try {
+  world.afterEvents.entitySpawn.subscribe(initializeSpawnedDragon);
+} catch {
+  // O primeiro ciclo de IA também inicializa dragões já existentes no mundo.
 }
 
 function inferEnvironment(dimension, location) {
@@ -99,7 +116,7 @@ function updateDimension(dimension, currentTick) {
 
   for (const entity of dragons) {
     try {
-      if (!entity.hasTag("ds:dragon")) entity.addTag("ds:dragon");
+      initializeDragonEntity(entity, currentTick);
       const nearby = dimension.getEntities({
         location: entity.location,
         maxDistance: QUERY_RADIUS
