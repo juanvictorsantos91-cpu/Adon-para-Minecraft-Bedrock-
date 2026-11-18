@@ -35,7 +35,7 @@ Medo, estresse e coragem não são traços de personalidade neste projeto. A res
 - Uma ação ambiental não deve ser repetida continuamente: cada comportamento precisa de intervalo ou condição de encerramento.
 
 ## Próximas etapas técnicas
-1. Conectar o gerador de personalidade ao nascimento e persistir os quatro traços.
+1. Integrar o adaptador de gravação de personalidade ao evento real de nascimento/spawn; o gerador e a escrita das tags já estão preparados.
 2. Produzir sinais de sono, exploração, brincadeira e observação no adaptador Bedrock.
 3. Integrar anexação territorial à confirmação real de conquista.
 4. Persistir domínios e desgaste territorial no mundo.
