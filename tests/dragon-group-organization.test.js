@@ -1,0 +1,69 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {
+  createOrganizedDragonGroup, selectDragonGroupLeader, createTerritoryPatrolPlan
+} from "../src/ai/dragon-group-organization.js";
+
+const roster = (species, count, prefix = species) =>
+  Array.from({ length: count }, (_, index) => ({
+    id: `${prefix}-${index + 1}`, species,
+    leadership: index === count - 1 ? 0.95 : 0.2,
+    experience: index / count, healthRatio: 0.9, energyRatio: 0.8,
+    protectiveness: 0.7, aggression: 0.4
+  }));
+
+test("Fogo forma grupo territorial de seis e mantém pares internos", () => {
+  const dragons = roster("fire", 6);
+  const group = createOrganizedDragonGroup({
+    id: "fire-01", species: "fire", dragons, createdTick: 10,
+    homeTerritoryId: "territory-fire-01", pairBonds: [[dragons[0].id, dragons[1].id], [dragons[2].id, dragons[3].id]]
+  });
+  assert.equal(group.memberIds.length, 6);
+  assert.equal(group.pairBonds.length, 2);
+  assert.equal(group.leaderId, dragons[5].id);
+  assert.equal(group.leader.role, "territory_leader");
+});
+
+test("Terra exige grupo maior de dez indivíduos", () => {
+  assert.throws(() => createOrganizedDragonGroup({
+    id: "earth-small", species: "earth", dragons: roster("earth", 6), createdTick: 0
+  }), /pelo menos 10/);
+  const group = createOrganizedDragonGroup({
+    id: "earth-large", species: "earth", dragons: roster("earth", 10), createdTick: 0
+  });
+  assert.equal(group.memberIds.length, 10);
+});
+
+test("Lava usa oito membros e Terra/Lava podem compartilhar estrutura de grupo", () => {
+  const dragons = [...roster("lava", 4, "lava"), ...roster("earth", 4, "earth")];
+  const group = createOrganizedDragonGroup({ id: "lava-earth", species: "lava", dragons, createdTick: 0 });
+  assert.equal(group.memberIds.length, 8);
+});
+
+test("seleciona líder pelo perfil e desempata pelo ID", () => {
+  const dragons = [
+    { id: "b", leadership: 0.5 },
+    { id: "a", leadership: 0.5 }
+  ];
+  assert.equal(selectDragonGroupLeader(dragons), "a");
+});
+
+test("plano distribui patrulhas e mantém casais juntos sem formar manada", () => {
+  const dragons = roster("fire", 6);
+  const group = createOrganizedDragonGroup({
+    id: "fire-patrol", species: "fire", dragons, createdTick: 1,
+    homeTerritoryId: "territory-1", pairBonds: [[dragons[0].id, dragons[1].id]]
+  });
+  const plan = createTerritoryPatrolPlan(group, ["north", "south", "east", "west"]);
+  assert.equal(plan.membersStayTogetherAsHerd, false);
+  assert.equal(plan.assignments.length, 5);
+  assert.deepEqual(plan.assignments[0].memberIds, [dragons[0].id, dragons[1].id].sort());
+  assert.equal(new Set(plan.assignments.map(item => item.sectorId)).size, 4);
+  assert.equal(plan.leaderDuty, "coordinate_and_oversee_patrol_sectors");
+});
+
+test("grupos solitários não podem ser criados como grupos sociais", () => {
+  assert.throws(() => createOrganizedDragonGroup({
+    id: "electric", species: "electric", dragons: roster("electric", 6), createdTick: 0
+  }), /solitárias/);
+});
