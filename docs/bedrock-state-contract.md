@@ -87,3 +87,12 @@ O adaptador `src/adapters/bedrock/social-memory-writer.js` grava a memória no c
 A ponte também observa `world.afterEvents.entityHurt`: quando um dragão causa dano a outro dragão, a vítima registra o agressor como hostil. O evento é acumulado e consumido no próximo ciclo de decisão da vítima. A falha ao gravar tags não interrompe a execução da ação do dragão.
 
 A memória social agora possui persistência por tags de entidade entre ciclos e recarregamentos da entidade, desde que o Bedrock preserve suas tags. Isso não equivale a um banco de dados global do mundo; os registros acompanham cada entidade e respeitam o limite de 32 relações por indivíduo.
+
+
+## Persistência territorial no mundo Bedrock
+
+O adaptador `src/adapters/bedrock/territory-dynamic-property-storage.js` conecta o codec territorial às propriedades dinâmicas de `world` (`getDynamicProperty` e `setDynamicProperty`). Para evitar depender de uma única string grande, o JSON é dividido em blocos UTF-8 de até 7.000 bytes por padrão. O limite pode ser configurado, mas não deve ser aumentado sem teste na versão-alvo.
+
+A gravação usa dois slots alternados: primeiro grava os blocos, depois um manifesto com geração, tamanho e checksum, verifica o conteúdo e só então troca o ponteiro ativo. O slot anterior é mantido como cópia de recuperação. Se o slot apontado estiver incompleto ou corrompido, a leitura tenta recuperar a outra cópia válida. Isso protege contra falhas parciais de gravação, mas não substitui backups do mundo.
+
+**Limite atual:** o adaptador está implementado e coberto por testes com um host simulado, mas ainda não foi conectado ao ciclo de vida dos reinos. A ponte ainda não possui uma fonte confiável de criação/identificação de grupos e territórios; portanto, não grava domínios fictícios nem inventa proprietários. A integração será feita quando o produtor real de território e o evento de conquista estiverem definidos e testáveis.
