@@ -72,7 +72,7 @@ Essas tags são sinais de entrada, não produtores automáticos. Os quatro traç
 
 
 ## Gravação dos traços individuais
-O adaptador `src/adapters/bedrock/personality-writer.js` fornece `initializeDragonPersonality`, que gera e grava as quatro tags de personalidade em uma entidade Bedrock. O fluxo real de nascimento/spawn ainda precisa chamar essa função. A presença do adaptador não significa que os traços já sejam atribuídos automaticamente no mundo.
+O adaptador `src/adapters/bedrock/personality-writer.js` fornece `initializeDragonPersonality`, que gera e grava as quatro tags de personalidade em uma entidade Bedrock. O adaptador `src/adapters/bedrock/dragon-initializer.js` chama essa função automaticamente no evento `world.afterEvents.entitySpawn` e também como fallback no primeiro ciclo de IA de entidades já existentes. A inicialização preserva traços e `ds:spawn_tick` que já existam, e marca a entidade com `ds:dragon`.
 
 
 ## Memória social individual
