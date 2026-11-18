@@ -22,3 +22,12 @@ Os traços individuais podem ser fornecidos em `state.personality` (por exemplo,
 
 ## Variações por espécie
 As ações de higiene e banho variam por espécie: por exemplo, Fogo remove cinzas, Água limpa as escamas na água, Gelo rola na neve e Lava repousa em pedra aquecida. Essas são intenções lógicas; animações e efeitos visuais serão implementados pelo adaptador Bedrock.
+
+## Traços individuais já utilizados
+- Curiosidade: favorece investigação segura.
+- Brincadeira: aumenta atividades lúdicas de filhotes e juvenis.
+- Sociabilidade: favorece aproximação pacífica de indivíduos conhecidos.
+- Independência: favorece exploração individual em áreas próximas.
+- Coragem: pode favorecer uma postura firme de aviso diante de ameaça, desde que saúde e energia estejam boas; não autoriza ataque automático.
+
+Os traços individuais são lidos de tags `ds:trait:<nome>:<valor>` quando disponíveis. Eles não são gerados automaticamente nesta etapa.
