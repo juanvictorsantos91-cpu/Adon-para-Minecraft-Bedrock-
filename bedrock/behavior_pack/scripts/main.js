@@ -2,10 +2,43 @@ import { system, world } from "@minecraft/server";
 import { decideDragonBehavior } from "./core/ai/dragon-behavior.js";
 import { buildDragonSnapshot, actionIntentTag } from "./core/adapters/bedrock/snapshot.js";
 import { executeDragonAction } from "./core/adapters/bedrock/action-executor.js";
+import { writeSocialMemory } from "./core/adapters/bedrock/social-memory-writer.js";
 
 const TICK_INTERVAL = 40;
 const QUERY_RADIUS = 32;
 const DIMENSIONS = ["overworld", "nether", "the_end"];
+const pendingSocialObservations = new Map();
+
+function isDragonEntity(entity) {
+  if (!entity) return false;
+  try {
+    return entity.hasTag?.("ds:dragon") === true ||
+      entity.typeId?.startsWith("dragon_survival:") === true;
+  } catch {
+    return false;
+  }
+}
+
+function queueHostileSocialObservation(event) {
+  const victim = event?.hurtEntity;
+  const attacker = event?.damageSource?.damagingEntity;
+  if (!isDragonEntity(victim) || !isDragonEntity(attacker) || victim.id === attacker.id) return;
+
+  const observations = pendingSocialObservations.get(victim.id) ?? [];
+  // Limita eventos acumulados entre ciclos e evita duplicar o mesmo agressor.
+  const existing = observations.find(item => item.entityId === attacker.id);
+  if (existing) existing.interaction = "hostile";
+  else if (observations.length < 16) {
+    observations.push({ entityId: attacker.id, interaction: "hostile" });
+  }
+  pendingSocialObservations.set(victim.id, observations);
+}
+
+try {
+  world.afterEvents.entityHurt.subscribe(queueHostileSocialObservation);
+} catch {
+  // Se o evento não estiver disponível nesta versão, a memória ainda registra encontros.
+}
 
 function inferEnvironment(dimension, location) {
   const context = { tags: [], immediateHazard: false };
