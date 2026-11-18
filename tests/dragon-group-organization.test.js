@@ -63,7 +63,7 @@ test("plano distribui patrulhas e mantém casais juntos sem formar manada", () =
 test("troca líder quando o atual sai, usando o elenco completo remanescente", () => {
   const dragons = roster("water", 6);
   const group = createOrganizedDragonGroup({ id: "water-01", species: "water", dragons, createdTick: 0 });
-  const remaining = dragons.slice(1);
+  const remaining = dragons.filter(dragon => dragon.id !== group.leaderId);
   remaining[0].leadership = 1;
   const updated = updateOrganizedDragonGroup(group, {
     removeMemberIds: [group.leaderId], remainingDragons: remaining, tick: 5
