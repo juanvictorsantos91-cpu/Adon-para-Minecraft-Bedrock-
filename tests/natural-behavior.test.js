@@ -59,3 +59,18 @@ test("não explora quando energia ou fome estão baixas", () => {
   }, profile);
   assert.notEqual(result.action, "investigate_surroundings");
 });
+
+test("autocuidado respeita diferenças naturais entre espécies", () => {
+  const fire = assessNaturalBehavior({
+    ...safe, species: "fire", groomingNeeded: true
+  }, profile);
+  const water = assessNaturalBehavior({
+    ...safe, species: "water", groomingNeeded: true
+  }, profile);
+  const ice = assessNaturalBehavior({
+    ...safe, species: "ice", bathingOpportunity: true
+  }, profile);
+  assert.equal(fire.action, "shake_ash_from_scales");
+  assert.equal(water.action, "clean_scales_in_water");
+  assert.equal(ice.action, "roll_in_snow");
+});
