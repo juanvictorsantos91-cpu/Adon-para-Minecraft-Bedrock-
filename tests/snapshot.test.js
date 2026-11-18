@@ -86,3 +86,22 @@ test("snapshot lê sinais de rotina e traços individuais sem inventar valores a
   assert.equal(state.temperatureCondition, "too_hot");
   assert.equal(state.safeToRest, true);
 });
+
+
+test("snapshot restaura recência e quantidade de encontros da memória social", () => {
+  const self = entity("fire-memory", [
+    "ds:species:fire",
+    "ds:known:water%3Adragon",
+    "ds:relation:water%3Adragon:trust:2",
+    "ds:seen:water%3Adragon:9600",
+    "ds:encounters:water%3Adragon:7",
+    "ds:hostile:water%3Adragon"
+  ]);
+  const state = buildDragonSnapshot(self, [], {}, 9700);
+  const relation = state.socialMemory[0];
+  assert.equal(relation.entityId, "water:dragon");
+  assert.equal(relation.trust, 2);
+  assert.equal(relation.hostile, true);
+  assert.equal(relation.lastSeenTick, 9600);
+  assert.equal(relation.encounters, 7);
+});
