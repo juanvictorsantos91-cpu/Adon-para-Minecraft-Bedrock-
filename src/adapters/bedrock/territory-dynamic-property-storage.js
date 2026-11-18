@@ -1,4 +1,4 @@
-import { createTerritoryWorldStorage } from "./territory-storage.js";
+import { createTerritoryWorldStorage, serializeTerritoryWorldState } from "./territory-storage.js";
 
 const DEFAULT_CHUNK_BYTES = 7000;
 const POINTER_SUFFIX = "active";
@@ -119,7 +119,7 @@ export function createBedrockTerritoryWorldStorage({
     load: () => storage.load(),
     save(state) {
       // Reutiliza o validador e serializador do adaptador comum.
-      const serialized = storageSerializer(state);
+      const serialized = serializeTerritoryWorldState(state);
       const activeValue = world.getDynamicProperty(`${key}:${POINTER_SUFFIX}`);
       const active = SLOT_NAMES.includes(activeValue) ? activeValue : null;
       const current = active ? readSlot(world, key, active) : null;
