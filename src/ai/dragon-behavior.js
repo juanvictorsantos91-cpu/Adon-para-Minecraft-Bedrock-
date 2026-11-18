@@ -11,6 +11,7 @@ import { assessTerritory } from "./territory.js";
 import { assessHuntingPlan } from "./hunting.js";
 import { assessLifeCycle } from "./life-cycle.js";
 import { assessNaturalBehavior } from "./natural-behavior.js";
+import { updateSocialMemory, socialMemoryTags } from "./social-memory.js";
 
 const commandActions = {
   follow: "follow_owner",
@@ -358,6 +359,26 @@ export function decideDragonBehavior(state) {
 
   const profile = getBehaviorProfile(state.species);
   const nearbyDragons = state.nearbyDragons ?? [];
+  // Reconhecimento nasce da observação; confiança/hostilidade só mudam
+  // quando o adaptador fornece um evento explícito em socialObservations.
+  const socialObservations = [
+    ...nearbyDragons.filter(other => other && typeof other.id === "string")
+      .map(other => ({ entityId: other.id, species: other.species })),
+    ...(Array.isArray(state.socialObservations) ? state.socialObservations : [])
+  ];
+  const socialMemory = Number.isInteger(state.currentTick) && state.currentTick >= 0
+    ? updateSocialMemory(state.socialMemory ?? [], socialObservations, state.currentTick)
+    : (state.socialMemory ?? []);
+  const socialTags = socialMemoryTags(socialMemory);
+  const rememberedNearbyDragons = nearbyDragons.map(other => {
+    const relation = socialMemory.find(item => item.entityId === other?.id);
+    return relation ? {
+      ...other,
+      knownToSelf: true,
+      socialTrust: relation.trust,
+      hostile: relation.hostile
+    } : other;
+  });
   const environmentAssessment = assessEnvironment(state.species, state.environmentContext ?? state);
   const territory = assessTerritory(state, nearbyDragons, state);
   const huntingPlan = assessHuntingPlan(state, state.nearbyPrey ?? [], state);
@@ -365,13 +386,13 @@ export function decideDragonBehavior(state) {
     environmentSafe: environmentAssessment.safetyScore >= 70 && !environmentAssessment.immediateHazard,
     incubationConditionsValid: state.incubationConditionsValid === true
   });
-  const worldAssessment = { environmentAssessment, territory, huntingPlan, lifeCycle };
+  const worldAssessment = { environmentAssessment, territory, huntingPlan, lifeCycle, socialMemory, socialMemoryTags: socialTags };
   const survival = decideSurvivalAction(state);
   if (survival.action !== "species_behavior") {
     return { ...survival, ...worldAssessment, system: "MIS", species: state.species ?? null };
   }
 
-  const relationships = assessDragonRelationships(state, nearbyDragons);
+  const relationships = assessDragonRelationships(state, rememberedNearbyDragons);
   const naturalBehavior = assessNaturalBehavior(state, profile);
   const migrationStatus = Number.isInteger(state.currentTick)
     ? getMigrationStatus({
@@ -383,13 +404,13 @@ export function decideDragonBehavior(state) {
       })
     : { migratory: profile.migrationPattern === "long_cycle", due: false };
   const migrationCycle = Math.floor((state.currentTick ?? 0) / (migrationStatus.cycleDurationTicks ?? 1));
-  const currentTerritory = assessTerritory(state, nearbyDragons, { ...state, migrationDue: migrationStatus.due, migrationCycle, invasionCycle: Math.floor((state.currentTick ?? 0) / 24000) });
-  const socialInteractions = assessSocialInteractions(state, nearbyDragons, { ...state, migrationDue: migrationStatus.due });
-  const electricStormRitual = assessElectricStormRitual(state, nearbyDragons, state);
+  const currentTerritory = assessTerritory(state, rememberedNearbyDragons, { ...state, migrationDue: migrationStatus.due, migrationCycle, invasionCycle: Math.floor((state.currentTick ?? 0) / 24000) });
+  const socialInteractions = assessSocialInteractions(state, rememberedNearbyDragons, { ...state, migrationDue: migrationStatus.due });
+  const electricStormRitual = assessElectricStormRitual(state, rememberedNearbyDragons, state);
   const groupPlan = getSocialGroupPlan(
     state.species,
     Number.isInteger(state.nearbySameSpeciesCount) ? state.nearbySameSpeciesCount : 0,
-    nearbyDragons
+    rememberedNearbyDragons
   );
   const enrichedState = {
     ...state,
@@ -397,6 +418,8 @@ export function decideDragonBehavior(state) {
     hasYoung: state.hasYoung ?? lifeCycle.needs.protection,
     ...state,
     relationships,
+    socialMemory,
+    socialMemoryTags: socialTags,
     naturalBehavior,
     socialInteractions,
     environmentAssessment,
