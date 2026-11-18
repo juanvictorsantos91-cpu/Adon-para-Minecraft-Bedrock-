@@ -77,6 +77,24 @@ function readSocialMemory(tags) {
     records.set(id, record);
   }
   for (const tag of tags) {
+    const match = tag.match(/^ds:seen:(.+):(\\d+)$/);
+    if (!match) continue;
+    let id;
+    try { id = decodeURIComponent(match[1]); } catch { id = match[1]; }
+    const record = records.get(id) ?? { entityId: id, known: true, trust: 0, hostile: false };
+    record.lastSeenTick = Number(match[2]);
+    records.set(id, record);
+  }
+  for (const tag of tags) {
+    const match = tag.match(/^ds:encounters:(.+):(\\d+)$/);
+    if (!match) continue;
+    let id;
+    try { id = decodeURIComponent(match[1]); } catch { id = match[1]; }
+    const record = records.get(id) ?? { entityId: id, known: true, trust: 0, hostile: false };
+    record.encounters = Number(match[2]);
+    records.set(id, record);
+  }
+  for (const tag of tags) {
     const match = tag.match(/^ds:hostile:(.+)$/);
     if (!match) continue;
     let id;
