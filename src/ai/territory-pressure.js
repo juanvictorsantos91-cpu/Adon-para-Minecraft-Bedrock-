@@ -89,7 +89,9 @@ export function applyDomainRaid(domain, territory, {
   const nextDomain = {
     ...domain,
     territoryIds: released ? domain.territoryIds.filter(id => id !== territory.id) : [...domain.territoryIds],
-    expansionIntegrity: released\n      ? Object.fromEntries(Object.entries(domain.expansionIntegrity ?? {}).filter(([id]) => id !== territory.id))\n      : { ...(domain.expansionIntegrity ?? {}), [territory.id]: nextIntegrity },
+    expansionIntegrity: released
+      ? Object.fromEntries(Object.entries(domain.expansionIntegrity ?? {}).filter(([id]) => id !== territory.id))
+      : { ...(domain.expansionIntegrity ?? {}), [territory.id]: nextIntegrity },
     lastRaidTick: tick,
     updatedTick: tick,
     revision: (domain.revision ?? 0) + 1,
