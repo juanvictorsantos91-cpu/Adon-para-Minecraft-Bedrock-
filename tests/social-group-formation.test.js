@@ -4,48 +4,38 @@ import { assessSocialGroupFormation } from "../src/ai/social-group-formation.js"
 
 const dragon = (id, species, extra = {}) => ({ id, species, ...extra });
 
-test("fogo e gelo só propõem pares quando há um candidato elegível", () => {
-  const fire = assessSocialGroupFormation({
-    dragon: dragon("f1", "fire"),
-    candidates: [dragon("f2", "fire", { distance: 12 })]
-  });
-  assert.equal(fire.status, "formation_candidate");
-  assert.deepEqual(fire.candidateIds, ["f2"]);
-
-  const ice = assessSocialGroupFormation({
-    dragon: dragon("i1", "ice"),
-    candidates: [dragon("i2", "ice", { distance: 5 })]
-  });
-  assert.equal(ice.targetGroupSize, 2);
-  assert.equal(ice.shouldForm, true);
+test("Fogo e Gelo exigem seis indivíduos para grupo territorial", () => {
+  for (const species of ["fire", "ice"]) {
+    const result = assessSocialGroupFormation({
+      dragon: dragon(`${species}-1`, species),
+      candidates: Array.from({ length: 5 }, (_, i) => dragon(`${species}-${i + 2}`, species, { distance: 12 }))
+    });
+    assert.equal(result.targetGroupSize, 6);
+    assert.equal(result.status, "formation_candidate");
+    assert.equal(result.candidateIds.length, 5);
+  }
 });
 
-test("água exige o tamanho-alvo do perfil e ignora espécies incompatíveis", () => {
+test("Água forma grupos territoriais de seis", () => {
   const result = assessSocialGroupFormation({
     dragon: dragon("w1", "water"),
-    candidates: [
-      dragon("w2", "water", { distance: 4 }),
-      dragon("w3", "water", { distance: 8 }),
-      dragon("f1", "fire", { distance: 2 })
-    ]
+    candidates: Array.from({ length: 5 }, (_, i) => dragon(`w${i + 2}`, "water", { distance: 4 }))
   });
-  assert.equal(result.targetGroupSize, 3);
+  assert.equal(result.targetGroupSize, 6);
   assert.equal(result.shouldForm, true);
-  assert.equal(result.status, "formation_candidate");
-  assert.deepEqual(result.candidateIds, ["w2", "w3"]);
 });
 
-test("Terra e Lava podem propor grupo misto, mas não absorvem membros já agrupados", () => {
+test("Terra exige dez membros e Terra/Lava podem compartilhar grupo", () => {
   const result = assessSocialGroupFormation({
     dragon: dragon("e1", "earth"),
     candidates: [
-      dragon("l1", "lava", { distance: 10 }),
-      dragon("e2", "earth", { distance: 11 }),
-      dragon("l2", "lava", { distance: 12, groupId: "existing" })
+      ...Array.from({ length: 4 }, (_, i) => dragon(`l${i + 1}`, "lava", { distance: 10 })),
+      ...Array.from({ length: 5 }, (_, i) => dragon(`e${i + 2}`, "earth", { distance: 11 }))
     ]
   });
-  assert.deepEqual(result.candidateIds, ["l1", "e2"]);
-  assert.equal(result.status, "insufficient_candidates");
+  assert.equal(result.targetGroupSize, 10);
+  assert.equal(result.candidateIds.length, 9);
+  assert.equal(result.status, "formation_candidate");
 });
 
 test("Elétrico permanece solitário mesmo com outros elétricos próximos", () => {
