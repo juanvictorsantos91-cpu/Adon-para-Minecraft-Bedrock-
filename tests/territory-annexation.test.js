@@ -65,3 +65,64 @@ test("não anexa território abandonado nem aceita data anterior", () => {
     tick: 1
   }), /não pode retroceder/);
 });
+
+test("conquista de região de outro reino remove a região do reino anterior", () => {
+  const capital = createTerritory({
+    id: "ice-capital", species: "ice", ownerGroupId: "ice-kingdom",
+    center: { x: 100, y: 64, z: 0 }, radius: 192, createdTick: 10
+  });
+  const outer = createTerritory({
+    id: "ice-frontier", species: "ice", ownerGroupId: "ice-kingdom",
+    center: { x: 300, y: 64, z: 0 }, radius: 192, createdTick: 12
+  });
+  const source = {
+    ...createTerritoryDomain({
+      id: "ice-realm", ownerGroupId: "ice-kingdom",
+      capitalTerritoryId: capital.id, createdTick: 10
+    }),
+    territoryIds: ["ice-capital", "ice-frontier"]
+  };
+  const { domain: fireRealm } = setup();
+  const frontier = { ...outer, domainId: "ice-realm" };
+  const result = annexTerritoryToDomain(fireRealm, frontier, {
+    tick: 400, sourceDomain: source, reason: "kingdom_conquest"
+  });
+  assert.deepEqual(result.sourceDomain.territoryIds, ["ice-capital"]);
+  assert.equal(result.sourceDomain.capitalTerritoryId, "ice-capital");
+  assert.equal(result.sourceDomain.status, "active");
+  assert.equal(result.territory.domainId, "fire-realm");
+  assert.equal(result.territory.ownerGroupId, "fire-kingdom");
+});
+
+test("reino que perde sua última região é dissolvido, sem apagar o histórico", () => {
+  const { domain: fireRealm } = setup();
+  const onlyRegion = createTerritory({
+    id: "small-kingdom-capital", species: "wind", ownerGroupId: "wind-kingdom",
+    center: { x: -200, y: 64, z: 0 }, radius: 96, createdTick: 20
+  });
+  const source = createTerritoryDomain({
+    id: "wind-realm", ownerGroupId: "wind-kingdom",
+    capitalTerritoryId: onlyRegion.id, createdTick: 20
+  });
+  const result = annexTerritoryToDomain(fireRealm, {
+    ...onlyRegion, domainId: source.id
+  }, { tick: 500, sourceDomain: source });
+  assert.equal(result.sourceDomain.status, "dissolved");
+  assert.equal(result.sourceDomain.capitalTerritoryId, null);
+  assert.deepEqual(result.sourceDomain.territoryIds, []);
+  assert.equal(result.sourceDomain.history.at(-1).type, "domain_dissolved_by_conquest");
+});
+
+test("não permite anexar território de reino rival sem atualizar o reino de origem", () => {
+  const { domain: fireRealm } = setup();
+  const rivalRegion = {
+    ...createTerritory({
+      id: "rival-region", species: "ice", ownerGroupId: "ice-kingdom",
+      center: { x: 10, y: 64, z: 200 }, radius: 192, createdTick: 10
+    }),
+    domainId: "ice-realm"
+  };
+  assert.throws(() => annexTerritoryToDomain(fireRealm, rivalRegion, {
+    tick: 400
+  }), /domínio de origem/);
+});
