@@ -33,23 +33,6 @@ export function assessNaturalBehavior(state, profile) {
   if (state.temperatureStress === "too_cold" && safeToRest) {
     return { eligible: true, action: "seek_warm_shelter", category: "environment_adaptation", reason: "cold_exposure" };
   }
-  if (state.groomingNeeded === true && safeToRest) {
-    return {
-      eligible: true,
-      action: SPECIES_GROOMING_ACTION[state.species] ?? "groom_scales",
-      category: "self_care",
-      reason: "grooming"
-    };
-  }
-  if (state.bathingOpportunity === true && safeToExplore) {
-    return {
-      eligible: true,
-      action: SPECIES_BATHING_ACTION[state.species] ?? "bathe_or_clean_scales",
-      category: "self_care",
-      reason: "cleaning_opportunity"
-    };
-  }
-
   const stage = state.lifeStage;
   const young = stage === "hatchling" || stage === "juvenile";
   const playfulness = trait(state, profile, "playfulness", young ? 0.65 : 0.3);
