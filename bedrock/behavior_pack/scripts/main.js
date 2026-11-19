@@ -6,7 +6,8 @@ import { writeSocialMemory } from "./core/adapters/bedrock/social-memory-writer.
 import { initializeDragonEntity } from "./core/adapters/bedrock/dragon-initializer.js";
 import { tickMetabolism } from "./core/survival/metabolism.js";
 import { getSpeciesProfile } from "./core/species/profiles/index.js";
-import { writeDragonGroupMembership, writeDragonGroupLeadership } from "./core/adapters/bedrock/dragon-group-writer.js";\nimport { getDragonBalance } from "./core/species/balance.js";
+import { writeDragonGroupMembership, writeDragonGroupLeadership } from "./core/adapters/bedrock/dragon-group-writer.js";
+import { getDragonBalance } from "./core/species/balance.js";
 
 const TICK_INTERVAL = 40;
 const QUERY_RADIUS = 32;
@@ -66,7 +67,8 @@ function inferEnvironment(dimension, location) {
     const biome = dimension.getBiome(location);
     const biomeId = typeof biome === "string" ? biome : biome?.id ?? "";
     context.biome = biomeId;
-    if (location.y < 50) context.tags.push("cave","darkness");\n    if (location.y >= 120) context.tags.push("high_altitude", "wind");
+    if (location.y < 50) context.tags.push("cave","darkness");
+    if (location.y >= 120) context.tags.push("high_altitude", "wind");
     else if (location.y >= 90) context.tags.push("wind");
     const normalized = biomeId.toLowerCase();
     if (location.y >= 100) context.tags.push("open");
@@ -77,7 +79,8 @@ function inferEnvironment(dimension, location) {
       const weather = String(world.getWeather?.() ?? "").toLowerCase();
       if (weather.includes("thunder")) context.tags.push("thunderstorm");
     } catch { /* API opcional entre versões. */ }
-    if (/ocean|river|beach/.test(normalized)) context.tags.push("water");\n    if (/swamp|mangrove/.test(normalized)) context.tags.push("swamp");
+    if (/ocean|river|beach/.test(normalized)) context.tags.push("water");
+    if (/swamp|mangrove/.test(normalized)) context.tags.push("swamp");
     if (/snow|frozen|ice|grove/.test(normalized)) context.tags.push("cold");
     if (/desert|badlands|savanna/.test(normalized)) context.tags.push("hot");
     if (/jungle|forest|taiga/.test(normalized)) context.tags.push("forest","cover");
@@ -235,7 +238,10 @@ function updateDimension(dimension, currentTick) {
       if (!state) continue;
       state.socialObservations = pendingSocialObservations.get(entity.id) ?? [];
       pendingSocialObservations.delete(entity.id);
-      const decision = decideDragonBehavior(state);\n      synchronizeNeeds(entity, state, decision, environmentContext);\n      synchronizeSocialGroup(entity, state, decision);\n      enforceFlightLimits(entity, state.species);
+      const decision = decideDragonBehavior(state);
+      synchronizeNeeds(entity, state, decision, environmentContext);
+      synchronizeSocialGroup(entity, state, decision);
+      enforceFlightLimits(entity, state.species);
       try {
         writeSocialMemory(entity, decision.socialMemory ?? []);
       } catch {
