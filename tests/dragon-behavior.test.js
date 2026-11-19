@@ -146,17 +146,19 @@ test("padrões sociais naturais usam grupos territoriais e exceções solitária
   assert.equal(getBehaviorProfile("electric").migrationPattern, "long_cycle");
 });
 
-test("dragões sociais procuram completar grupos e patrulhar territórios", () => {
-  for (const species of ["water", "fire", "ice", "earth", "lava"]) {
+test("grupos respeitam o tamanho social definido para cada espécie", () => {
+  for (const species of ["earth", "lava"]) {
     const result = decideDragonBehavior(healthy(species, {
       nearbySameSpeciesCount: 2, safeToExplore: true
     }));
     assert.equal(result.action, "seek_group_members");
   }
-  const complete = decideDragonBehavior(healthy("fire", {
-    nearbySameSpeciesCount: 5, safeToExplore: true
-  }));
-  assert.equal(complete.action, "organize_territory_patrol_group");
+  for (const species of ["water", "fire", "ice"]) {
+    const result = decideDragonBehavior(healthy(species, {
+      nearbySameSpeciesCount: 2, safeToExplore: true
+    }));
+    assert.equal(result.action, "organize_territory_patrol_group");
+  }
 });
 
 test("dragões elétricos permanecem solitários e migram em ciclos longos seguros", () => {
