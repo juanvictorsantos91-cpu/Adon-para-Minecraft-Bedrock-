@@ -14,7 +14,7 @@ export function initializeDragonEntity(entity, currentTick = 0) {
   if (!entity.typeId.startsWith(ENTITY_PREFIX)) return null;
 
   const species = entity.typeId.slice(ENTITY_PREFIX.length).replace(/_dragon$/, "");
-  if (!/^(fire|water|electric|ice|earth|lava|wind|sound|poison|plasma)$/.test(species)) {
+  if (!/^(?:fire|water|electric|ice|earth|lava|wind|sound|poison|plasma|acid|sand|light|radioactive|shadow)$/.test(species)) {
     return null;
   }
 
@@ -31,6 +31,9 @@ export function initializeDragonEntity(entity, currentTick = 0) {
     spawnTickInitialized = true;
   }
   if (!tags.includes("ds:dragon")) entity.addTag("ds:dragon");
+  if (!tags.includes(`ds:species:${species}`)) entity.addTag(`ds:species:${species}`);
+  if (!tags.some(tag => tag.startsWith("ds:energy:"))) entity.addTag("ds:energy:100");
+  if (!tags.some(tag => tag.startsWith("ds:hunger:"))) entity.addTag("ds:hunger:100");
 
   return { species, personality, spawnTickInitialized };
 }
