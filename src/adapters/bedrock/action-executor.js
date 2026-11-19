@@ -13,7 +13,23 @@ const ELEMENTAL_EFFECTS = Object.freeze({
   raise_sandstorm: { damage: 0, radius: 8, effect: "blindness", duration: 60 },
   release_blinding_light_pulse: { damage: 1, radius: 7, effect: "blindness", duration: 80 },
   release_radiation_pulse: { damage: 4, radius: 7, effect: "weakness", duration: 100 },
-  activate_cumulative_exposure_field: { damage: 1, radius: 6, effect: "weakness", duration: 120 }
+  activate_cumulative_exposure_field: { damage: 1, radius: 6, effect: "weakness", duration: 120 },
+  release_fire_breath: { damage: 8, radius: 7, effect: "slowness", duration: 40, fireSeconds: 3 },
+  create_flame_projectile: { damage: 9, radius: 10, effect: "slowness", duration: 40, fireSeconds: 4 },
+  release_water_jet: { damage: 4, radius: 7, effect: "slowness", duration: 60, knockback: 0.7 },
+  release_frost_breath: { damage: 5, radius: 6, effect: "slowness", duration: 120 },
+  release_electric_discharge: { damage: 8, radius: 6, effect: "slowness", duration: 50, knockback: 0.45 },
+  release_magma_wave: { damage: 10, radius: 5, effect: "slowness", duration: 60, fireSeconds: 4 },
+  breathe_venom: { damage: 3, radius: 6, effect: "poison", duration: 120 },
+  spit_venom: { damage: 5, radius: 9, effect: "poison", duration: 100 },
+  release_camouflage_mist: { damage: 0, radius: 5, effect: "blindness", duration: 60 },
+  release_plasma_breath: { damage: 9, radius: 7, effect: "weakness", duration: 80 },
+  release_plasma_discharge: { damage: 11, radius: 6, effect: "slowness", duration: 80, knockback: 0.5 },
+  fire_ionized_projectile: { damage: 7, radius: 10, effect: "weakness", duration: 80 },
+  create_plasma_arc: { damage: 8, radius: 6, effect: "weakness", duration: 100, knockback: 0.4 },
+  activate_plasma_overload: { damage: 12, radius: 5, effect: "weakness", duration: 100, knockback: 0.8 },
+  perform_sonic_impact_wave: { damage: 3, radius: 6, effect: "slowness", duration: 40, knockback: 1.0 },
+  perform_disorienting_roar: { damage: 1, radius: 7, effect: "slowness", duration: 100 }
 });
 
 function executeElementalEffect(entity, action, nearbyEntities, currentTick = 0) {
@@ -28,6 +44,11 @@ function executeElementalEffect(entity, action, nearbyEntities, currentTick = 0)
     try {
       if (spec.damage > 0) target.applyDamage?.(spec.damage);
       if (spec.effect) target.addEffect?.(spec.effect, spec.duration, { amplifier: 0, showParticles: false });
+      if (spec.fireSeconds) target.setOnFire?.(spec.fireSeconds, true);
+      if (spec.knockback) {
+        const direction = normalizedDirection(entity.location, target.location);
+        target.applyKnockback?.({ x: direction.x, z: direction.z }, spec.knockback);
+      }
       if (action === "release_radiation_pulse" || action === "activate_cumulative_exposure_field") {
         const tags = target.getTags?.() ?? [];
         const previous = tags.find(tag => tag.startsWith("ds:exposure:"));
