@@ -4,6 +4,9 @@ import { buildDragonSnapshot, actionIntentTag } from "./core/adapters/bedrock/sn
 import { executeDragonAction } from "./core/adapters/bedrock/action-executor.js";
 import { writeSocialMemory } from "./core/adapters/bedrock/social-memory-writer.js";
 import { initializeDragonEntity } from "./core/adapters/bedrock/dragon-initializer.js";
+import { tickMetabolism } from "./core/survival/metabolism.js";
+import { getSpeciesProfile } from "./core/species/profiles/index.js";
+import { writeDragonGroupMembership, writeDragonGroupLeadership } from "./core/adapters/bedrock/dragon-group-writer.js";
 
 const TICK_INTERVAL = 40;
 const QUERY_RADIUS = 32;
@@ -93,6 +96,72 @@ function inferEnvironment(dimension, location) {
   return context;
 }
 
+function replaceNumberTag(entity, prefix, value) {
+  for (const tag of entity.getTags()) if (tag.startsWith(prefix)) entity.removeTag(tag);
+  entity.addTag(prefix + Number(value).toFixed(2));
+}
+
+function hashGroupKey(value) {
+  let hash = 2166136261;
+  for (let i = 0; i < value.length; i++) hash = Math.imul(hash ^ value.charCodeAt(i), 16777619);
+  return (hash >>> 0).toString(36);
+}
+
+function synchronizeNeeds(entity, state, decision, environmentContext) {
+  const profile = getSpeciesProfile(state.species);
+  const action = decision.action ?? "idle";
+  const activity = /fly|flight|glide/.test(action) ? "fly" :
+    /attack|combat|confront|defend/.test(action) ? "physicalAttack" :
+    /run|chase|pursue|retreat|move/.test(action) ? "run" : "idle";
+  const environment = state.species === "fire" && environmentContext.tags.includes("hot") ? "hot" :
+    state.species === "lava" && environmentContext.tags.includes("volcanic") ? "volcanic" :
+    state.species === "water" && environmentContext.tags.includes("water") ? "water" :
+    state.species === "ice" && environmentContext.tags.includes("cold") ? "frozen" :
+    state.species === "earth" && entity.location.y < 50 ? "underground" :
+    state.species === "wind" && entity.location.y >= 120 ? "highAltitude" :
+    state.species === "sand" && environmentContext.tags.includes("hot") ? "desert" :
+    state.species === "light" && (world.getTimeOfDay?.() ?? 0) < 12000 ? "clearDaylight" :
+    state.species === "shadow" && (world.getTimeOfDay?.() ?? 0) >= 13000 ? "night" :
+    state.species === "sound" && entity.location.y < 50 ? "quietCave" : "neutral";
+  const next = tickMetabolism({
+    energy: state.energy, hunger: state.hunger, health: state.health,
+    injury: state.injury?.severity === "none" ? null : state.injury,
+    starvationMinutes: state.starvationMinutes ?? 0
+  }, profile, {
+    minutes: TICK_INTERVAL / 1200,
+    activity,
+    resting: action === "rest_in_preferred_habitat" || entity.hasTag("ds:resting"),
+    safe: environmentContext.immediateHazard !== true && state.threatDetected !== true,
+    stationary: entity.hasTag("ds:resting") || action === "rest_in_preferred_habitat",
+    environment
+  });
+  replaceNumberTag(entity, "ds:energy:", next.energy);
+  replaceNumberTag(entity, "ds:hunger:", next.hunger);
+  replaceNumberTag(entity, "ds:health:", next.health);
+  replaceNumberTag(entity, "ds:starvation_minutes:", next.starvationMinutes ?? 0);
+  const health = entity.getComponent?.("minecraft:health");
+  if (health && typeof health.setCurrentValue === "function" && Number.isFinite(health.effectiveMax)) {
+    health.setCurrentValue(Math.max(0, health.effectiveMax * next.health / 100));
+  }
+  if (next.activityBlocked) entity.addTag("ds:activity_blocked");
+  else entity.removeTag("ds:activity_blocked");
+}
+
+function synchronizeSocialGroup(entity, state, decision) {
+  const plan = decision.groupPlan;
+  if (!plan || plan.pattern === "solitary" || plan.action !== "organize_territory_patrol_group") {
+    if (entity.hasTag("ds:leader")) entity.removeTag("ds:leader");
+    return;
+  }
+  const members = [entity.id, ...(state.nearbyDragons ?? [])
+    .filter(other => other.species === state.species && other.distance <= QUERY_RADIUS)
+    .map(other => other.id)].sort();
+  if (members.length < plan.targetGroupSize) return;
+  const groupId = state.species + ":" + hashGroupKey(members.join("|"));
+  writeDragonGroupMembership(entity, groupId);
+  writeDragonGroupLeadership(entity, entity.id === members[0]);
+}
+
 function publishIntent(entity, action) {
   try {
     for (const tag of entity.getTags()) {
@@ -126,7 +195,7 @@ function updateDimension(dimension, currentTick) {
       if (!state) continue;
       state.socialObservations = pendingSocialObservations.get(entity.id) ?? [];
       pendingSocialObservations.delete(entity.id);
-      const decision = decideDragonBehavior(state);
+      const decision = decideDragonBehavior(state);\n      synchronizeNeeds(entity, state, decision, environmentContext);\n      synchronizeSocialGroup(entity, state, decision);
       try {
         writeSocialMemory(entity, decision.socialMemory ?? []);
       } catch {
