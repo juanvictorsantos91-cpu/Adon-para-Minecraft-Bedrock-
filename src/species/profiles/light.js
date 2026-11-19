@@ -1,8 +1,12 @@
+import { getDragonBalance } from "../balance.js";
+
+const balance = getDragonBalance("light");
+
 export const lightDragonProfile = {
   species: "light",
-  restRecoveryPerMinute: 2,
+  restRecoveryPerMinute: balance.rest,
   environmentRecovery: { clearDaylight: 4, openSunlitArea: 3 },
-  hungerPerMinute: 0.05,
+  hungerPerMinute: balance.hunger,
   starvationGraceMinutes: 60,
   starvationDamagePerMinute: 0.1,
   lowHungerEnergyMultiplier: 0.5,
