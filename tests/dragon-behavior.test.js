@@ -137,8 +137,12 @@ test("padrões sociais naturais usam grupos territoriais e exceções solitária
   assert.equal(getBehaviorProfile("electric").socialPattern, "solitary");
   assert.equal(getBehaviorProfile("poison").socialPattern, "solitary");
   assert.equal(getBehaviorProfile("plasma").socialPattern, "solitary");
-  assert.equal(getBehaviorProfile("earth").preferredGroupSize, 10);
-  assert.equal(getBehaviorProfile("lava").preferredGroupSize, 8);
+  assert.equal(getBehaviorProfile("water").preferredGroupSize, 3);
+  assert.equal(getBehaviorProfile("fire").preferredGroupSize, 2);
+  assert.equal(getBehaviorProfile("ice").preferredGroupSize, 2);
+  assert.equal(getBehaviorProfile("earth").preferredGroupSize, 6);
+  assert.equal(getBehaviorProfile("lava").preferredGroupSize, 6);
+  assert.equal(getBehaviorProfile("sound").preferredGroupSize, 3);
   assert.equal(getBehaviorProfile("electric").migrationPattern, "long_cycle");
 });
 
@@ -174,11 +178,11 @@ test("dragões elétricos permanecem solitários e migram em ciclos longos segur
 
 test("planejador social respeita o tamanho preferido de cada espécie", () => {
   const cases = [
-    ["water", 6, 1, "seek_group_members"],
-    ["fire", 6, 1, "seek_group_members"],
-    ["ice", 6, 1, "seek_group_members"],
-    ["earth", 10, 2, "seek_group_members"],
-    ["lava", 8, 5, "seek_group_members"]
+    ["water", 3, 1, "seek_group_members"],
+    ["fire", 2, 0, "seek_group_members"],
+    ["ice", 2, 0, "seek_group_members"],
+    ["earth", 6, 2, "seek_group_members"],
+    ["lava", 6, 2, "seek_group_members"]
   ];
 
   for (const [species, target, nearby, action] of cases) {
