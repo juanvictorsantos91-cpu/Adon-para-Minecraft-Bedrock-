@@ -34,6 +34,7 @@ export function initializeDragonEntity(entity, currentTick = 0) {
   if (!tags.includes(`ds:species:${species}`)) entity.addTag(`ds:species:${species}`);
   if (!tags.some(tag => tag.startsWith("ds:energy:"))) entity.addTag("ds:energy:100");
   if (!tags.some(tag => tag.startsWith("ds:hunger:"))) entity.addTag("ds:hunger:100");
+  if (!tags.some(tag => tag.startsWith("ds:stage:"))) entity.addTag("ds:stage:adult");
 
   return { species, personality, spawnTickInitialized };
 }
