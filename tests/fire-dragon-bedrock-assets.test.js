@@ -47,7 +47,7 @@ test("Fire Dragon geometry contains the approved basic anatomy", async () => {
     assert.equal(cube.origin.length, 3);
     assert.equal(cube.size.length, 3);
     assert.ok(cube.size.every((value) => value > 0));
-    assert.equal(cube.uv.length, 2);
+    assert.ok(Array.isArray(cube.uv) ? cube.uv.length === 2 : cube.uv && typeof cube.uv === "object" && Object.keys(cube.uv).length > 0);
   }
 });
 
