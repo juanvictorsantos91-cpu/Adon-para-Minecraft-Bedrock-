@@ -126,6 +126,67 @@ export const behaviorProfiles = {
     bodyPlan: "standard_four_legged_two_winged",
     locomotionSupport: "four_legs_and_two_wings"
   }
+  ,
+  acid: {
+    temperament: "patient_corrosive_hunter",
+    aggression: 0.62, caution: 0.72, curiosity: 0.55, protectiveness: 0.5,
+    sociability: 0.25, independence: 0.9,
+    socialPattern: "solitary", preferredGroupSize: 1, groupRange: "individual",
+    migrationPattern: "local_roaming",
+    preferredActivities: ["stalk_prey", "corrode_obstacles", "create_temporary_acid_pool", "retreat_to_cover"],
+    preferredEnvironment: ["acidic_cavern", "humid_cave", "swamp", "dense_forest"],
+    threatResponse: "corrosive_warning",
+    acidCombat: true, materialCorrosion: true,
+    corrosionTargetPolicy: "hostile_entities_and_selected_soft_blocks_only"
+  },
+  sand: {
+    temperament: "territorial_ambush_hunter",
+    aggression: 0.58, caution: 0.72, curiosity: 0.65, protectiveness: 0.55,
+    sociability: 0.5, independence: 0.7,
+    socialPattern: "territorial_groups", preferredGroupSize: 4, groupRange: "small",
+    patrolStyle: "distributed_patrol", internalPairing: false,
+    migrationPattern: "seasonal_roaming",
+    preferredActivities: ["burrow_under_sand", "track_vibrations", "ambush_from_below", "raise_sand_screen"],
+    preferredEnvironment: ["desert", "badlands", "warm_sand", "dry_dunes"],
+    threatResponse: "burrow_and_ambush",
+    sandCombat: true, undergroundAmbush: true
+  },
+  light: {
+    temperament: "alert_benevolent_sentinel",
+    aggression: 0.25, caution: 0.72, curiosity: 0.8, protectiveness: 0.85,
+    sociability: 0.7, independence: 0.55,
+    socialPattern: "territorial_groups", preferredGroupSize: 4, groupRange: "small",
+    patrolStyle: "distributed_patrol", internalPairing: false,
+    migrationPattern: "local_roaming",
+    preferredActivities: ["sunbathe", "scan_open_area", "illuminate_dark_passage", "dazzle_threat"],
+    preferredEnvironment: ["sunlit_area", "open_plains", "flower_forest", "clear_daylight"],
+    threatResponse: "dazzle_and_withdraw",
+    lightCombat: true, restorativeDaylight: true,
+    protectiveAura: false
+  },
+  radioactive: {
+    temperament: "solitary_energy_guardian",
+    aggression: 0.52, caution: 0.88, curiosity: 0.45, protectiveness: 0.6,
+    sociability: 0.18, independence: 0.96,
+    socialPattern: "solitary", preferredGroupSize: 1, groupRange: "individual",
+    migrationPattern: "rare_long_roaming",
+    preferredActivities: ["absorb_mineral_energy", "monitor_exposure_field", "withdraw_when_overloaded"],
+    preferredEnvironment: ["irradiated_mineral_cavern", "deep_crystal_cave", "underground"],
+    threatResponse: "release_warning_pulse",
+    radioactiveCombat: true, cumulativeExposure: true,
+    exposureAffectsEnvironment: true
+  },
+  shadow: {
+    temperament: "elusive_nocturnal_stalker",
+    aggression: 0.48, caution: 0.96, curiosity: 0.7, protectiveness: 0.4,
+    sociability: 0.15, independence: 0.98,
+    socialPattern: "solitary", preferredGroupSize: 1, groupRange: "individual",
+    migrationPattern: "nocturnal_roaming",
+    preferredActivities: ["hide_in_darkness", "move_between_shadows", "stalk_from_cover", "rest_in_deep_darkness"],
+    preferredEnvironment: ["deep_darkness", "shaded_cave", "dark_forest", "night"],
+    threatResponse: "vanish_into_shadow",
+    shadowCombat: true, shadowCloak: true, shortShadowDisplacement: true
+  }
 };
 
 export function getBehaviorProfile(species) {
