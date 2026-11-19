@@ -116,7 +116,7 @@ export const behaviorProfiles = {
     temperament: "observant_cautious",
     aggression: 0.45, caution: 0.85, curiosity: 0.9, protectiveness: 0.65,
     sociability: 0.6, independence: 0.7,
-    socialPattern: "territorial_groups", preferredGroupSize: 6, groupRange: "large",
+    socialPattern: "territorial_groups", preferredGroupSize: 3, groupRange: "small",
     patrolStyle: "distributed_patrol", internalPairing: false,
     migrationPattern: "local_roaming",
     preferredActivities: ["map_environment_with_echoes", "track_vibrations", "signal_group_with_echoes", "patrol_rocky_valley"],
