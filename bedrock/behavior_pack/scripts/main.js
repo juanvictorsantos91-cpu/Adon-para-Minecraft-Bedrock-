@@ -313,10 +313,11 @@ function updateDimension(dimension, currentTick) {
       } else if (entity.hasTag("ds:migration_due")) {
         entity.removeTag("ds:migration_due");
       }
-      publishIntent(entity, decision.action);
-      executeDragonAction(entity, decision, nearby, {
+      publishIntent(entity, effectiveDecision.action);
+      executeDragonAction(entity, effectiveDecision, nearby, {
         threatDetected: state.threatDetected,
-        immediateDanger: environmentContext.immediateHazard === true
+        immediateDanger: environmentContext.immediateHazard === true,
+        currentTick
       });
     } catch {
       // Uma entidade inválida não deve interromper a IA das demais.
