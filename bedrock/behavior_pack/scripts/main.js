@@ -128,19 +128,55 @@ function hashGroupKey(value) {
 function synchronizeNeeds(entity, state, decision, environmentContext) {
   const profile = getSpeciesProfile(state.species);
   const action = decision.action ?? "idle";
-  const activity = /fly|flight|glide/.test(action) ? "fly" :
+  const actionCosts = {
+    perform_sonic_impact_wave: "sonicImpact", perform_disorienting_roar: "disorientingRoar",
+    release_fire_breath: "fireBreath", create_flame_projectile: "fireProjectile",
+    release_water_jet: "waterJet", release_frost_breath: "frostBreath",
+    release_electric_discharge: "electricDischarge", release_magma_wave: "magmaWave",
+    breathe_venom: "venomBreath", spit_venom: "venomSpit", release_camouflage_mist: "camouflageMist",
+    release_plasma_breath: "plasmaBreath", release_plasma_discharge: "plasmaDischarge",
+    fire_ionized_projectile: "ionizedProjectile", create_plasma_arc: "plasmaArc",
+    activate_plasma_overload: "overload", release_acid_jet: "acidJet",
+    create_temporary_acid_pool: "corrosivePool", raise_sandstorm: "sandstorm",
+    release_blinding_light_pulse: "blindingPulse", release_radiation_pulse: "radiationPulse",
+    activate_cumulative_exposure_field: "exposureField", activate_shadow_cloak: "shadowCloak",
+    perform_shadow_step: "shadowStep", perform_wind_gust: "windGust",
+    perform_aerial_push: "aerialPush", perform_electric_storm_communication_ritual: "electricBoost",
+    burrow_under_sand: "burrow", dim_plasma_glow_and_conceal: "concealment",
+    reposition_silently: "stealthMovement"
+  };
+  const activity = actionCosts[action] ?? (/fly|flight|glide/.test(action) ? "fly" :
     /attack|combat|confront|defend/.test(action) ? "physicalAttack" :
-    /run|chase|pursue|retreat|move/.test(action) ? "run" : "idle";
-  const environment = state.species === "fire" && environmentContext.tags.includes("hot") ? "hot" :
-    state.species === "lava" && environmentContext.tags.includes("volcanic") ? "volcanic" :
-    state.species === "water" && environmentContext.tags.includes("water") ? "water" :
-    state.species === "ice" && environmentContext.tags.includes("cold") ? "frozen" :
+    /run|chase|pursue|retreat|move/.test(action) ? "run" : "idle");
+  const time = world.getTimeOfDay?.() ?? 0;
+  const tags = environmentContext.tags ?? [];
+  const environment =
+    state.species === "fire" && tags.includes("hot") ? "hot" :
+    state.species === "lava" && tags.includes("volcanic") ? "volcanic" :
+    state.species === "water" && tags.includes("water") ? "water" :
+    state.species === "ice" && tags.includes("cold") ? "frozen" :
     state.species === "earth" && entity.location.y < 50 ? "underground" :
+    state.species === "electric" && tags.includes("thunderstorm") ? "thunderstorm" :
+    state.species === "electric" && tags.includes("night") ? "night" :
     state.species === "wind" && entity.location.y >= 120 ? "highAltitude" :
-    state.species === "sand" && environmentContext.tags.includes("hot") ? "desert" :
-    state.species === "light" && (world.getTimeOfDay?.() ?? 0) < 12000 ? "clearDaylight" :
-    state.species === "shadow" && (world.getTimeOfDay?.() ?? 0) >= 13000 ? "night" :
-    state.species === "sound" && entity.location.y < 50 ? "quietCave" : "neutral";
+    state.species === "wind" && tags.includes("wind") ? "strongWind" :
+    state.species === "sand" && tags.includes("hot") ? "desert" :
+    state.species === "light" && tags.includes("daylight") ? "clearDaylight" :
+    state.species === "light" && tags.includes("open") ? "openSunlitArea" :
+    state.species === "shadow" && tags.includes("darkness") && entity.location.y < 50 ? "deepDarkness" :
+    state.species === "shadow" && tags.includes("darkness") ? "night" :
+    state.species === "sound" && entity.location.y < 50 ? "quietCave" :
+    state.species === "poison" && tags.includes("swamp") ? "swamp" :
+    state.species === "poison" && tags.includes("forest") ? "humidForest" :
+    state.species === "plasma" && tags.includes("thunderstorm") && entity.location.y >= 100 ? "highAltitudeStorm" :
+    state.species === "plasma" && entity.location.y < 50 ? "exposedMineralCavern" :
+    state.species === "acid" && entity.location.y < 50 ? "acidicCavern" :
+    state.species === "acid" && tags.includes("swamp") ? "humidCave" :
+    state.species === "radioactive" && entity.location.y < 40 ? "deepCrystalCave" :
+    state.species === "radioactive" ? "irradiatedMineralCavern" :
+    state.species === "shadow" && tags.includes("forest") ? "shadedCave" :
+    state.species === "light" && time < 12000 ? "clearDaylight" : "neutral";
+  const restingAction = action === "rest_in_preferred_habitat" || action === "absorb_charge_from_storm";
   const next = tickMetabolism({
     energy: state.energy, hunger: state.hunger, health: state.health,
     injury: state.injury?.severity === "none" ? null : state.injury,
@@ -148,9 +184,9 @@ function synchronizeNeeds(entity, state, decision, environmentContext) {
   }, profile, {
     minutes: TICK_INTERVAL / 1200,
     activity,
-    resting: action === "rest_in_preferred_habitat" || entity.hasTag("ds:resting"),
+    resting: restingAction || entity.hasTag("ds:resting"),
     safe: environmentContext.immediateHazard !== true && state.threatDetected !== true,
-    stationary: entity.hasTag("ds:resting") || action === "rest_in_preferred_habitat",
+    stationary: entity.hasTag("ds:resting") || restingAction,
     environment
   });
   replaceNumberTag(entity, "ds:energy:", next.energy);
@@ -163,6 +199,7 @@ function synchronizeNeeds(entity, state, decision, environmentContext) {
   }
   if (next.activityBlocked) entity.addTag("ds:activity_blocked");
   else entity.removeTag("ds:activity_blocked");
+  return next;
 }
 
 function synchronizeSocialGroup(entity, state, decision) {
@@ -263,6 +300,9 @@ function updateDimension(dimension, currentTick) {
         }
       } else synchronizeSocialGroup(entity, state, decision);
       enforceFlightLimits(entity, state.species);
+      const effectiveDecision = needsAfterDecision.activityBlocked
+        ? { ...decision, action: "conserve_energy", reason: "A reserva mínima de energia bloqueou a habilidade neste ciclo." }
+        : decision;
       try {
         writeSocialMemory(entity, decision.socialMemory ?? []);
       } catch {
