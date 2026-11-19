@@ -323,6 +323,70 @@ function behaviorRules(profile) {
       action: "create_plasma_arc",
       reason: "Cria arcos de plasma contra alvos próximos."
     },
+
+    {
+      name: "acid-corrosion-jet", priority: 3.55,
+      when: s => profile.acidCombat === true && s.acidJetRequested === true &&
+        s.threatDetected === true && s.energy >= 25,
+      action: "release_acid_jet",
+      reason: "Usa um jato corrosivo contra uma ameaça; a corrosão de blocos deve obedecer à lista restrita de alvos permitidos."
+    },
+    {
+      name: "acid-temporary-pool", priority: 3.56,
+      when: s => profile.acidCombat === true && s.acidPoolRequested === true &&
+        s.threatDetected === true && s.energy >= 30,
+      action: "create_temporary_acid_pool",
+      reason: "Cria uma poça corrosiva temporária em área de combate, sem destruir construções indiscriminadamente."
+    },
+    {
+      name: "sand-burrow", priority: 3.52,
+      when: s => profile.sandCombat === true && s.burrowRequested === true &&
+        s.sandAvailable === true && s.energy >= 15,
+      action: "burrow_under_sand",
+      reason: "Enterra-se em areia adequada para se esconder ou preparar uma emboscada."
+    },
+    {
+      name: "sandstorm-attack", priority: 3.57,
+      when: s => profile.sandCombat === true && s.sandstormRequested === true &&
+        s.threatDetected === true && s.energy >= 30,
+      action: "raise_sandstorm",
+      reason: "Levanta uma cortina de areia para dificultar a aproximação de ameaças."
+    },
+    {
+      name: "light-dazzling-pulse", priority: 3.58,
+      when: s => profile.lightCombat === true && s.lightPulseRequested === true &&
+        s.threatDetected === true && s.energy >= 20,
+      action: "release_blinding_light_pulse",
+      reason: "Emite um clarão para desorientar temporariamente uma ameaça; não cria aura protetora."
+    },
+    {
+      name: "radioactive-exposure-pulse", priority: 3.59,
+      when: s => profile.radioactiveCombat === true && s.radiationPulseRequested === true &&
+        s.threatDetected === true && s.energy >= 30,
+      action: "release_radiation_pulse",
+      reason: "Libera um pulso energético fictício; efeitos de exposição devem ser acumulativos e controlados pelo adaptador."
+    },
+    {
+      name: "radioactive-exposure-field", priority: 3.61,
+      when: s => profile.radioactiveCombat === true && s.exposureFieldRequested === true &&
+        s.threatDetected === true && s.energy >= 45,
+      action: "activate_cumulative_exposure_field",
+      reason: "Ativa um campo de exposição por tempo limitado, sem tratar o efeito como veneno instantâneo."
+    },
+    {
+      name: "shadow-cloak", priority: 3.32,
+      when: s => profile.shadowCloak === true && s.shadowCloakRequested === true &&
+        s.darknessNearby === true && s.energy >= 15,
+      action: "activate_shadow_cloak",
+      reason: "Envolve o corpo em escuridão para ocultação em ambiente escuro."
+    },
+    {
+      name: "shadow-step", priority: 3.34,
+      when: s => profile.shortShadowDisplacement === true && s.shadowStepRequested === true &&
+        s.darknessNearby === true && s.energy >= 25,
+      action: "perform_shadow_step",
+      reason: "Executa um deslocamento curto entre áreas sombreadas; não é teleporte ilimitado."
+    },
     {
       name: "wind-gust-ability", priority: 13.5,
       when: s => profile.windCombat === true && s.windAbilityRequested === true && s.energy > 25 && s.threatDetected === true,
