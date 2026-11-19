@@ -14,31 +14,31 @@ const roster = (species, count, prefix = species) =>
   }));
 
 test("Fogo forma grupo territorial de seis e mantém pares internos", () => {
-  const dragons = roster("fire", 6);
+  const dragons = roster("fire", 2);
   const group = createOrganizedDragonGroup({
     id: "fire-01", species: "fire", dragons, createdTick: 10,
     homeTerritoryId: "territory-fire-01", pairBonds: [[dragons[0].id, dragons[1].id], [dragons[2].id, dragons[3].id]]
   });
-  assert.equal(group.memberIds.length, 6);
+  assert.equal(group.memberIds.length, 2);
   assert.equal(group.pairBonds.length, 2);
   assert.equal(group.leaderId, dragons[5].id);
   assert.equal(group.leader.role, "territory_leader");
 });
 
-test("Terra exige grupo maior de dez indivíduos", () => {
+test("Terra forma grupo territorial de seis indivíduos", () => {
   assert.throws(() => createOrganizedDragonGroup({
     id: "earth-small", species: "earth", dragons: roster("earth", 6), createdTick: 0
   }), /pelo menos 10/);
   const group = createOrganizedDragonGroup({
-    id: "earth-large", species: "earth", dragons: roster("earth", 10), createdTick: 0
+    id: "earth-large", species: "earth", dragons: roster("earth", 6), createdTick: 0
   });
-  assert.equal(group.memberIds.length, 10);
+  assert.equal(group.memberIds.length, 6);
 });
 
-test("Lava usa oito membros e Terra/Lava podem compartilhar estrutura de grupo", () => {
-  const dragons = [...roster("lava", 4, "lava"), ...roster("earth", 4, "earth")];
+test("Lava usa seis membros e Terra/Lava podem compartilhar estrutura de grupo", () => {
+  const dragons = [...roster("lava", 3, "lava"), ...roster("earth", 3, "earth")];
   const group = createOrganizedDragonGroup({ id: "lava-earth", species: "lava", dragons, createdTick: 0 });
-  assert.equal(group.memberIds.length, 8);
+  assert.equal(group.memberIds.length, 6);
 });
 
 test("seleciona líder pelo perfil e desempata pelo ID", () => {
@@ -54,14 +54,14 @@ test("plano distribui patrulhas e mantém casais juntos sem formar manada", () =
   });
   const plan = createTerritoryPatrolPlan(group, ["north", "south", "east", "west"]);
   assert.equal(plan.membersStayTogetherAsHerd, false);
-  assert.equal(plan.assignments.length, 5);
+  assert.equal(plan.assignments.length, 1);
   assert.deepEqual(plan.assignments[0].memberIds, [dragons[0].id, dragons[1].id].sort());
-  assert.equal(new Set(plan.assignments.map(item => item.sectorId)).size, 4);
+  assert.equal(new Set(plan.assignments.map(item => item.sectorId)).size, 1);
   assert.equal(plan.leaderDuty, "coordinate_and_oversee_patrol_sectors");
 });
 
 test("troca líder quando o atual sai, usando o elenco completo remanescente", () => {
-  const dragons = roster("water", 6);
+  const dragons = roster("water", 3);
   const group = createOrganizedDragonGroup({ id: "water-01", species: "water", dragons, createdTick: 0 });
   const remaining = dragons.filter(dragon => dragon.id !== group.leaderId);
   remaining[0].leadership = 1;
