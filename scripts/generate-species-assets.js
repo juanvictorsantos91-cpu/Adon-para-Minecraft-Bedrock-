@@ -74,17 +74,17 @@ for(const id of species){
   if(id==="poison") geo.bones=geo.bones.filter(bone=>!["front_leg_left","front_leg_right"].includes(bone.name));
   if(id==="wind"){
     for(const side of ["left","right"]){
-      const wing=structuredClone(geo.bones.find(bone=>bone.name==="wing_"+side));
+      const wing=structuredClone(geometry.bones.find(bone=>bone.name==="wing_"+side));
       wing.name="wing_rear_"+side;wing.pivot[1]-=3;wing.pivot[2]+=13;
       wing.cubes.forEach(cube=>{if(cube.origin)cube.origin[2]+=13;if(cube.pivot)cube.pivot[2]+=13;});
-      geo.bones.push(wing);
+      geometry.bones.push(wing);
       for(const childName of ["wing_membrane_","wing_tip_"]){
-        const original=geo.bones.find(bone=>bone.name===childName+side);
+        const original=geometry.bones.find(bone=>bone.name===childName+side);
         if(!original)continue;
         const child=structuredClone(original);child.name=childName+"rear_"+side;child.parent=wing.name;
         child.pivot[1]-=3;child.pivot[2]+=13;
         child.cubes?.forEach(cube=>{if(cube.origin)cube.origin[2]+=13;if(cube.pivot)cube.pivot[2]+=13;});
-        geo.bones.push(child);
+        geometry.bones.push(child);
       }
     }
   }
