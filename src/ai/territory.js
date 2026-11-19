@@ -9,7 +9,8 @@ export const TERRITORY_RULES = Object.freeze({
 
 export const SPECIES_TERRITORY_RADII = Object.freeze({
   electric: 256, water: 160, ice: 192, fire: 224, earth: 160,
-  lava: 192, wind: 96, sound: 128, poison: 112, plasma: null
+  lava: 192, wind: 96, sound: 128, poison: 112, plasma: null,
+  acid: 112, sand: 176, light: 144, radioactive: 192, shadow: 128
 });
 
 export function getTerritoryRadius(species, override) {
@@ -45,10 +46,11 @@ export function assessTerritorialSpacing(self, nearbyDragons = []) {
 
 const MIGRATION_CONFRONTATION_CHANCE = Object.freeze({
   fire: 0.72, water: 0.38, electric: 0.55, ice: 0.42, earth: 0.45,
-  wind: 0.32, sound: 0.40, poison: 0.78, plasma: 0.60
+  wind: 0.32, sound: 0.40, poison: 0.78, plasma: 0.60,
+  acid: 0.58, sand: 0.42, light: 0.18, radioactive: 0.35, shadow: 0.55
 });
 
-const INVASION_DAILY_CHANCE = Object.freeze({ fire: 0.035, electric: 0.008, ice: 0.008, earth: 0.008, wind: 0.008, sound: 0.008, poison: 0.008 });
+const INVASION_DAILY_CHANCE = Object.freeze({ fire: 0.035, electric: 0.008, ice: 0.008, earth: 0.008, wind: 0.008, sound: 0.008, poison: 0.008, acid: 0.008, sand: 0.008, light: 0.004, radioactive: 0.008, shadow: 0.008 });
 const INVASION_MIN_AGGRESSION = 0.7;
 
 /** Planeja invasões raras; não inicia combate nem transfere território por conta própria. */
