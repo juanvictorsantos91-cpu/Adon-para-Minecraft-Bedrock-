@@ -13,22 +13,22 @@ const roster = (species, count, prefix = species) =>
     protectiveness: 0.7, aggression: 0.4
   }));
 
-test("Fogo forma grupo territorial de seis e mantém pares internos", () => {
+test("Fogo forma dupla territorial e mantém vínculo interno", () => {
   const dragons = roster("fire", 2);
   const group = createOrganizedDragonGroup({
     id: "fire-01", species: "fire", dragons, createdTick: 10,
-    homeTerritoryId: "territory-fire-01", pairBonds: [[dragons[0].id, dragons[1].id], [dragons[2].id, dragons[3].id]]
+    homeTerritoryId: "territory-fire-01", pairBonds: [[dragons[0].id, dragons[1].id]]
   });
   assert.equal(group.memberIds.length, 2);
-  assert.equal(group.pairBonds.length, 2);
-  assert.equal(group.leaderId, dragons[5].id);
+  assert.equal(group.pairBonds.length, 1);
+  assert.equal(group.leaderId, dragons[1].id);
   assert.equal(group.leader.role, "territory_leader");
 });
 
 test("Terra forma grupo territorial de seis indivíduos", () => {
   assert.throws(() => createOrganizedDragonGroup({
-    id: "earth-small", species: "earth", dragons: roster("earth", 6), createdTick: 0
-  }), /pelo menos 10/);
+    id: "earth-small", species: "earth", dragons: roster("earth", 5), createdTick: 0
+  }), /pelo menos 6/);
   const group = createOrganizedDragonGroup({
     id: "earth-large", species: "earth", dragons: roster("earth", 6), createdTick: 0
   });
@@ -47,7 +47,7 @@ test("seleciona líder pelo perfil e desempata pelo ID", () => {
 });
 
 test("plano distribui patrulhas e mantém casais juntos sem formar manada", () => {
-  const dragons = roster("fire", 6);
+  const dragons = roster("fire", 2);
   const group = createOrganizedDragonGroup({
     id: "fire-patrol", species: "fire", dragons, createdTick: 1,
     homeTerritoryId: "territory-1", pairBonds: [[dragons[0].id, dragons[1].id]]
