@@ -69,12 +69,20 @@ function inferEnvironment(dimension, location) {
     if (location.y >= 120) context.tags.push("high_altitude", "wind");
     else if (location.y >= 90) context.tags.push("wind");
     const normalized = biomeId.toLowerCase();
+    if (location.y >= 100) context.tags.push("open");
+    const timeOfDay = world.getTimeOfDay?.() ?? 0;
+    if (timeOfDay >= 13000 || timeOfDay < 1000) context.tags.push("night","darkness");
+    if (timeOfDay >= 1000 && timeOfDay < 12000) context.tags.push("daylight");
+    try {
+      const weather = String(world.getWeather?.() ?? "").toLowerCase();
+      if (weather.includes("thunder")) context.tags.push("thunderstorm");
+    } catch { /* API opcional entre versões. */ }
     if (/ocean|river|beach/.test(normalized)) context.tags.push("water");
     if (/snow|frozen|ice|grove/.test(normalized)) context.tags.push("cold");
     if (/desert|badlands|savanna/.test(normalized)) context.tags.push("hot");
-    if (/jungle|forest|taiga/.test(normalized)) context.tags.push("forest");
-    if (/mountain|peak|windswept/.test(normalized)) context.tags.push("mountain");
-    if (/nether|basalt|crimson|warped/.test(normalized)) context.tags.push("volcanic");
+    if (/jungle|forest|taiga/.test(normalized)) context.tags.push("forest","cover");
+    if (/mountain|peak|windswept/.test(normalized)) context.tags.push("mountain","cover");
+    if (/nether|basalt|crimson|warped/.test(normalized)) context.tags.push("volcanic","cover");
   } catch {
     context.biome = "unavailable";
   }
