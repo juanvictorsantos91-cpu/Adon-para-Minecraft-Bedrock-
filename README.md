@@ -13,9 +13,9 @@ A base consolidada `dragon-survival/consolidated` reúne uma primeira base indep
 - Metabolismo configurável por espécie.
 - Decisões do MIS considerando os três indicadores e perigo imediato.
 - Alimentação que recupera fome e energia com limite por refeição.
-- Perfis experimentais das espécies Elétrico, Água, Gelo, Fogo, Terra, Lava, Vento, Som, Venenoso e Plasma.
+- Perfis experimentais das 15 espécies: Fogo, Água, Gelo, Elétrico, Terra, Lava, Vento, Som, Veneno, Areia, Luz, Plasma, Ácido, Radioativo e Sombra.
 - Dietas e preferências alimentares por espécie.
-- Personalidades distintas e tendências comportamentais para as dez espécies.
+- Personalidades distintas e tendências comportamentais cadastradas para as 15 espécies.
 - Sistema DBS integrado às prioridades do MIS: proteção de filhotes/ninhos, resposta a ameaças, vínculo com o dono, socialização, descanso, exploração e comandos treinados.
 - Padrões sociais naturais: Água em pequenos grupos; Fogo e Gelo em duplas; Elétrico solitário; Terra e Lava em grandes grupos, inclusive grupos mistos Terra-Lava.
 - Interações entre espécies: cooperação, exploração conjunta, convivência perto de água/calor e sinais sociais pacíficos; respostas agressivas apenas diante de ataque ou conflito territorial, com recuo quando ferido ou com pouca energia.
@@ -30,12 +30,12 @@ A base consolidada `dragon-survival/consolidated` reúne uma primeira base indep
 
 Os valores desta etapa são parâmetros experimentais para simulação, não balanceamento final.
 
-## Estrutura principal
+## Catálogo das espécies\n\nO catálogo oficial com habitat, alimentação, comportamento, habilidades e pendências de cada espécie está em [`docs/SPECIES_CATALOG.md`](docs/SPECIES_CATALOG.md). Os perfis e habilidades novos são dados experimentais; não significam que as ações já estejam implementadas no Minecraft.\n\n## Estrutura principal
 
 - `src/ai/rule-engine.js`: motor genérico de regras.
 - `src/ai/survival-decisions.js`: prioridades de sobrevivência do MIS.
 - `src/survival/`: energia, fome, saúde, ferimentos e metabolismo.
-- `src/species/profiles/`: perfis metabólicos das dez espécies.
+- `src/species/profiles/`: perfis metabólicos das 15 espécies.
 - `src/species/diets/species-diets.js`: dietas e preferências alimentares.
 - `src/species/behavior-profiles.js`: personalidade e tendências por espécie.
 - `src/ai/dragon-behavior.js`: decisões comportamentais integradas ao MIS.
@@ -45,7 +45,7 @@ Os valores desta etapa são parâmetros experimentais para simulação, não bal
 - `src/ai/electric-storm-ritual.js`: condições, participantes e intervalo do ritual coletivo de tempestade elétrica.
 - `src/ai/migration-cycle.js`: agenda de migração de longo ciclo do Dragão Elétrico e do ciclo territorial temporário do Dragão de Terra, medida em ticks do mundo.
 - `tests/dragon-behavior.test.js`: testes do sistema de comportamentos.
-- `examples/simulate-all-dragons.js`: simulação comparativa das dez espécies.
+- `examples/simulate-all-dragons.js`: simulação comparativa das 15 espécies.
 - `examples/simulate-social-life.js`: simulação de grupos, parentesco e cuidado parental.
 - `examples/simulate-electric-dragon.js`: simulação fora do Minecraft.
 - `tests/survival.test.js`: testes automatizados do núcleo.
