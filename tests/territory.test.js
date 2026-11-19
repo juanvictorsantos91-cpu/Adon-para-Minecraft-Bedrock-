@@ -8,7 +8,8 @@ import {
 test("cada espécie recebe seu raio territorial inicial", () => {
   assert.deepEqual(SPECIES_TERRITORY_RADII, {
     electric: 256, water: 160, ice: 192, fire: 224, earth: 160,
-    lava: 192, wind: 96, sound: 128, poison: 112, plasma: null
+    lava: 192, wind: 96, sound: 128, poison: 112, plasma: null,
+    acid: 112, sand: 176, light: 144, radioactive: 192, shadow: 128
   });
   assert.equal(getTerritoryRadius("electric"), 256);
   assert.equal(getTerritoryRadius("plasma"), null);
