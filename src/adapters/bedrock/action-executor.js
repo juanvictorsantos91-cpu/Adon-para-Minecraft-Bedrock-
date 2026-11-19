@@ -62,7 +62,8 @@ function executeElementalEffect(entity, action, nearbyEntities, currentTick = 0)
   }
   return { executed: true, action, affectedTargets: affected, radius: spec.radius };
 }
-\nfunction normalizedDirection(from, to) {
+
+function normalizedDirection(from, to) {
   const dx = to.x - from.x, dy = to.y - from.y, dz = to.z - from.z;
   const length = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
   return { x: dx / length, y: dy / length, z: dz / length };
