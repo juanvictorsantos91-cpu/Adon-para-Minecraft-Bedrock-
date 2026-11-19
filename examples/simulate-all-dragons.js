@@ -13,10 +13,10 @@ const environments = {
   sound: "quiet_cave",
   poison: "swamp",
   plasma: "high_altitude_storm",
-  acid: "acidic_cavern",
+  acid: "acidicCavern",
   sand: "desert",
-  light: "clear_daylight",
-  radioactive: "deep_crystal_cave",
+  light: "clearDaylight",
+  radioactive: "deepCrystalCave",
   shadow: "night"
 };
 
