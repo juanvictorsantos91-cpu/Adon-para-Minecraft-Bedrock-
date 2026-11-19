@@ -23,7 +23,7 @@ A base consolidada `dragon-survival/consolidated` reúne uma primeira base indep
 - Migração de longo ciclo para o Dragão Elétrico: ciclo configurável, com referência inicial de 14 dias Minecraft (336.000 ticks), condicionada à segurança da rota.
 - Dragão de Terra nômade: estabelece territórios temporários por ciclos de 21 dias Minecraft (504.000 ticks), explora/escava a região e depois procura outro local; a mudança é adiada se a rota não for segura. O adaptador deve atualizar `lastMigrationTick` após a mudança e sinalizar `temporaryTerritoryMigrationDue` nos dragões de Terra próximos para que Lava possa reconhecer o convite.
 - Passagem migratória Terra-Lava: durante a mudança, os grupos de Terra podem atravessar temporariamente territórios fixos de Lava sem disparar conflito territorial automático. Lava não acompanha a migração; apenas tolera a passagem quando identifica o marcador de migração de Terra.
-- Planejamento social explícito: Água (3), Fogo (2), Gelo (2), Terra (6), Lava (6); Elétrico mantém padrão solitário. Os tamanhos são metas experimentais de grupo.
+- Planejamento social explícito: Água (3), Fogo (2), Gelo (2), Terra (6), Lava (6), Som (2–3); Elétrico mantém padrão solitário. Os tamanhos são metas experimentais de grupo.
 - Reconhecimento de relações entre pais, filhotes, irmãos, parceiros e indivíduos da mesma espécie.
 - Formação de casal apenas entre adultos da mesma espécie, compatíveis, em boas condições e sem parentesco próximo conhecido.
 - Cuidado parental prioriza proteção, alimentação e aquecimento dos filhotes conforme a necessidade.
