@@ -1,7 +1,7 @@
 import { getBehaviorProfile } from "../species/behavior-profiles.js";
 
 const LARGE_GROUP_SPECIES = new Set(["earth", "lava"]);
-const VALID_SPECIES = new Set(["fire", "water", "electric", "ice", "earth", "lava", "wind", "sound", "poison", "plasma"]);
+const VALID_SPECIES = new Set(["fire", "water", "electric", "ice", "earth", "lava", "wind", "sound", "poison", "plasma", "acid", "sand", "light", "radioactive", "shadow"]);
 
 function compatibleSpecies(species, otherSpecies) {
   if (species === otherSpecies) return true;
