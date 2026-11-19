@@ -172,7 +172,7 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
         isGroupLeader: otherTags.includes("ds:leader"),
         parentIds: otherTags.filter(tag => tag.startsWith("ds:parent:")).map(tag => tag.slice("ds:parent:".length)),
         partnerId: readTaggedId(otherTags, "ds:partner:"),
-        pairCompatible: otherTags.includes("ds:pair_compatible"),
+        pairCompatible: otherTags.includes("ds:pair_compatible") || otherTags.includes("ds:stage:adult"),
         safeToPair: otherTags.includes("ds:safe_to_pair") ||
           (readHealthPercent(other, otherTags) > 40 &&
            readTaggedNumber(otherTags, NUMBER_PREFIXES.energy, 100) > 25 &&
