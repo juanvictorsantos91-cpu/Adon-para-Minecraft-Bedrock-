@@ -4,7 +4,7 @@
  * ou uma integração externa informa explicitamente a associação.
  */
 const VALID_STATUSES = new Set(["active", "disbanded"]);
-const VALID_SPECIES = new Set(["fire","water","electric","ice","earth","lava","wind","sound","poison","plasma"]);
+const VALID_SPECIES = new Set(["fire","water","electric","ice","earth","lava","wind","sound","poison","plasma","acid","sand","light","radioactive","shadow"]);
 
 function text(value, field) {
   if (typeof value !== "string" || !value.trim()) throw new TypeError(`${field} precisa ser um texto não vazio.`);
