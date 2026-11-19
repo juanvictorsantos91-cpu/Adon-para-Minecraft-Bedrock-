@@ -125,8 +125,7 @@ export const behaviorProfiles = {
     soundSensing: true, soundCombat: true,
     bodyPlan: "standard_four_legged_two_winged",
     locomotionSupport: "four_legs_and_two_wings"
-  }
-  ,
+  },
   acid: {
     temperament: "patient_corrosive_hunter",
     aggression: 0.62, caution: 0.72, curiosity: 0.55, protectiveness: 0.5,
