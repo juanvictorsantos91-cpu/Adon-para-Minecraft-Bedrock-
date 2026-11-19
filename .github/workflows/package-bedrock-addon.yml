@@ -3,7 +3,7 @@ name: Dragon Survival Bedrock Package
 on:
   workflow_dispatch:
   push:
-    branches: [feature/dragon-survival-core, feature/mis-bedrock-data-contract]
+    branches: [feature/dragon-survival-core, feature/mis-bedrock-data-contract, dragon-survival/consolidated]
     paths:
       - "bedrock/**"
       - "src/**"
