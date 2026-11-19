@@ -6,7 +6,42 @@ const ACTIONS_WITH_MOVEMENT = new Set([
   "begin_long_migration", "follow_owner", "stay_near_owner"
 ]);
 
-function normalizedDirection(from, to) {
+
+const ELEMENTAL_EFFECTS = Object.freeze({
+  release_acid_jet: { damage: 7, radius: 8, effect: "slowness", duration: 60 },
+  create_temporary_acid_pool: { damage: 2, radius: 4, effect: "slowness", duration: 80 },
+  raise_sandstorm: { damage: 0, radius: 8, effect: "blindness", duration: 60 },
+  release_blinding_light_pulse: { damage: 1, radius: 7, effect: "blindness", duration: 80 },
+  release_radiation_pulse: { damage: 4, radius: 7, effect: "weakness", duration: 100 },
+  activate_cumulative_exposure_field: { damage: 1, radius: 6, effect: "weakness", duration: 120 }
+});
+
+function executeElementalEffect(entity, action, nearbyEntities, currentTick = 0) {
+  const spec = ELEMENTAL_EFFECTS[action];
+  if (!spec) return null;
+  const targets = nearbyEntities.filter(target => target.id !== entity.id &&
+    (target.hasTag?.("ds:hostile") || isHostileType(target.typeId)) &&
+    Math.hypot(target.location.x - entity.location.x, target.location.y - entity.location.y,
+      target.location.z - entity.location.z) <= spec.radius);
+  let affected = 0;
+  for (const target of targets) {
+    try {
+      if (spec.damage > 0) target.applyDamage?.(spec.damage);
+      if (spec.effect) target.addEffect?.(spec.effect, spec.duration, { amplifier: 0, showParticles: false });
+      if (action === "release_radiation_pulse" || action === "activate_cumulative_exposure_field") {
+        const tags = target.getTags?.() ?? [];
+        const previous = tags.find(tag => tag.startsWith("ds:exposure:"));
+        const level = Math.min(3, (previous ? Number(previous.slice("ds:exposure:".length)) : 0) + 1);
+        if (previous) target.removeTag(previous);
+        target.addTag("ds:exposure:" + level);
+        if (level >= 3) target.addEffect?.("slowness", 160, { amplifier: 1, showParticles: false });
+      }
+      affected++;
+    } catch { /* Um alvo inválido não interrompe os demais. */ }
+  }
+  return { executed: true, action, affectedTargets: affected, radius: spec.radius };
+}
+\nfunction normalizedDirection(from, to) {
   const dx = to.x - from.x, dy = to.y - from.y, dz = to.z - from.z;
   const length = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
   return { x: dx / length, y: dy / length, z: dz / length };
