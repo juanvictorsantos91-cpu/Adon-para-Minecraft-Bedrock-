@@ -60,7 +60,12 @@ export function createBedrockSocialWorldRuntime(world) {
     const members = [memberRecord(state), ...companions.map(memberRecord)]
       .filter((item, index, all) => all.findIndex(candidate => candidate.id === item.id) === index)
       .sort((a,b) => a.id.localeCompare(b.id));
-    if (members.length < plan.targetGroupSize) return null;
+    if (members.length < plan.targetGroupSize) {
+      if (oldId) lifecycle.disband(oldId, Math.max(0, state.currentTick ?? 0));
+      writeDragonGroupMembership(entity, null);
+      writeDragonGroupLeadership(entity, false);
+      return null;
+    }
     const ids = members.map(item => item.id);
     const mixed = members.some(item => item.species !== state.species);
     const groupSpecies = mixed ? "earth" : state.species;
