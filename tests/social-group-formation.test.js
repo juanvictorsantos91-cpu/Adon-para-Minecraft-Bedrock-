@@ -4,28 +4,28 @@ import { assessSocialGroupFormation } from "../src/ai/social-group-formation.js"
 
 const dragon = (id, species, extra = {}) => ({ id, species, ...extra });
 
-test("Fogo e Gelo exigem seis indivíduos para grupo territorial", () => {
+test("Fogo e Gelo formam duplas", () => {
   for (const species of ["fire", "ice"]) {
     const result = assessSocialGroupFormation({
       dragon: dragon(`${species}-1`, species),
-      candidates: Array.from({ length: 5 }, (_, i) => dragon(`${species}-${i + 2}`, species, { distance: 12 }))
+      candidates: Array.from({ length: 1 }, (_, i) => dragon(`${species}-${i + 2}`, species, { distance: 12 }))
     });
-    assert.equal(result.targetGroupSize, 6);
+    assert.equal(result.targetGroupSize, 2);
     assert.equal(result.status, "formation_candidate");
-    assert.equal(result.candidateIds.length, 5);
+    assert.equal(result.candidateIds.length, 1);
   }
 });
 
-test("Água forma grupos territoriais de seis", () => {
+test("Água forma grupos territoriais de três", () => {
   const result = assessSocialGroupFormation({
     dragon: dragon("w1", "water"),
-    candidates: Array.from({ length: 5 }, (_, i) => dragon(`w${i + 2}`, "water", { distance: 4 }))
+    candidates: Array.from({ length: 2 }, (_, i) => dragon(`w${i + 2}`, "water", { distance: 4 }))
   });
-  assert.equal(result.targetGroupSize, 6);
+  assert.equal(result.targetGroupSize, 3);
   assert.equal(result.shouldForm, true);
 });
 
-test("Terra exige dez membros e Terra/Lava podem compartilhar grupo", () => {
+test("Terra exige seis membros e Terra/Lava podem compartilhar grupo", () => {
   const result = assessSocialGroupFormation({
     dragon: dragon("e1", "earth"),
     candidates: [
@@ -33,7 +33,7 @@ test("Terra exige dez membros e Terra/Lava podem compartilhar grupo", () => {
       ...Array.from({ length: 5 }, (_, i) => dragon(`e${i + 2}`, "earth", { distance: 11 }))
     ]
   });
-  assert.equal(result.targetGroupSize, 10);
+  assert.equal(result.targetGroupSize, 6);
   assert.equal(result.candidateIds.length, 9);
   assert.equal(result.status, "formation_candidate");
 });
