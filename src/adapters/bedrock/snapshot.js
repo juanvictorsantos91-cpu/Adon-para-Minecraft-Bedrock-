@@ -25,10 +25,10 @@ function clampPercent(value, fallback = 100) {
   return Math.max(0, Math.min(100, numeric));
 }
 
-function readHealthPercent(entity) {
+function readHealthPercent(entity, tags = []) {
   const component = entity.getComponent?.("minecraft:health");
   const current = component?.currentValue;
-  if (!Number.isFinite(current)) return 100;
+  if (!Number.isFinite(current)) return clampPercent(readTaggedNumber(tags, "ds:health:", 100));
   const maximum = Number.isFinite(component?.effectiveMax) && component.effectiveMax > 0
     ? component.effectiveMax
     : Number.isFinite(component?.defaultValue) && component.defaultValue > 0
@@ -127,7 +127,7 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
   const profile = getBehaviorProfile(species);
   // O núcleo do MIS usa escalas percentuais de 0 a 100, independentemente
   // do máximo absoluto configurado na entidade Bedrock (por exemplo, 120 HP).
-  const health = readHealthPercent(entity);
+  const health = readHealthPercent(entity, tags);
   const energy = clampPercent(readTaggedNumber(tags, NUMBER_PREFIXES.energy, 100));
   const hunger = clampPercent(readTaggedNumber(tags, NUMBER_PREFIXES.hunger, 100));
   const aggression = Math.max(0, Math.min(1,
@@ -156,7 +156,7 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
         id: other.id,
         species: otherSpecies,
         distance,
-        health: readHealthPercent(other),
+        health: readHealthPercent(other, otherTags),
         energy: clampPercent(readTaggedNumber(otherTags, NUMBER_PREFIXES.energy, 100)),
         hunger: clampPercent(readTaggedNumber(otherTags, NUMBER_PREFIXES.hunger, 100)),
         isTamed: otherTags.includes("ds:tamed"),
@@ -169,7 +169,7 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
         temporaryTerritoryMigrationDue: otherTags.includes("ds:migration_due"),
         territoryId: readTaggedId(otherTags, "ds:territory:"),
         groupId: readTaggedId(otherTags, "ds:group:"),
-        isGroupLeader: otherTags.includes("ds:leader")
+        isGroupLeader: otherTags.includes("ds:leader"),\n        parentIds: otherTags.filter(tag => tag.startsWith("ds:parent:")).map(tag => tag.slice("ds:parent:".length)),\n        partnerId: readTaggedId(otherTags, "ds:partner:"),\n        pairCompatible: otherTags.includes("ds:pair_compatible"),\n        safeToPair: otherTags.includes("ds:safe_to_pair")
       });
       continue;
     }
@@ -206,7 +206,7 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
     isTamed,
     isOwned,
     hasYoung: tags.includes("ds:has_young"),
-    injury: { severity: injurySeverity },
+    injury: { severity: injurySeverity },\n    parentIds: tags.filter(tag => tag.startsWith("ds:parent:")).map(tag => tag.slice("ds:parent:".length)),\n    partnerId: readTaggedId(tags, "ds:partner:"),\n    pairCompatible: tags.includes("ds:pair_compatible"),\n    safeToPair: tags.includes("ds:safe_to_pair"),\n    starvationMinutes: readTaggedNumber(tags, "ds:starvation_minutes:", 0),\n    attackedByDragon: tags.some(tag => tag.startsWith("ds:attacked_by:")),
     immediateDanger: environmentContext.immediateHazard === true || tags.includes("ds:immediate_danger"),
     energy,
     hunger,
@@ -224,7 +224,7 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
     environment: environmentContext.environment ?? "unknown",
     safeToExplore: environmentContext.immediateHazard !== true,
     safeToRest: environmentContext.immediateHazard !== true,
-    sleepRequested: tags.includes("ds:sleep_requested"),
+    sleepRequested: tags.includes("ds:sleep_requested"),\n    socialOpportunity: tags.includes("ds:social_opportunity"),\n    acidJetRequested: tags.includes("ds:acid_jet_requested"),\n    acidPoolRequested: tags.includes("ds:acid_pool_requested"),\n    burrowRequested: tags.includes("ds:burrow_requested"),\n    sandstormRequested: tags.includes("ds:sandstorm_requested"),\n    lightPulseRequested: tags.includes("ds:light_pulse_requested"),\n    radiationPulseRequested: tags.includes("ds:radiation_pulse_requested"),\n    exposureFieldRequested: tags.includes("ds:exposure_field_requested"),\n    shadowCloakRequested: tags.includes("ds:shadow_cloak_requested"),\n    shadowStepRequested: tags.includes("ds:shadow_step_requested"),\n    darknessNearby: environmentContext.tags?.includes("darkness") === true || environmentContext.tags?.includes("night") === true,\n    sandAvailable: environmentContext.tags?.includes("hot") === true || /desert|badlands/.test(environmentContext.biome ?? ""),
     playOpportunity: tags.includes("ds:play_opportunity") || environmentContext.playOpportunity === true,
     explorationOpportunity: tags.includes("ds:exploration_opportunity") || environmentContext.explorationOpportunity === true,
     quietObservationOpportunity: tags.includes("ds:quiet_observation") || environmentContext.quietObservationOpportunity === true,
