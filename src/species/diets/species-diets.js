@@ -8,7 +8,12 @@ export const speciesDiets = {
   wind: { foods: ["meat", "small_animals", "fish"], preferred: ["rabbit", "chicken", "salmon"] },
   poison: { foods: ["venomous_mobs", "plants"], preferred: ["spider", "cave_spider", "bee", "spider_eye", "poisonous_potato", "mushroom", "red_mushroom", "brown_mushroom"] },
   sound: { foods: ["small_animals", "fish", "meat"], preferred: ["rabbit", "chicken", "salmon"] },
-  plasma: { foods: ["meat", "small_animals"], preferred: ["rabbit", "chicken", "salmon"] }
+  plasma: { foods: ["meat", "small_animals"], preferred: ["rabbit", "chicken", "salmon"] },
+  acid: { foods: ["meat", "small_animals", "insects"], preferred: ["rabbit", "spider", "cave_spider", "chicken"] },
+  sand: { foods: ["meat", "small_animals", "desert_animals"], preferred: ["rabbit", "chicken", "mutton"] },
+  light: { foods: ["fish", "small_animals", "insects"], preferred: ["salmon", "rabbit", "chicken"] },
+  radioactive: { foods: ["meat", "small_animals", "minerals"], preferred: ["beef", "rabbit", "iron_nugget", "redstone"] },
+  shadow: { foods: ["meat", "small_animals", "cave_animals"], preferred: ["rabbit", "chicken", "spider"] }
 };
 
 export function getSpeciesDiet(species) {
