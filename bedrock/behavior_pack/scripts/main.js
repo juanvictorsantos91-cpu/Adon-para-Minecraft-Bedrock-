@@ -7,12 +7,18 @@ import { initializeDragonEntity } from "./core/adapters/bedrock/dragon-initializ
 import { tickMetabolism } from "./core/survival/metabolism.js";
 import { getSpeciesProfile } from "./core/species/profiles/index.js";
 import { writeDragonGroupMembership, writeDragonGroupLeadership } from "./core/adapters/bedrock/dragon-group-writer.js";
-import { getDragonBalance } from "./core/species/balance.js";
+import { getDragonBalance } from "./core/species/balance.js";\nimport { createBedrockSocialWorldRuntime } from "./core/adapters/bedrock/social-world-runtime.js";
 
 const TICK_INTERVAL = 40;
 const QUERY_RADIUS = 32;
 const DIMENSIONS = ["overworld", "nether", "the_end"];
 const pendingSocialObservations = new Map();
+let socialWorldRuntime = null;
+try {
+  socialWorldRuntime = createBedrockSocialWorldRuntime(world);
+} catch {
+  // O MIS segue funcionando com tags locais se a persistência do mundo não estiver disponível.
+}
 
 function isDragonEntity(entity) {
   if (!entity) return false;
@@ -240,7 +246,14 @@ function updateDimension(dimension, currentTick) {
       pendingSocialObservations.delete(entity.id);
       const decision = decideDragonBehavior(state);
       synchronizeNeeds(entity, state, decision, environmentContext);
-      synchronizeSocialGroup(entity, state, decision);
+      if (socialWorldRuntime) {
+        try {
+          const group = socialWorldRuntime.synchronizeGroup(entity, state, decision);
+          socialWorldRuntime.ensureTerritory(entity, { ...state, groupId: group?.id ?? state.groupId });
+        } catch {
+          synchronizeSocialGroup(entity, state, decision);
+        }
+      } else synchronizeSocialGroup(entity, state, decision);
       enforceFlightLimits(entity, state.species);
       try {
         writeSocialMemory(entity, decision.socialMemory ?? []);
