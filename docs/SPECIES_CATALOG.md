@@ -18,7 +18,7 @@ Este catálogo reúne as decisões de design já aprovadas e os parâmetros prov
 - **Comportamento:** dominante e agressivo; protege território e ninho.
 - **Habilidades:** sopro de fogo, projéteis flamejantes e ataques de área; ascensão flamejante como ação de alto custo.
 - **Aparência aprovada:** corpo robusto, escamas carvão escuro, marcas vermelhas e alaranjadas, asas grandes com membranas lembrando chamas, cabeça robusta com chifres, cauda segmentada com espinhos e peito com aparência de calor interno. Duas asas e quatro patas.
-- **Grupo:** perfil de grupo territorial grande; planejamento social ainda experimental.
+- **Grupo:** perfil de dupla, com patrulha territorial independente.
 
 ### 2. Dragão de Água
 - **Elemento e função:** água; especialista aquático.
@@ -26,7 +26,7 @@ Este catálogo reúne as decisões de design já aprovadas e os parâmetros prov
 - **Alimentação:** peixes e animais aquáticos; prefere salmão, bacalhau e peixe tropical.
 - **Comportamento:** cauteloso, protetor e ligado a ambientes aquáticos.
 - **Habilidades e adaptações:** respiração subaquática temporária; recuperação favorecida por algas/recursos aquáticos e peixes. As habilidades ofensivas finais ainda precisam de ficha consolidada.
-- **Grupo:** tendência social em grupos; a quantidade definitiva deve ser harmonizada com a ficha anterior (há parâmetros antigos divergentes entre 3 e 6).
+- **Grupo:** tendência social em grupos; grupo-alvo de 3 indivíduos, conforme o planejamento social aprovado.
 
 ### 3. Dragão de Gelo
 - **Elemento e função:** gelo; espécie defensiva de regiões frias.
@@ -34,7 +34,7 @@ Este catálogo reúne as decisões de design já aprovadas e os parâmetros prov
 - **Alimentação:** peixes e animais de biomas frios; prefere salmão, bacalhau e coelho.
 - **Comportamento:** reservado, cauteloso e defensivo.
 - **Habilidades:** manipulação de frio/gelo em desenvolvimento. “Rastro Glacial” foi apenas uma sugestão e não é habilidade aprovada.
-- **Grupo:** perfil territorial; a composição final do grupo ainda precisa ser harmonizada com a ficha anterior.
+- **Grupo:** dupla, com comportamento defensivo e patrulha territorial.
 
 ### 4. Dragão Elétrico
 - **Elemento e função:** eletricidade; espécie de altitude e tempestades.
@@ -51,7 +51,7 @@ Este catálogo reúne as decisões de design já aprovadas e os parâmetros prov
 - **Alimentação:** animais terrestres e minerais; prefere carne bovina, carneiro, pepitas de ferro e cobre.
 - **Comportamento:** calmo e protetor; escava e explora.
 - **Habilidades:** escavação e exploração subterrânea. A habilidade genérica “Cauda de Pedra” foi removida.
-- **Grupo e território:** grupos grandes; território temporário com ciclo experimental de 21 dias Minecraft. Pode migrar em conjunto com Lava, sem exigir que Lava abandone seu território.
+- **Grupo e território:** grupos de 6 indivíduos; território temporário com ciclo experimental de 21 dias Minecraft. Pode migrar em conjunto com Lava, sem exigir que Lava abandone seu território.
 
 ### 6. Dragão de Lava
 - **Elemento e função:** lava/calor; espécie resistente a ambientes extremos.
@@ -75,7 +75,7 @@ Este catálogo reúne as decisões de design já aprovadas e os parâmetros prov
 - **Elemento e função:** som/vibração; especialista em percepção.
 - **Habitat:** cavernas, vales rochosos, cânions, florestas e penhascos.
 - **Alimentação:** pequenos animais, peixes e carne; prefere coelho, frango e salmão.
-- **Comportamento:** observador e cauteloso; grupos pequenos de 2 a 3 indivíduos.
+- **Comportamento:** observador e cauteloso; grupos pequenos de 2 a 3 indivíduos (o perfil de código usa 3 como alvo).
 - **Anatomia:** dragão tradicional, quatro patas, duas asas e cauda; não é serpentino.
 - **Habilidades:** ecolocalização, percepção de vibrações no solo e paredes, onda de impacto sonora, rugido desorientador e explosão sonora propulsora durante o voo.
 - **Velocidade:** ficha anterior o posiciona entre os mais rápidos; a posição numérica final será confirmada no balanceamento geral.
