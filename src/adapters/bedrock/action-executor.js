@@ -3,7 +3,8 @@ const ACTIONS_WITH_MOVEMENT = new Set([
   "search_food_safely", "explore_environment", "travel_in_small_group",
   "travel_in_pair", "travel_in_large_group", "travel_with_species_group",
   "travel_with_mixed_earth_lava_group", "seek_group_members",
-  "begin_long_migration", "follow_owner", "stay_near_owner",\n  "approach_compatible_mate", "socialize_with_dragon", "coordinate_mixed_territory_patrol", "seek_shelter_during_storm"
+  "begin_long_migration", "follow_owner", "stay_near_owner",
+  "approach_compatible_mate", "socialize_with_dragon", "coordinate_mixed_territory_patrol", "seek_shelter_during_storm"
 ]);
 
 
