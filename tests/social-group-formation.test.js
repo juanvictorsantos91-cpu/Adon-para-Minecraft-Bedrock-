@@ -63,6 +63,18 @@ test("filtra distância, duplicatas, indisponíveis e candidatos inválidos", ()
   assert.equal(result.shouldForm, false);
 });
 
+
+test("as cinco novas espécies são reconhecidas pelo planejador de grupos", () => {
+  for (const species of ["acid", "sand", "light", "radioactive", "shadow"]) {
+    const result = assessSocialGroupFormation({
+      dragon: dragon(`${species}-1`, species),
+      candidates: []
+    });
+    assert.equal(result.species, species);
+    assert.ok(result.targetGroupSize >= 1);
+  }
+});
+
 test("não substitui grupo já associado e valida entradas", () => {
   const existing = assessSocialGroupFormation({
     dragon: dragon("f1", "fire", { groupId: "pair-1" }),
