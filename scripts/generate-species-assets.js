@@ -68,10 +68,11 @@ for(const id of species){
   const b=dragonBalance[id], scale=Number((b.height/3.2).toFixed(3));
   const entityId="dragon_survival:"+id+"_dragon";
   const geo=structuredClone(baseGeo);
-  geo.description.identifier="geometry.dragon_survival."+id;
-  geo.description.visible_bounds_width=Math.max(5,b.width*3.4);
-  geo.description.visible_bounds_height=Math.max(5,b.height*2.8);
-  if(id==="poison") geo.bones=geo.bones.filter(bone=>!["front_leg_left","front_leg_right"].includes(bone.name));
+  const geometry=geo["minecraft:geometry"][0];
+  geometry.description.identifier="geometry.dragon_survival."+id;
+  geometry.description.visible_bounds_width=Math.max(5,b.width*3.4);
+  geometry.description.visible_bounds_height=Math.max(5,b.height*2.8);
+  if(id==="poison") geometry.bones=geometry.bones.filter(bone=>!["front_leg_left","front_leg_right"].includes(bone.name));
   if(id==="wind"){
     for(const side of ["left","right"]){
       const wing=structuredClone(geometry.bones.find(bone=>bone.name==="wing_"+side));
