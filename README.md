@@ -1,10 +1,12 @@
-# IA de Regras para Mobs — Minecraft Bedrock
+# Dragon Survival — IA de Regras para Minecraft Bedrock
 
-Projeto experimental para desenvolver uma inteligência baseada em regras para entidades (mobs) do Minecraft Bedrock, com foco em dispositivos móveis.
+Projeto principal de desenvolvimento de um add-on de dragões para Minecraft Bedrock, com inteligência baseada em regras (MIS), voltado também para dispositivos móveis.
+
+> **Organização do repositório:** o protótipo original de IA para zumbis continua preservado como referência independente do motor de regras. O desenvolvimento principal está no Dragon Survival. Consulte `docs/REPOSITORY_MAP.md` para localizar cada parte e entender o estado real da implementação.
 
 ## Núcleo de sobrevivência Dragon Survival
 
-A ramificação `feature/dragon-survival-core` adiciona uma primeira base independente da Script API para testar os sistemas de sobrevivência dos dragões:
+A base consolidada `dragon-survival/consolidated` reúne uma primeira base independente da Script API para testar os sistemas de sobrevivência dos dragões:
 
 - Energia, fome e saúde como indicadores separados.
 - Ferimento simplificado, com no máximo um estado ativo.
