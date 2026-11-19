@@ -11,7 +11,7 @@ export const behaviorProfiles = {
     migrationPattern: "long_cycle", migrationInterval: "long",
     preferredActivities: ["scan_high_ground", "patrol_territory", "explore"],
     preferredEnvironment: ["mountain", "cold", "high_altitude", "windswept_plateau"],
-    threatResponse: "charge_warning"
+    threatResponse: "charge_warning", electricCombat: true
   },
   water: {
     temperament: "cautious_guardian",
@@ -22,7 +22,7 @@ export const behaviorProfiles = {
     migrationPattern: "local_roaming",
     preferredActivities: ["swim_patrol", "dive_explore", "rest_near_water"],
     preferredEnvironment: ["water", "river", "ocean", "waterfall", "mangrove"],
-    threatResponse: "retreat_to_water"
+    threatResponse: "retreat_to_water", waterCombat: true
   },
   ice: {
     temperament: "reserved_defensive",
@@ -33,7 +33,7 @@ export const behaviorProfiles = {
     migrationPattern: "local_roaming",
     preferredActivities: ["observe_quietly", "patrol_snow", "rest_in_cold"],
     preferredEnvironment: ["snow", "ice", "glacier", "cold", "snowy_plains", "frozen_peaks", "frozen_ocean"],
-    threatResponse: "frost_warning"
+    threatResponse: "frost_warning", iceCombat: true
   },
   fire: {
     temperament: "dominant_aggressive",
@@ -44,7 +44,7 @@ export const behaviorProfiles = {
     migrationPattern: "local_roaming",
     preferredActivities: ["patrol_territory", "display_strength", "sun_warm"],
     preferredEnvironment: ["hot", "volcanic", "lava", "desert", "savanna", "badlands"],
-    threatResponse: "roar_and_stand_ground"
+    threatResponse: "roar_and_stand_ground", fireCombat: true
   },
   earth: {
     temperament: "calm_protector",
@@ -67,7 +67,7 @@ export const behaviorProfiles = {
     migrationPattern: "local_roaming",
     preferredActivities: ["patrol_hot_ground", "absorb_heat", "volcanic_roam"],
     preferredEnvironment: ["volcanic", "lava", "basalt_deltas", "hot_cave"],
-    threatResponse: "heat_warning"
+    threatResponse: "heat_warning", lavaCombat: true
   }
   ,
   wind: {
