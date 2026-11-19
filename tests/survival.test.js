@@ -70,9 +70,9 @@ test("alimentação recupera fome e energia com limite por refeição", () => {
 });
 
 
-test("as dez espécies possuem perfis metabólicos válidos", () => {
+test("as quinze espécies possuem perfis metabólicos válidos", () => {
   assert.deepEqual(Object.keys(speciesProfiles).sort(), [
-    "earth", "electric", "fire", "ice", "lava", "plasma", "poison", "sound", "water", "wind"
+    "acid", "earth", "electric", "fire", "ice", "lava", "light", "plasma", "poison", "radioactive", "sand", "shadow", "sound", "water", "wind"
   ]);
   for (const profile of Object.values(speciesProfiles)) {
     assert.ok(profile.restRecoveryPerMinute > 0);
@@ -88,6 +88,10 @@ test("dietas diferenciam preferências entre espécies", () => {
   assert.equal(canEat("fire", "beef"), true);
   assert.equal(canEat("ice", "beef"), false);
   assert.equal(getSpeciesDiet("earth").foods.includes("minerals"), true);
+  for (const species of ["acid", "sand", "light", "radioactive", "shadow"]) {
+    assert.ok(getSpeciesDiet(species).foods.length > 0);
+    assert.ok(getSpeciesDiet(species).preferred.length > 0);
+  }
 });
 
 test("ambiente especial melhora recuperação conforme o perfil", () => {
