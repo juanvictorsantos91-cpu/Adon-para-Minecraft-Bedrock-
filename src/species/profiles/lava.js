@@ -1,8 +1,12 @@
+import { getDragonBalance } from "../balance.js";
+
+const balance = getDragonBalance("lava");
+
 export const lavaDragonProfile = {
   species: "lava",
-  restRecoveryPerMinute: 2,
+  restRecoveryPerMinute: balance.rest,
   environmentRecovery: { volcanic: 6 },
-  hungerPerMinute: 0.05,
+  hungerPerMinute: balance.hunger,
   starvationGraceMinutes: 60,
   starvationDamagePerMinute: 0.1,
   lowHungerEnergyMultiplier: 0.5,
