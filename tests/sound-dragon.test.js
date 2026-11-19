@@ -48,9 +48,9 @@ test("onda sonora exige ameaça e energia suficiente", () => {
   assert.notEqual(tired.action, "perform_sonic_impact_wave");
 });
 
-test("as dez espécies estão registradas no catálogo metabólico", () => {
+test("as quinze espécies estão registradas no catálogo metabólico", () => {
   assert.deepEqual(Object.keys(speciesProfiles).sort(), [
-    "earth", "electric", "fire", "ice", "lava", "plasma", "poison", "sound", "water", "wind"
+    "acid", "earth", "electric", "fire", "ice", "lava", "light", "plasma", "poison", "radioactive", "sand", "shadow", "sound", "water", "wind"
   ]);
-  assert.equal(Object.keys(behaviorProfiles).length, 10);
+  assert.equal(Object.keys(behaviorProfiles).length, 15);
 });
