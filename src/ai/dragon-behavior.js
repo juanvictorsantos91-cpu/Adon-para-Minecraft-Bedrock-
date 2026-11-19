@@ -108,7 +108,7 @@ function behaviorRules(profile) {
       reason: "Evita aproximação de um indivíduo que já demonstrou hostilidade, sem iniciar combate por conta própria."
     },
     {
-      name: "respond-to-dragon-aggression", priority: 9,
+      name: "respond-to-dragon-aggression", priority: 3.5,
       when: s => s.socialInteractions?.action && s.socialInteractions.kind !== "peaceful",
       action: s => s.socialInteractions.action,
       reason: "Responde a agressão ou conflito territorial de outro dragão sem iniciar hostilidade automaticamente."
@@ -472,7 +472,14 @@ export function decideDragonBehavior(state) {
     : { migratory: profile.migrationPattern === "long_cycle", due: false };
   const migrationCycle = Math.floor((state.currentTick ?? 0) / (migrationStatus.cycleDurationTicks ?? 1));
   const currentTerritory = assessTerritory(state, rememberedNearbyDragons, { ...state, migrationDue: migrationStatus.due, migrationCycle, invasionCycle: Math.floor((state.currentTick ?? 0) / 24000) });
-  const socialInteractions = assessSocialInteractions(state, rememberedNearbyDragons, { ...state, migrationDue: migrationStatus.due });
+  const hostileObservation = (state.socialObservations ?? []).find(item => item.interaction === "hostile");
+  const socialInteractions = assessSocialInteractions(state, rememberedNearbyDragons, {
+    ...state,
+    migrationDue: migrationStatus.due,
+    attackedByDragon: state.attackedByDragon === true || Boolean(hostileObservation),
+    attackerId: hostileObservation?.entityId ?? state.attackerId,
+    socialOpportunity: state.socialOpportunity === true
+  });
   const electricStormRitual = assessElectricStormRitual(state, rememberedNearbyDragons, state);
   const groupPlan = getSocialGroupPlan(
     state.species,
