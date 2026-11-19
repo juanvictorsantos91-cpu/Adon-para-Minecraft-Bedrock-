@@ -243,6 +243,13 @@ function updateDimension(dimension, currentTick) {
       const state = buildDragonSnapshot(entity, nearby, environmentContext, currentTick);
       if (!state) continue;
       state.socialObservations = pendingSocialObservations.get(entity.id) ?? [];
+      for (const tag of entity.getTags()) {
+        if (!tag.startsWith("ds:positive_contact:")) continue;
+        let entityId = tag.slice("ds:positive_contact:".length);
+        try { entityId = decodeURIComponent(entityId); } catch { /* Mantém o ID original. */ }
+        state.socialObservations.push({ entityId, interaction: "peaceful" });
+        entity.removeTag(tag);
+      }
       pendingSocialObservations.delete(entity.id);
       const decision = decideDragonBehavior(state);
       synchronizeNeeds(entity, state, decision, environmentContext);
