@@ -28,7 +28,7 @@ function memberRecord(dragon) {
     healthRatio: Math.max(0, Math.min(1, (dragon.health ?? 100) / 100)),
     energyRatio: Math.max(0, Math.min(1, (dragon.energy ?? 100) / 100)),
     protectiveness: dragon.protectiveness ?? 0.5,
-    aggression: dragon.aggression ?? 0.4
+    aggression: dragon.aggression ?? 0.4,\n    partnerId: dragon.partnerId ?? null,\n    parentIds: dragon.parentIds ?? []
   };
 }
 
