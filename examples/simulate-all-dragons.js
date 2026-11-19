@@ -12,7 +12,12 @@ const environments = {
   wind: "wind",
   sound: "quiet_cave",
   poison: "swamp",
-  plasma: "high_altitude_storm"
+  plasma: "high_altitude_storm",
+  acid: "acidic_cavern",
+  sand: "desert",
+  light: "clear_daylight",
+  radioactive: "deep_crystal_cave",
+  shadow: "night"
 };
 
 for (const [species, profile] of Object.entries(speciesProfiles)) {
