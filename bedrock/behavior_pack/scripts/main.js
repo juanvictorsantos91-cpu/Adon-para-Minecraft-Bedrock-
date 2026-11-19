@@ -252,7 +252,7 @@ function updateDimension(dimension, currentTick) {
       }
       pendingSocialObservations.delete(entity.id);
       const decision = decideDragonBehavior(state);
-      synchronizeNeeds(entity, state, decision, environmentContext);
+      const needsAfterDecision = synchronizeNeeds(entity, state, decision, environmentContext);
       if (socialWorldRuntime) {
         try {
           const group = socialWorldRuntime.synchronizeGroup(entity, state, decision);
