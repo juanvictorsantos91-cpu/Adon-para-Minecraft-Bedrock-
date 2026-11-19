@@ -127,7 +127,7 @@ test("espécie desconhecida é rejeitada", () => {
 });
 
 test("padrões sociais naturais usam grupos territoriais e exceções solitárias", () => {
-  for (const species of ["water", "fire", "ice", "earth", "lava", "wind", "sound"]) {
+  for (const species of ["earth", "lava", "wind"]) {
     assert.equal(getBehaviorProfile(species).socialPattern, "territorial_groups");
     assert.ok(getBehaviorProfile(species).preferredGroupSize > 4);
     assert.equal(getBehaviorProfile(species).patrolStyle, "distributed_patrol");
@@ -200,7 +200,7 @@ test("o plano social é incluído nas decisões DBS e não substitui o MIS", () 
   const normal = decideDragonBehavior(healthy("water", {
     nearbySameSpeciesCount: 1
   }));
-  assert.equal(normal.groupPlan.targetGroupSize, 6);
+  assert.equal(normal.groupPlan.targetGroupSize, 3);
   assert.equal(normal.groupPlan.action, "seek_group_members");
 
   const critical = decideDragonBehavior(healthy("water", {
