@@ -8,6 +8,11 @@ import { windDragonProfile } from "./wind.js";
 import { soundDragonProfile } from "./sound.js";
 import { poisonDragonProfile } from "./poison.js";
 import { plasmaDragonProfile } from "./plasma.js";
+import { acidDragonProfile } from "./acid.js";
+import { sandDragonProfile } from "./sand.js";
+import { lightDragonProfile } from "./light.js";
+import { radioactiveDragonProfile } from "./radioactive.js";
+import { shadowDragonProfile } from "./shadow.js";
 
 export const speciesProfiles = {
   electric: electricDragonProfile,
@@ -19,7 +24,12 @@ export const speciesProfiles = {
   wind: windDragonProfile,
   sound: soundDragonProfile,
   poison: poisonDragonProfile,
-  plasma: plasmaDragonProfile
+  plasma: plasmaDragonProfile,
+  acid: acidDragonProfile,
+  sand: sandDragonProfile,
+  light: lightDragonProfile,
+  radioactive: radioactiveDragonProfile,
+  shadow: shadowDragonProfile
 };
 
 export function getSpeciesProfile(species) {
