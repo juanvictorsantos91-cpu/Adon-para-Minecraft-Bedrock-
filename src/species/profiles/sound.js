@@ -1,8 +1,12 @@
+import { getDragonBalance } from "../balance.js";
+
+const balance = getDragonBalance("sound");
+
 export const soundDragonProfile = {
   species: "sound",
-  restRecoveryPerMinute: 2.1,
+  restRecoveryPerMinute: balance.rest,
   environmentRecovery: { quietCave: 4, shelteredValley: 3 },
-  hungerPerMinute: 0.05,
+  hungerPerMinute: balance.hunger,
   starvationGraceMinutes: 60,
   starvationDamagePerMinute: 0.1,
   lowHungerEnergyMultiplier: 0.5,
