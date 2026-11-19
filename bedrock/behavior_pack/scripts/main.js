@@ -6,7 +6,7 @@ import { writeSocialMemory } from "./core/adapters/bedrock/social-memory-writer.
 import { initializeDragonEntity } from "./core/adapters/bedrock/dragon-initializer.js";
 import { tickMetabolism } from "./core/survival/metabolism.js";
 import { getSpeciesProfile } from "./core/species/profiles/index.js";
-import { writeDragonGroupMembership, writeDragonGroupLeadership } from "./core/adapters/bedrock/dragon-group-writer.js";
+import { writeDragonGroupMembership, writeDragonGroupLeadership } from "./core/adapters/bedrock/dragon-group-writer.js";\nimport { getDragonBalance } from "./core/species/balance.js";
 
 const TICK_INTERVAL = 40;
 const QUERY_RADIUS = 32;
@@ -162,6 +162,38 @@ function synchronizeSocialGroup(entity, state, decision) {
   writeDragonGroupLeadership(entity, entity.id === members[0]);
 }
 
+function enforceFlightLimits(entity, species) {
+  const balance = getDragonBalance(species);
+  if (entity.location.y > balance.maxFlightAltitude) {
+    entity.applyImpulse({ x: 0, y: -0.18, z: 0 });
+    entity.addTag("ds:flight_altitude_limited");
+  } else if (entity.hasTag("ds:flight_altitude_limited")) {
+    entity.removeTag("ds:flight_altitude_limited");
+  }
+  const originTag = entity.getTags().find(tag => tag.startsWith("ds:flight_origin:"));
+  if (entity.isOnGround === true) {
+    if (originTag) entity.removeTag(originTag);
+    return;
+  }
+  if (!originTag) {
+    const p = entity.location;
+    entity.addTag(`ds:flight_origin:${p.x.toFixed(1)}:${p.y.toFixed(1)}:${p.z.toFixed(1)}`);
+    return;
+  }
+  const parts = originTag.split(":");
+  const origin = { x: Number(parts[2]), y: Number(parts[3]), z: Number(parts[4]) };
+  if (!Number.isFinite(origin.x) || !Number.isFinite(origin.y) || !Number.isFinite(origin.z)) {
+    entity.removeTag(originTag); return;
+  }
+  const dx=entity.location.x-origin.x, dy=entity.location.y-origin.y, dz=entity.location.z-origin.z;
+  const distance=Math.hypot(dx,dy,dz);
+  if (distance > balance.flightRange) {
+    const length=distance||1;
+    entity.applyImpulse({ x: -dx/length*0.16, y: -Math.max(0,dy)/length*0.08, z: -dz/length*0.16 });
+    entity.addTag("ds:flight_range_limited");
+  } else if (entity.hasTag("ds:flight_range_limited")) entity.removeTag("ds:flight_range_limited");
+}
+
 function publishIntent(entity, action) {
   try {
     for (const tag of entity.getTags()) {
@@ -195,7 +227,7 @@ function updateDimension(dimension, currentTick) {
       if (!state) continue;
       state.socialObservations = pendingSocialObservations.get(entity.id) ?? [];
       pendingSocialObservations.delete(entity.id);
-      const decision = decideDragonBehavior(state);\n      synchronizeNeeds(entity, state, decision, environmentContext);\n      synchronizeSocialGroup(entity, state, decision);
+      const decision = decideDragonBehavior(state);\n      synchronizeNeeds(entity, state, decision, environmentContext);\n      synchronizeSocialGroup(entity, state, decision);\n      enforceFlightLimits(entity, state.species);
       try {
         writeSocialMemory(entity, decision.socialMemory ?? []);
       } catch {
