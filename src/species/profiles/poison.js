@@ -1,8 +1,12 @@
+import { getDragonBalance } from "../balance.js";
+
+const balance = getDragonBalance("poison");
+
 export const poisonDragonProfile = {
   species: "poison",
-  restRecoveryPerMinute: 2,
+  restRecoveryPerMinute: balance.rest,
   environmentRecovery: { humidForest: 3, swamp: 3.5 },
-  hungerPerMinute: 0.05,
+  hungerPerMinute: balance.hunger,
   starvationGraceMinutes: 60,
   starvationDamagePerMinute: 0.1,
   lowHungerEnergyMultiplier: 0.5,
