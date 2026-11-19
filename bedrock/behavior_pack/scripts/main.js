@@ -7,7 +7,8 @@ import { initializeDragonEntity } from "./core/adapters/bedrock/dragon-initializ
 import { tickMetabolism } from "./core/survival/metabolism.js";
 import { getSpeciesProfile } from "./core/species/profiles/index.js";
 import { writeDragonGroupMembership, writeDragonGroupLeadership } from "./core/adapters/bedrock/dragon-group-writer.js";
-import { getDragonBalance } from "./core/species/balance.js";\nimport { createBedrockSocialWorldRuntime } from "./core/adapters/bedrock/social-world-runtime.js";
+import { getDragonBalance } from "./core/species/balance.js";
+import { createBedrockSocialWorldRuntime } from "./core/adapters/bedrock/social-world-runtime.js";
 
 const TICK_INTERVAL = 40;
 const QUERY_RADIUS = 32;
