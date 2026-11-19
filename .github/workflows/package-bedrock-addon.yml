@@ -8,6 +8,8 @@ on:
       - "bedrock/**"
       - "src/**"
       - "scripts/package-bedrock-addon.js"
+      - "scripts/generate-species-assets.js"
+      - "package.json"
       - ".github/workflows/package-bedrock-addon.yml"
 
 jobs:
