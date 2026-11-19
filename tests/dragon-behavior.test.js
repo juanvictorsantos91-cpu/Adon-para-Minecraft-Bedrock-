@@ -100,6 +100,28 @@ test("descanso seguro, socialização e exploração são considerados", () => {
   })).action, "explore_environment");
 });
 
+
+test("as cinco novas espécies expõem ações elementais condicionadas por energia e contexto", () => {
+  assert.equal(decideDragonBehavior(healthy("acid", {
+    acidJetRequested: true, threatDetected: true, energy: 60
+  })).action, "release_acid_jet");
+  assert.equal(decideDragonBehavior(healthy("sand", {
+    sandstormRequested: true, threatDetected: true, energy: 60
+  })).action, "raise_sandstorm");
+  assert.equal(decideDragonBehavior(healthy("light", {
+    lightPulseRequested: true, threatDetected: true, energy: 60
+  })).action, "release_blinding_light_pulse");
+  assert.equal(decideDragonBehavior(healthy("radioactive", {
+    radiationPulseRequested: true, threatDetected: true, energy: 60
+  })).action, "release_radiation_pulse");
+  assert.equal(decideDragonBehavior(healthy("shadow", {
+    shadowStepRequested: true, darknessNearby: true, energy: 60
+  })).action, "perform_shadow_step");
+  assert.notEqual(decideDragonBehavior(healthy("shadow", {
+    shadowStepRequested: true, darknessNearby: false, energy: 60
+  })).action, "perform_shadow_step");
+});
+
 test("espécie desconhecida é rejeitada", () => {
   assert.throws(() => getBehaviorProfile("unknown"), RangeError);
 });
