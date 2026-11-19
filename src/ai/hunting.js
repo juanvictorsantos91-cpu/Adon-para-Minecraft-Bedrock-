@@ -17,7 +17,12 @@ const HUNTING_STYLES = Object.freeze({
   wind: "aerial_opportunistic_dive",
   sound: "echo_tracking",
   poison: "stealth_and_venom_ambush",
-  plasma: "concealed_stalk_and_short_burst"
+  plasma: "concealed_stalk_and_short_burst",
+  acid: "corrosive_ambush",
+  sand: "subterranean_ambush",
+  light: "precise_open_sky_pursuit",
+  radioactive: "patient_energy_burst",
+  shadow: "nocturnal_shadow_stalk"
 });
 
 function matchesDiet(species, prey) {
