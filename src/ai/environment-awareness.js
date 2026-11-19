@@ -10,7 +10,12 @@ const habitatTags = {
   wind: ["wind", "high_altitude", "open_plains", "coast", "savanna"],
   poison: ["swamp", "mangrove", "jungle", "dark_forest", "dense_forest"],
   sound: ["valley", "rocky_canyon", "forest", "cliffs", "cave"],
-  plasma: ["storm_exposed", "open_plateau", "windswept_coast", "high_altitude"]
+  plasma: ["storm_exposed", "open_plateau", "windswept_coast", "high_altitude"],
+  acid: ["acidic_cavern", "humid_cave", "swamp", "dense_forest"],
+  sand: ["desert", "badlands", "warm_sand", "dry_dunes"],
+  light: ["sunlit_area", "open_plains", "flower_forest", "clear_daylight"],
+  radioactive: ["irradiated_mineral_cavern", "deep_crystal_cave", "underground"],
+  shadow: ["deep_darkness", "shaded_cave", "dark_forest", "night"]
 };
 
 const hazardKeys = ["lavaNearby", "fireNearby", "hostileMobsNearby", "unstableGround", "deepWater", "fallRisk"];
