@@ -173,7 +173,10 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
         parentIds: otherTags.filter(tag => tag.startsWith("ds:parent:")).map(tag => tag.slice("ds:parent:".length)),
         partnerId: readTaggedId(otherTags, "ds:partner:"),
         pairCompatible: otherTags.includes("ds:pair_compatible"),
-        safeToPair: otherTags.includes("ds:safe_to_pair")
+        safeToPair: otherTags.includes("ds:safe_to_pair") ||
+          (readHealthPercent(other, otherTags) > 40 &&
+           readTaggedNumber(otherTags, NUMBER_PREFIXES.energy, 100) > 25 &&
+           !otherTags.includes("ds:injury:severe"))
       });
       continue;
     }
@@ -210,11 +213,19 @@ export function buildDragonSnapshot(entity, nearbyEntities = [], environmentCont
     isTamed,
     isOwned,
     hasYoung: tags.includes("ds:has_young"),
+    youngInDanger: tags.includes("ds:young_in_danger"),
+    youngNeedsFood: tags.includes("ds:young_needs_food"),
+    youngNeedsWarmth: tags.includes("ds:young_needs_warmth"),
+    youngNeedsCare: tags.includes("ds:young_needs_care"),
+    nestThreatened: tags.includes("ds:nest_threatened"),
+    ownerInDanger: tags.includes("ds:owner_in_danger"),
+    trainingCommand: readTaggedId(tags, "ds:command:"),
     injury: { severity: injurySeverity },
     parentIds: tags.filter(tag => tag.startsWith("ds:parent:")).map(tag => tag.slice("ds:parent:".length)),
     partnerId: readTaggedId(tags, "ds:partner:"),
-    pairCompatible: tags.includes("ds:pair_compatible"),
-    safeToPair: tags.includes("ds:safe_to_pair"),
+    pairCompatible: tags.includes("ds:pair_compatible") || tags.includes("ds:stage:adult"),
+    safeToPair: tags.includes("ds:safe_to_pair") ||
+      (health > 40 && energy > 25 && injurySeverity !== "severe" && environmentContext.immediateHazard !== true),
     starvationMinutes: readTaggedNumber(tags, "ds:starvation_minutes:", 0),
     attackedByDragon: tags.some(tag => tag.startsWith("ds:attacked_by:")),
     immediateDanger: environmentContext.immediateHazard === true || tags.includes("ds:immediate_danger"),
