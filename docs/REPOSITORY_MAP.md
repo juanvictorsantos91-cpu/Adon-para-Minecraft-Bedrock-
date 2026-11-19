@@ -25,4 +25,4 @@ Arquivos de referência preservados:
 ## Estado de validação
 A aprovação dos testes Node.js valida somente as regras e ferramentas executadas no ambiente de testes. A geração do pacote valida a estrutura de empacotamento. Nenhuma dessas etapas substitui a importação e o teste dentro do Minecraft Bedrock Android.
 
-A lista de espécies está em evolução. O catálogo de planejamento atual possui 15 espécies; os perfis de código ainda precisam ser conferidos e completados para corresponder integralmente a esse catálogo antes da implantação final.
+O catálogo oficial de 15 espécies está documentado em `docs/SPECIES_CATALOG.md`. Os 15 perfis metabólicos, dietas, personalidades, habitats e estilos de caça estão cadastrados na branch consolidada. Habilidades e parâmetros novos ainda são experimentais: não equivalem a efeitos completos no Minecraft nem a validação dentro do jogo.
