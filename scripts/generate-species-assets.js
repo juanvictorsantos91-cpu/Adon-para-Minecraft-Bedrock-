@@ -72,7 +72,7 @@ for(const id of species){
   geometry.description.identifier="geometry.dragon_survival."+id;
   geometry.description.visible_bounds_width=Math.max(5,b.width*3.4);
   geometry.description.visible_bounds_height=Math.max(5,b.height*2.8);
-  if(id==="poison") geometry.bones=geometry.bones.filter(bone=>!["front_leg_left","front_leg_right"].includes(bone.name));
+  if(id==="poison") geometry.bones=geometry.bones.filter(bone=>!["rear_leg_left","rear_leg_right"].includes(bone.name));
   if(id==="wind"){
     for(const side of ["left","right"]){
       const wing=structuredClone(geometry.bones.find(bone=>bone.name==="wing_"+side));
@@ -93,6 +93,28 @@ for(const id of species){
   await writeFile(path.join(root,"bedrock/resource_pack/textures/entity/dragon_"+id+".png"),png(128,palettes[id]));
   await writeFile(path.join(root,"bedrock/resource_pack/textures/items/dragon_"+id+"_spawn_egg.png"),png(16,palettes[id]));
   const animation=structuredClone(baseAnim);
+  for(const [key,value] of Object.entries(animation.animations)){
+    value.bones ??= {};
+    if(id==="poison"){
+      delete value.bones.rear_leg_left;
+      delete value.bones.rear_leg_right;
+    }
+    if(id==="wind"){
+      for(const side of ["left","right"]){
+        const sign=side==="left"?-1:1;
+        if(key.endsWith(".idle")){
+          value.bones["wing_rear_"+side]={rotation:[0,0,sign*5]};
+          value.bones["wing_tip_rear_"+side]={rotation:[0,0,sign*3]};
+        } else if(key.endsWith(".walk")){
+          value.bones["wing_rear_"+side]={rotation:[0,0,sign*10]};
+          value.bones["wing_tip_rear_"+side]={rotation:[0,0,sign*5]};
+        } else if(key.endsWith(".fly")){
+          value.bones["wing_rear_"+side]={rotation:[0,0,sign===-1?"-42 + math.sin(query.anim_time * 14 + 0.35) * 30":"42 - math.sin(query.anim_time * 14 + 0.35) * 30"]};
+          value.bones["wing_tip_rear_"+side]={rotation:[0,0,sign===-1?"-16 + math.sin(query.anim_time * 14 + 0.75) * 13":"16 - math.sin(query.anim_time * 14 + 0.75) * 13"]};
+        }
+      }
+    }
+  }
   const animText=JSON.stringify(animation).replaceAll("dragon_survival.fire","dragon_survival."+id);
   await writeFile(path.join(root,"bedrock/resource_pack/animations/dragon_"+id+".animation.json"),animText+"\n");
   const controller=structuredClone(baseAnimController);
