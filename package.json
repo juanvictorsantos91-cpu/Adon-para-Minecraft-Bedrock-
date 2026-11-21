@@ -10,7 +10,7 @@
     "test": "node --test",
     "simulate:social": "node examples/simulate-social-life.js",
     "simulate:world": "node examples/simulate-world-systems.js",
-    "build:bedrock": "node scripts/build-bedrock-pack.js && node scripts/generate-species-assets.js",
+    "build:bedrock": "node scripts/build-bedrock-pack.js && node scripts/generate-species-assets.js && node scripts/validate-species-assets.js",
     "build:assets": "node scripts/generate-species-assets.js"
   }
 }
