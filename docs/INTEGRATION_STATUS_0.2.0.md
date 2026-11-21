@@ -63,11 +63,13 @@ O script scripts/generate-species-assets.js gera, para as 15 espécies:
 - animation controller e render controller;
 - nomes em português e manifestos sincronizados na versão 0.2.0.
 
-O gerador usa o rig do Dragão de Fogo como base inicial. O Dragão de Vento recebe um segundo par de asas e o Dragão de Veneno usa o corpo com apenas as duas patas traseiras. As outras espécies já têm geometrias e texturas separadas, mas ainda compartilham a estrutura anatômica quadrúpede base nesta primeira passagem.
+O gerador usa o rig do Dragão de Fogo como base inicial. O Dragão de Vento recebe um segundo par de asas com ossos e animações próprios. O Dragão de Veneno preserva as duas patas dianteiras e remove as duas traseiras. As outras espécies têm geometrias e texturas separadas por arquivo, mas ainda compartilham a estrutura anatômica quadrúpede base nesta primeira passagem. As texturas são padrões procedurais de paleta, não texturas artísticas finais; a geometria Meshy não foi exportada nem incorporada.
 
 As texturas são paletas pixel-art de protótipo, não acabamento artístico final. Animações individuais, ataques visuais, efeitos de partículas e refinamento de silhueta continuam pendentes.
 
 ## Build e validação automatizada
+
+O build agora executa `scripts/validate-species-assets.js` depois de gerar os recursos. O validador verifica os 15 conjuntos: JSONs, hierarquia e unicidade dos ossos, referências de animação, dimensões/UVs, assinatura e tamanho das texturas PNG, correspondência entre IDs de geometria e entidades, anatomia dianteira/traseira do Veneno e quatro asas do Vento. Isso detecta inconsistências estruturais, mas não substitui a inspeção visual nem o teste no Minecraft.
 
 Com Node.js 22:
 
