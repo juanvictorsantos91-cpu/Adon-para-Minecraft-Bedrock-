@@ -27,7 +27,6 @@ test("vento recebe quatro asas e veneno mantém o plano corporal de duas patas",
   assert.ok(windBones.includes("wing_rear_left") && windBones.includes("wing_rear_right"));
   assert.ok(poisonBones.includes("front_leg_left") && poisonBones.includes("front_leg_right"));
   assert.ok(!poisonBones.includes("rear_leg_left") && !poisonBones.includes("rear_leg_right"));
-  assert.ok(!poisonBones.includes("rear_leg_left") && !poisonBones.includes("rear_leg_right"));
 });
 
 test("texturas de espécie e ovos são PNGs de 128 e 16 pixels", async () => {
