@@ -177,8 +177,8 @@ await writeJson(path.join(root,"bedrock/resource_pack/textures/item_texture.json
 await writeFile(langFile,lang+"\n");
 for(const file of ["bedrock/behavior_pack/manifest.json","bedrock/resource_pack/manifest.json"]){
   const manifest=JSON.parse(await readFile(path.join(root,file),"utf8"));
-  manifest.header.version=[0,2,0];for(const module of manifest.modules)module.version=[0,2,0];
-  if(file.includes("resource_pack"))manifest.dependencies[0].version=[0,2,0];
+  manifest.header.version=[0,2,1];for(const module of manifest.modules)module.version=[0,2,1];
+  if(file.includes("resource_pack"))manifest.dependencies[0].version=[0,2,1];
   await writeJson(path.join(root,file),manifest);
 }
 console.log("Gerados 15 entidades BP, 15 client entities, 15 geometrias, texturas, ovos, animações e controladores.");
