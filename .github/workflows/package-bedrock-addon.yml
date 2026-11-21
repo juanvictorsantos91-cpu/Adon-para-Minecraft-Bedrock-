@@ -9,6 +9,7 @@ on:
       - "src/**"
       - "scripts/package-bedrock-addon.js"
       - "scripts/generate-species-assets.js"
+      - "scripts/validate-species-assets.js"
       - "package.json"
       - ".github/workflows/package-bedrock-addon.yml"
 
