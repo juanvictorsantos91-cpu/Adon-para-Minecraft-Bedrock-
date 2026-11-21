@@ -1,8 +1,8 @@
-# Integração Dragon Survival 0.2.0
+# Integração Dragon Survival 0.2.1 — pacote de diagnóstico visual
 
 ## Estado desta entrega
 
-Esta rodada integra o núcleo de sobrevivência e comportamento ao runtime Bedrock e prepara os recursos das 15 espécies no processo de build. O resultado é uma base funcional de desenvolvimento, ainda dependente de validação dentro do Minecraft Bedrock Android.
+Esta rodada integra o núcleo de sobrevivência e comportamento ao runtime Bedrock e prepara os recursos das 15 espécies no processo de build. O resultado é uma base de diagnóstico estrutural para a revisão visual, ainda dependente de validação dentro do Minecraft Bedrock Android.
 
 ## Sobrevivência
 
