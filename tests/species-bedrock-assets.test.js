@@ -13,6 +13,13 @@ test("o build gera Behavior Pack e Resource Pack para as quinze espécies", asyn
     assert.equal(b.description.identifier, `dragon_survival:${id}_dragon`);
     assert.ok(b.components["minecraft:health"].max > 0);
     assert.ok(b.components["minecraft:collision_box"].height > 0);
+    assert.ok(b.components["minecraft:movement.generic"]);
+    assert.ok(b.components["minecraft:navigation.generic"]);
+    assert.ok(b.components["minecraft:can_fly"]);
+    assert.equal(Object.hasOwn(b.components, "minecraft:movement.fly"), false);
+    assert.equal(Object.hasOwn(b.components, "minecraft:movement.basic"), false);
+    assert.equal(Object.hasOwn(b.components, "minecraft:navigation.fly"), false);
+    assert.equal(Object.hasOwn(b.components, "minecraft:navigation.walk"), false);
     assert.ok(c.geometry.default.endsWith(id));
     assert.ok(c.textures.default.endsWith(id));
     assert.ok(c.animations[id+"_controller"]);
