@@ -117,15 +117,15 @@ test("Bedrock dragon discovery uses the declared dragon_survival family", async 
   assert.ok(initializer.includes('entity.addTag("ds:dragon")'));
 });
 
-test("Dragon Survival 0.2.1 manifests and RP dependency are synchronized", async () => {
+test("Dragon Survival 0.2.2 manifests and RP dependency are synchronized", async () => {
   const behavior = await readJson("../bedrock/behavior_pack/manifest.json");
   const resource = await readJson("../bedrock/resource_pack/manifest.json");
 
-  assert.deepEqual(behavior.header.version, [0, 2, 1]);
-  assert.deepEqual(resource.header.version, [0, 2, 1]);
-  assert.deepEqual(behavior.modules.map((module) => module.version), [[0, 2, 1], [0, 2, 1]]);
-  assert.deepEqual(resource.modules[0].version, [0, 2, 1]);
+  assert.deepEqual(behavior.header.version, [0, 2, 2]);
+  assert.deepEqual(resource.header.version, [0, 2, 2]);
+  assert.deepEqual(behavior.modules.map((module) => module.version), [[0, 2, 2], [0, 2, 2]]);
+  assert.deepEqual(resource.modules[0].version, [0, 2, 2]);
   assert.deepEqual(resource.dependencies[0].version, behavior.header.version);
-  assert.deepEqual(behavior.header.version, [0, 2, 1]);
+  assert.deepEqual(behavior.header.version, [0, 2, 2]);
   assert.equal(resource.dependencies[0].uuid, behavior.header.uuid);
 });
