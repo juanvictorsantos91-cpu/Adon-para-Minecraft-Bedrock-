@@ -133,10 +133,17 @@ for(const id of species){
         "minecraft:collision_box":{width:b.width,height:b.height},
         "minecraft:scale":{value:scale},
         "minecraft:movement":{value:b.groundSpeed},
-        "minecraft:movement.fly":{value:b.flightSpeed},
-        "minecraft:movement.basic":{},
-        "minecraft:navigation.walk":{can_path_over_water:id==="water",avoid_water:id!=="water",avoid_damage_blocks:true},
-        "minecraft:navigation.fly":{can_path_over_water:true,avoid_damage_blocks:true},
+        "minecraft:movement.generic":{},
+        "minecraft:navigation.generic":{
+          can_walk:true,
+          can_swim:id==="water",
+          is_amphibious:id==="water",
+          can_path_from_air:true,
+          can_path_over_water:id==="water",
+          avoid_water:id!=="water",
+          avoid_damage_blocks:true
+        },
+        "minecraft:can_fly":{},
         "minecraft:physics":{has_gravity:true,has_collision:true},
         "minecraft:pushable":{is_pushable:true,is_pushable_by_piston:true},
         "minecraft:nameable":{},
@@ -177,8 +184,8 @@ await writeJson(path.join(root,"bedrock/resource_pack/textures/item_texture.json
 await writeFile(langFile,lang+"\n");
 for(const file of ["bedrock/behavior_pack/manifest.json","bedrock/resource_pack/manifest.json"]){
   const manifest=JSON.parse(await readFile(path.join(root,file),"utf8"));
-  manifest.header.version=[0,2,1];for(const module of manifest.modules)module.version=[0,2,1];
-  if(file.includes("resource_pack"))manifest.dependencies[0].version=[0,2,1];
+  manifest.header.version=[0,2,2];for(const module of manifest.modules)module.version=[0,2,2];
+  if(file.includes("resource_pack"))manifest.dependencies[0].version=[0,2,2];
   await writeJson(path.join(root,file),manifest);
 }
 console.log("Gerados 15 entidades BP, 15 client entities, 15 geometrias, texturas, ovos, animações e controladores.");
