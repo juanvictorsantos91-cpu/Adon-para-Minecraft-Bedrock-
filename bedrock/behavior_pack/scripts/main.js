@@ -9,6 +9,7 @@ import { getSpeciesProfile } from "./core/species/profiles/index.js";
 import { writeDragonGroupMembership, writeDragonGroupLeadership } from "./core/adapters/bedrock/dragon-group-writer.js";
 import { getDragonBalance } from "./core/species/balance.js";
 import { createBedrockSocialWorldRuntime } from "./core/adapters/bedrock/social-world-runtime.js";
+import { assessFlightPolicy } from "./core/ai/flight-control.js";
 
 const TICK_INTERVAL = 40;
 const QUERY_RADIUS = 32;
@@ -145,9 +146,11 @@ function synchronizeNeeds(entity, state, decision, environmentContext) {
     burrow_under_sand: "burrow", dim_plasma_glow_and_conceal: "concealment",
     reposition_silently: "stealthMovement"
   };
-  const activity = actionCosts[action] ?? (/fly|flight|glide/.test(action) ? "fly" :
-    /attack|combat|confront|defend/.test(action) ? "physicalAttack" :
-    /run|chase|pursue|retreat|move/.test(action) ? "run" : "idle");
+  const activity = actionCosts[action] ?? (entity.isOnGround === false
+    ? (state.species === "wind" && tags.includes("wind") ? "glideWithWind" : "fly")
+    : (/fly|flight|glide/.test(action) ? "fly" :
+      /attack|combat|confront|defend/.test(action) ? "physicalAttack" :
+      /run|chase|pursue|retreat|move/.test(action) ? "run" : "idle"));
   const time = world.getTimeOfDay?.() ?? 0;
   const tags = environmentContext.tags ?? [];
   const environment =
@@ -217,8 +220,27 @@ function synchronizeSocialGroup(entity, state, decision) {
   writeDragonGroupLeadership(entity, entity.id === members[0]);
 }
 
-function enforceFlightLimits(entity, species) {
+function enforceFlightLimits(entity, species, state) {
   const balance = getDragonBalance(species);
+  const flightPolicy = assessFlightPolicy(state, species);
+  if (entity.isOnGround === true) {
+    for (const tag of ["ds:flight:descending", "ds:flight:gliding", "ds:flight:cruising"]) {
+      if (entity.hasTag(tag)) entity.removeTag(tag);
+    }
+  } else if (flightPolicy.shouldDescend) {
+    entity.addTag("ds:flight:descending");
+    entity.removeTag("ds:flight:gliding");
+    entity.removeTag("ds:flight:cruising");
+    entity.applyImpulse({ x: 0, y: -flightPolicy.descentImpulse, z: 0 });
+  } else if (flightPolicy.shouldConserve) {
+    entity.addTag("ds:flight:gliding");
+    entity.removeTag("ds:flight:descending");
+    entity.removeTag("ds:flight:cruising");
+  } else {
+    entity.addTag("ds:flight:cruising");
+    entity.removeTag("ds:flight:descending");
+    entity.removeTag("ds:flight:gliding");
+  }
   if (entity.location.y > balance.maxFlightAltitude) {
     entity.applyImpulse({ x: 0, y: -0.18, z: 0 });
     entity.addTag("ds:flight_altitude_limited");
@@ -299,7 +321,7 @@ function updateDimension(dimension, currentTick) {
           synchronizeSocialGroup(entity, state, decision);
         }
       } else synchronizeSocialGroup(entity, state, decision);
-      enforceFlightLimits(entity, state.species);
+      enforceFlightLimits(entity, state.species, state);
       const effectiveDecision = needsAfterDecision.activityBlocked
         ? { ...decision, action: "conserve_energy", reason: "A reserva mínima de energia bloqueou a habilidade neste ciclo." }
         : decision;
