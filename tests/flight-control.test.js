@@ -37,3 +37,13 @@ test("as quinze espécies têm perfis de voo distintos e limites coerentes", () 
 test("estado inválido é rejeitado", () => {
   assert.throws(() => assessFlightPolicy({ energy: -1, hunger: 50, health: 50 }, "fire"), TypeError);
 });
+
+import { tickMetabolism } from "../src/survival/metabolism.js";
+import { fireDragonProfile } from "../src/species/profiles/fire.js";
+
+test("tempo no ar consome energia pela atividade de voo", () => {
+  const base = { energy: 80, hunger: 80, health: 100, injury: null };
+  const flying = tickMetabolism(base, fireDragonProfile, { minutes: 1, activity: "fly" });
+  const idle = tickMetabolism(base, fireDragonProfile, { minutes: 1, activity: "idle" });
+  assert.ok(flying.energy < idle.energy);
+});
