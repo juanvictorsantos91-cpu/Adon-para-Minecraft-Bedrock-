@@ -10,8 +10,10 @@ import { writeDragonGroupMembership, writeDragonGroupLeadership } from "./core/a
 import { getDragonBalance } from "./core/species/balance.js";
 import { createBedrockSocialWorldRuntime } from "./core/adapters/bedrock/social-world-runtime.js";
 import { assessFlightPolicy } from "./core/ai/flight-control.js";
+import { registerSaddleMounting } from "./core/adapters/bedrock/saddle-mount.js";
 
 const TICK_INTERVAL = 40;
+try { registerSaddleMounting(world, system); } catch { /* Montaria opcional: não interrompe o MIS. */ }
 const QUERY_RADIUS = 32;
 const DIMENSIONS = ["overworld", "nether", "the_end"];
 const pendingSocialObservations = new Map();
