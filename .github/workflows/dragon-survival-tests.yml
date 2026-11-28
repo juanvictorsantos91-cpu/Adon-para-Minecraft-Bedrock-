@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [feature/dragon-survival-core, feature/mis-bedrock-data-contract, dragon-survival/consolidated, feature/flight-refinement]
+    branches: [feature/dragon-survival-core, feature/mis-bedrock-data-contract, dragon-survival/consolidated, feature/flight-refinement, feature/vanilla-saddle-mount]
 
 jobs:
   node-tests:
@@ -24,6 +24,8 @@ jobs:
         run: node --check bedrock/behavior_pack/scripts/core/adapters/bedrock/dragon-initializer.js
       - name: Check social memory adapter syntax
         run: node --check bedrock/behavior_pack/scripts/core/adapters/bedrock/social-memory-writer.js
+      - name: Check saddle adapter syntax
+        run: node --check bedrock/behavior_pack/scripts/core/adapters/bedrock/saddle-mount.js
       - name: Run unit tests
         run: npm test
       - name: Run electric dragon simulation

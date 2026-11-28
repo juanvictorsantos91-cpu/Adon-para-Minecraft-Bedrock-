@@ -144,6 +144,13 @@ for(const id of species){
           avoid_damage_blocks:true
         },
         "minecraft:can_fly":{},
+        ...(id !== "lava" ? { "minecraft:rideable": {
+          seat_count: 1,
+          family_types: ["player"],
+          controlling_seat: 0,
+          rider_can_interact: true,
+          seats: [{ position: [0, Number((b.height * 0.58).toFixed(2)), Number((b.width * -0.12).toFixed(2))], min_rider_count: 0, max_rider_count: 1 }]
+        } } : {}),
         "minecraft:physics":{has_gravity:true,has_collision:true},
         "minecraft:pushable":{is_pushable:true,is_pushable_by_piston:true},
         "minecraft:nameable":{},
